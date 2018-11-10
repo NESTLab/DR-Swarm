@@ -7,9 +7,10 @@ public class SimpleGraph : MonoBehaviour
 {
 
     [SerializeField] private Sprite circleSprite;
-    private RectTransform graphContainer;
+    [SerializeField] private string variableName;
 
-    Graph g;
+    private RectTransform graphContainer;
+    private Graph g;
 
     private class Graph
     {
@@ -124,8 +125,11 @@ public class SimpleGraph : MonoBehaviour
     List<int> values = new List<int>() { };
     private void Update()
     {
-        float x = n / 20.0f;
-        if (n % 2 == 0) values.Add(Mathf.RoundToInt(50 * Mathf.Sin(x)) + 50);
+        VariableDict dict = DataModel.Instance.GetRobotDict("1");
+        if (dict.Has(variableName))
+        {
+            values.Add(Mathf.RoundToInt(50 * (float)dict.Get(variableName)));
+        }
 
         g.Update(values);
         n++;
