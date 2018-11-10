@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\DataModel.cs" />
     <Compile Include="Assets\Scripts\SimpleGraph.cs" />
+    <Compile Include="Assets\Scripts\Temp Scripts\PositionTracker.cs" />
     <Compile Include="Assets\Scripts\VariableDict.cs" />
     <None Include="Assets\Vuforia\Shaders\Text3D.shader" />
     <None Include="Assets\Vuforia\Shaders\OutlineOpaque.shader" />
@@ -74,8 +75,8 @@
     <None Include="Assets\Vuforia\Shaders\DepthContour.shader" />
     <None Include="Assets\Vuforia\Shaders\DepthMask.shader" />
     <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />
-    <None Include="Assets\StreamingAssets\Vuforia\DRSwarmTargets.xml" />
     <None Include="Assets\Vuforia\Shaders\CameraDiffuse.shader" />
+    <None Include="Assets\StreamingAssets\Vuforia\DRSwarmTargets.xml" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/theje/Documents/MQP/DR-Swarm/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

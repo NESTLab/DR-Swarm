@@ -125,10 +125,23 @@ public class SimpleGraph : MonoBehaviour
     List<int> values = new List<int>() { };
     private void Update()
     {
-        VariableDict dict = DataModel.Instance.GetRobotDict("1");
+        transform.LookAt(GameObject.Find("ARCamera").transform);
+
+        string robotName = transform.parent.gameObject.name;
+        VariableDict dict = DataModel.Instance.GetRobotDict(robotName);
         if (dict.Has(variableName))
         {
-            values.Add(Mathf.RoundToInt(50 * (float)dict.Get(variableName)));
+            object variable = dict.Get(variableName);
+            if (variable.GetType() == typeof(Vector3))
+            {
+                values.Add(Mathf.RoundToInt(1000 * ((Vector3)variable).z));
+            } else if (variable.GetType() == typeof(int))
+            {
+                values.Add(50 * (int)variable);
+            } else if (variable.GetType() == typeof(float))
+            {
+                values.Add(Mathf.RoundToInt(50 * (float)variable));
+            }
         }
 
         g.Update(values);
