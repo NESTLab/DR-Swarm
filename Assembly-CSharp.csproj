@@ -333,6 +333,18 @@
       <Project>{2F603F31-7296-1B83-6CE5-D8390EF68760}</Project>
       <Name>VuforiaScripts</Name>
     </ProjectReference>
+    <ProjectReference Include="UniRx.csproj">
+      <Project>{F58E19FA-F497-C63D-EF29-8BF7589F6974}</Project>
+      <Name>UniRx</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniRx.Async.csproj">
+      <Project>{B4089058-CDDC-3272-D751-FA5F60AE053D}</Project>
+      <Name>UniRx.Async</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniRx.Async.Editor.csproj">
+      <Project>{3C600389-939A-D22F-483A-7428AC9D3B42}</Project>
+      <Name>UniRx.Async.Editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

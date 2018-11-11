@@ -1,25 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 public class VariableDict {
 
-    Dictionary<string, object> variables;
+    Dictionary<string, BehaviorSubject<object>> variables;
 
     public VariableDict()
     {
-        variables = new Dictionary<string, object>();
+        variables = new Dictionary<string, BehaviorSubject<object>>();
     }
 
-    public object Get(string name)
+    public object GetValue(string name)
     {
-        if (Has(name)) return variables[name];
+        if (Has(name)) return variables[name].Value;
         return null;
     }
 
-    public void Set(string name, object value)
+    public IObservable<object> GetObservableValue(string name)
     {
-        variables[name] = value;
+        if (!Has(name))
+            variables[name] = new BehaviorSubject<object>(null);
+
+        return variables[name];
+    }
+
+    public void SetValue(string name, object value)
+    {
+        if (Has(name))
+        {
+            variables[name].OnNext(value);
+        } else
+        {
+            variables[name] = new BehaviorSubject<object>(value);
+        }
     }
 
     public bool Has(string name)

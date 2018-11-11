@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class SimpleGraph : MonoBehaviour
 {
@@ -114,37 +115,39 @@ public class SimpleGraph : MonoBehaviour
         }
     }
 
+    List<int> values = new List<int>() { };
+
     private void Awake()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
 
         g = new Graph(graphContainer, circleSprite, 50);
-    }
-
-    int n = 0;
-    List<int> values = new List<int>() { };
-    private void Update()
-    {
-        transform.LookAt(GameObject.Find("ARCamera").transform);
 
         string robotName = transform.parent.gameObject.name;
         VariableDict dict = DataModel.Instance.GetRobotDict(robotName);
-        if (dict.Has(variableName))
+        dict.GetObservableValue(variableName).Subscribe(value =>
         {
-            object variable = dict.Get(variableName);
-            if (variable.GetType() == typeof(Vector3))
-            {
-                values.Add(Mathf.RoundToInt(1000 * ((Vector3)variable).z));
-            } else if (variable.GetType() == typeof(int))
-            {
-                values.Add(50 * (int)variable);
-            } else if (variable.GetType() == typeof(float))
-            {
-                values.Add(Mathf.RoundToInt(50 * (float)variable));
-            }
-        }
+            if (value == null)
+                return;
 
+            if (value.GetType() == typeof(Vector3))
+            {
+                values.Add(Mathf.RoundToInt(1000 * ((Vector3)value).z));
+            }
+            else if (value.GetType() == typeof(int))
+            {
+                values.Add(50 * (int)value);
+            }
+            else if (value.GetType() == typeof(float))
+            {
+                values.Add(Mathf.RoundToInt(50 * (float)value));
+            }
+        });
+    }
+    
+    private void Update()
+    {
+        transform.LookAt(GameObject.Find("ARCamera").transform);
         g.Update(values);
-        n++;
     }
 }
