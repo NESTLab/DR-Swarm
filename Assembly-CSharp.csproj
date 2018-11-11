@@ -325,6 +325,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="UniRx.csproj">
+      <Project>{F58E19FA-F497-C63D-EF29-8BF7589F6974}</Project>
+      <Name>UniRx</Name>
+    </ProjectReference>
     <ProjectReference Include="VuforiaEditorScripts.csproj">
       <Project>{F326E520-4026-9707-8870-BADF6EB28EE1}</Project>
       <Name>VuforiaEditorScripts</Name>
@@ -332,10 +336,6 @@
     <ProjectReference Include="VuforiaScripts.csproj">
       <Project>{2F603F31-7296-1B83-6CE5-D8390EF68760}</Project>
       <Name>VuforiaScripts</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniRx.csproj">
-      <Project>{F58E19FA-F497-C63D-EF29-8BF7589F6974}</Project>
-      <Name>UniRx</Name>
     </ProjectReference>
     <ProjectReference Include="UniRx.Async.csproj">
       <Project>{B4089058-CDDC-3272-D751-FA5F60AE053D}</Project>

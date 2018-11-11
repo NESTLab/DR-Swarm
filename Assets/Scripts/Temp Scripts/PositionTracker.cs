@@ -18,11 +18,10 @@ public class PositionTracker : MonoBehaviour {
 
     // Update is called once per frame
    	void Update() {
-        if ((lastPosition - transform.position).magnitude > 0.0001)
+        if ((lastPosition - transform.position).magnitude > 0.005)
         {
             dict.SetValue("position", transform.position);
+            lastPosition = transform.position;
         }
-
-        lastPosition = transform.position;
 	}
 }

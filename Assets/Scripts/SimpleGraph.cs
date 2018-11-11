@@ -3,126 +3,50 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
+using System.Linq;
 
 public class SimpleGraph : MonoBehaviour
 {
-
+    /* Unity Properties */
     [SerializeField] private Sprite circleSprite;
     [SerializeField] private string variableName;
+    [SerializeField] private int numDataPoints;
 
     private RectTransform graphContainer;
-    private Graph g;
-
-    private class Graph
-    {
-        List<GameObject> circles;
-        List<GameObject> connectingLines;
-
-        RectTransform container;
-        Sprite circleSprite;
-
-        int numDataPoints;
-
-        public Graph(RectTransform container, Sprite circleSprite, int n)
-        {
-            this.container = container;
-            this.circleSprite = circleSprite;
-
-            this.circles = new List<GameObject>();
-            this.connectingLines = new List<GameObject>();
-
-            this.numDataPoints = n;
-
-            GameObject lastCircle = null;
-            for (int i = 0; i < n; i++)
-            {
-                GameObject circle = CreateCircle();
-                circle.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-                this.circles.Add(circle);
-
-                if (lastCircle != null)
-                {
-                    GameObject connectionObject = new GameObject("connection", typeof(Image));
-                    connectionObject.transform.SetParent(container, false);
-                    connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
-                    connectionObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
-
-                    this.connectingLines.Add(connectionObject);
-                }
-                lastCircle = circle;
-            }
-        }
-
-        public void Update(List<int> values)
-        {
-            List<int> lastValues = values.GetRange(Mathf.Max(values.Count - numDataPoints, 0), Mathf.Min(numDataPoints, values.Count));
-
-            float graphHeight = container.sizeDelta.y;
-            float yMaximum = 100f;
-            float xSize = container.sizeDelta.x / circles.Count;
-
-            GameObject lastCircle = null;
-            for (int i = 0; i < lastValues.Count; i++)
-            {
-                GameObject circle = circles[i];
-                float x = i * xSize;
-                float y = (lastValues[i] / yMaximum) * graphHeight;
-                circle.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
-
-                if (lastCircle != null)
-                {
-                    GameObject connectionObject = connectingLines[i - 1];
-                    Vector2 positionA = circle.GetComponent<RectTransform>().anchoredPosition;
-                    Vector2 positionB = lastCircle.GetComponent<RectTransform>().anchoredPosition;
-                    UpdateConnectionLine(connectionObject, positionA, positionB);
-                }
-                lastCircle = circle;
-            }
-        }
-
-        private GameObject CreateCircle()
-        {
-            GameObject circleObject = new GameObject("circle", typeof(Image));
-            circleObject.transform.SetParent(container, false);
-            circleObject.GetComponent<Image>().sprite = circleSprite;
-
-            RectTransform transform = circleObject.GetComponent<RectTransform>();
-            transform.sizeDelta = new Vector2(11, 11);
-            transform.anchorMin = new Vector2(0, 0);
-            transform.anchorMax = new Vector2(0, 0);
-
-            return circleObject;
-        }
-
-        private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
-        {
-            Vector2 dir = (positionB - positionA).normalized;
-            float distance = Vector2.Distance(positionA, positionB);
-
-            RectTransform transform = line.GetComponent<RectTransform>();
-            transform.anchorMin = new Vector2(0, 0);
-            transform.anchorMax = new Vector2(0, 0);
-            transform.sizeDelta = new Vector2(distance, 3.0f);
-            transform.anchoredPosition = positionA + dir * distance * 0.5f;
-            transform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
-        }
-
-        private float GetAngleFromVectorFloat(Vector2 dir)
-        {
-            float difference = (dir.y / dir.x);
-            float angleRot = Mathf.Atan(difference) * 180 / Mathf.PI;
-            return angleRot;
-        }
-    }
-
-    List<int> values = new List<int>() { };
+    
+    List<GameObject> circles;
+    List<GameObject> connectingLines;
 
     private void Awake()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
 
-        g = new Graph(graphContainer, circleSprite, 50);
+        this.circles = new List<GameObject>();
+        this.connectingLines = new List<GameObject>();
 
+        // Create circles and connecting lines
+        GameObject lastCircle = null;
+        for (int i = 0; i < numDataPoints; i++)
+        {
+            int xPos = Mathf.RoundToInt(i * (graphContainer.sizeDelta.x / numDataPoints));
+
+            GameObject circle = CreateCircle();
+            circle.GetComponent<RectTransform>().anchoredPosition = new Vector2(xPos, 0);
+            this.circles.Add(circle);
+
+            if (lastCircle != null)
+            {
+                GameObject connectionObject = new GameObject("connection", typeof(Image));
+                connectionObject.transform.SetParent(graphContainer, false);
+                connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+                connectionObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+
+                this.connectingLines.Add(connectionObject);
+            }
+            lastCircle = circle;
+        }
+
+        // Subscribe to data
         string robotName = transform.parent.gameObject.name;
         VariableDict dict = DataModel.Instance.GetRobotDict(robotName);
         dict.GetObservableValue(variableName).Subscribe(value =>
@@ -130,24 +54,89 @@ public class SimpleGraph : MonoBehaviour
             if (value == null)
                 return;
 
+            float newCirclePosition = 0.0f;
             if (value.GetType() == typeof(Vector3))
             {
-                values.Add(Mathf.RoundToInt(1000 * ((Vector3)value).z));
-            }
-            else if (value.GetType() == typeof(int))
+                newCirclePosition = 1000 * ((Vector3)value).z;
+            } else if (value.GetType() == typeof(float))
             {
-                values.Add(50 * (int)value);
-            }
-            else if (value.GetType() == typeof(float))
+                newCirclePosition = (float)value;
+            } else if (value.GetType() == typeof(int))
             {
-                values.Add(Mathf.RoundToInt(50 * (float)value));
+                newCirclePosition = (int)value;
+            }
+
+            float yMax = 100.0f;
+            newCirclePosition = graphContainer.sizeDelta.y * (newCirclePosition / yMax);
+
+            // Update circle positions
+            // For every circle i, set i.y = (i+1).y
+            for (int i = 0; i < circles.Count; i++)
+            {
+                RectTransform circle = circles[i].GetComponent<RectTransform>();
+
+                float x = circle.anchoredPosition.x;
+                float y;
+                if (i < circles.Count - 1)
+                {
+                    RectTransform nextCircle = circles[i + 1].GetComponent<RectTransform>();
+                     y = nextCircle.anchoredPosition.y;
+                } else
+                {
+                    y = newCirclePosition;
+                }
+                circle.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
+
+                if (i > 1)
+                {
+                    GameObject connectionObject = connectingLines[i - 1];
+                    RectTransform prevCircle = circles[i - 1].GetComponent<RectTransform>();
+                    UpdateConnectionLine(connectionObject, circle.anchoredPosition, prevCircle.anchoredPosition);
+                }
             }
         });
     }
-    
+
     private void Update()
     {
         transform.LookAt(GameObject.Find("ARCamera").transform);
-        g.Update(values);
+
+        // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
+        // when instead we want it pointing away from the camera
+        transform.Rotate(new Vector3(0, 180, 0), Space.Self);
+    }
+    
+    private GameObject CreateCircle()
+    {
+        GameObject circleObject = new GameObject("circle", typeof(Image));
+        circleObject.transform.SetParent(graphContainer, false);
+        circleObject.GetComponent<Image>().sprite = circleSprite;
+
+        RectTransform transform = circleObject.GetComponent<RectTransform>();
+        transform.sizeDelta = new Vector2(11, 11);
+        transform.anchorMin = new Vector2(0, 0);
+        transform.anchorMax = new Vector2(0, 0);
+
+        return circleObject;
+    }
+
+    private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
+    {
+        Vector2 dir = (positionB - positionA).normalized;
+        float distance = Vector2.Distance(positionA, positionB);
+
+        RectTransform transform = line.GetComponent<RectTransform>();
+        transform.anchorMin = new Vector2(0, 0);
+        transform.anchorMax = new Vector2(0, 0);
+        transform.sizeDelta = new Vector2(distance, 3.0f);
+        transform.anchoredPosition = positionA + dir * distance * 0.5f;
+        transform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
+    }
+
+    private float GetAngleFromVectorFloat(Vector2 dir)
+    {
+        float difference = (dir.y / dir.x);
+        float angleRot = Mathf.Atan(difference) * 180 / Mathf.PI;
+        return angleRot;
     }
 }
