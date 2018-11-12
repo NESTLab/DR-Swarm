@@ -2,35 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class PieGraph : MonoBehaviour {
     //should eventually make all of these private 
     //eventually need to instantiate these in start() the same way wedges is
     public float[] data;
-    public Color[] wedgeColors;
+    [SerializeField] public Color[] wedgeColors;
 
     public Image wedgePrefab;
-    public Image[] wedges;
+    private Image[] wedges;
 
-    public float total = 0f;
-    public float zRotation = 0f;
+    private float total = 15f; //constant just for now
+    private float zRotation = 0f;
+    
+    VariableDict dict;
 
     // Use this for initialization
     void Start() {
-        data[0] = 5f;
-        data[1] = 10f;
         wedges = new Image[2];
-        //set the total
-        for (int i = 0; i < data.Length; i++) {
-            total += data[i];
-        }
+
         //initialize the wedges
         for (int i = 0; i < data.Length; i++) {
             Debug.Log("making new wedge");
             Image newWedge = Instantiate(wedgePrefab) as Image;
             wedges[i] = newWedge;
         }
-        MakeGraph();
+
+        string robotName = transform.parent.parent.gameObject.name; //name of the image target
+        dict = DataModel.Instance.GetRobotDict(robotName);
+        dict.SetValue("percent", 0f);
+        dict.GetObservableValue("percent").Subscribe(percent => { //assume float for now
+            if (percent == null)
+                return;
+
+            data[0] = (float)percent;
+            data[1] = total - data[0];
+            MakeGraph();
+        });
+
+        //data[0] = 5f;
+        //data[1] = 10f;
+        
+        /*
+        //set the total
+        for (int i = 0; i < data.Length; i++) {
+            total += data[i];
+        }
+        */
+        
     }
 
     //update the pie graph
@@ -48,8 +68,10 @@ public class PieGraph : MonoBehaviour {
         }
     }
 
+    
     // Update is called once per frame
     void Update() {
+        /*
         // just for progress bar
         zRotation = 0f;
 
@@ -64,5 +86,20 @@ public class PieGraph : MonoBehaviour {
         }
         
         MakeGraph();
+        */
+
+        float value = (float) dict.GetValue("percent");
+
+        if(value/total < 1) {
+            value += 0.01f;
+        }
+        else {
+            value = total;
+        }
+
+        dict.SetValue("percent", value);
+
+        //MakeGraph();
     }
+    
 }
