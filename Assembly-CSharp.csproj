@@ -61,8 +61,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\FillBarTest.cs" />
-    <Compile Include="Assets\PieGraph.cs" />
+    <Compile Include="Assets\Scripts\FillBarTest.cs" />
+    <Compile Include="Assets\Scripts\PieGraph.cs" />
     <Compile Include="Assets\Scripts\SimpleGraph.cs" />
     <None Include="Assets\Vuforia\Shaders\Text3D.shader" />
     <None Include="Assets\Vuforia\Shaders\OutlineOpaque.shader" />
