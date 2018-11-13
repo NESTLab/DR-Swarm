@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FillBarTest : MonoBehaviour {
-    public float percentage; //dummy value for now, goes between 0 and 1
-    public Vector3 originalSize;
-    public Vector3 up;
-    public Vector3 down;
-    public Vector3 direction;
+    private float percentage; //dummy value for now, goes between 0 and 1
+    private Vector3 originalSize;
+    private Vector3 up;
+    private Vector3 down;
+    private Vector3 direction;
     //empty part of progress bar
     [SerializeField] private GameObject emptyContainer;
 

@@ -61,8 +61,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ComLinesObserver.cs" />
     <Compile Include="Assets\Scripts\DataModel.cs" />
     <Compile Include="Assets\Scripts\FillBarTest.cs" />
+    <Compile Include="Assets\Scripts\MoveBehavior.cs" />
+    <Compile Include="Assets\Scripts\MoveDrag.cs" />
     <Compile Include="Assets\Scripts\PieGraph.cs" />
     <Compile Include="Assets\Scripts\SimpleGraph.cs" />
     <Compile Include="Assets\Scripts\Temp Scripts\PositionTracker.cs" />
