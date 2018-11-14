@@ -7,16 +7,16 @@ using UniRx;
 public class PieGraph : MonoBehaviour {
     //should eventually make all of these private 
     //eventually need to instantiate these in start() the same way wedges is
-    public float[] data;
+    private float[] data;
     [SerializeField] public Color[] wedgeColors;
 
-    public Image wedgePrefab;
+    private Image wedgePrefab;
     private Image[] wedges;
 
     private float total = 15f; //constant just for now
     private float zRotation = 0f;
     
-    VariableDict dict;
+    private VariableDict dict;
 
     // Use this for initialization
     void Start() {

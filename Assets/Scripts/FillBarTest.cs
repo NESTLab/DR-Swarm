@@ -11,7 +11,7 @@ public class FillBarTest : MonoBehaviour {
     //empty part of progress bar
     [SerializeField] private GameObject emptyContainer;
 
-    VariableDict dict;
+    private VariableDict dict;
 
     // Use this for initialization
     void Start () {
@@ -19,7 +19,7 @@ public class FillBarTest : MonoBehaviour {
         //down = new Vector3(0, 0, -0.005f);
         //direction = up;
 
-        originalSize = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z) * 2;
+        originalSize = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z * 2);
 
         string robotName = transform.parent.gameObject.name; //name of the image target
         dict = DataModel.Instance.GetRobotDict(robotName);
