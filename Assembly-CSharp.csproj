@@ -62,7 +62,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ComLines.cs" />
+<<<<<<< HEAD
     <Compile Include="Assets\Scripts\communicationLines.cs" />
+=======
+>>>>>>> ea84bcf2854a237a27ba06cec578f416e0f2fbc9
     <Compile Include="Assets\Scripts\DataModel.cs" />
     <Compile Include="Assets\Scripts\FillBarTest.cs" />
     <Compile Include="Assets\Scripts\MoveBehavior.cs" />
