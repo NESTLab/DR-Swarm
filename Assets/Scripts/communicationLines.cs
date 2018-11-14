@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vuforia;
 
-public class ComLines : MonoBehaviour
-{
+public class communicationLines : MonoBehaviour {
     // Creates one LineRenderer for each robot pair and sets it to visible if robot setting indicates com line functionality
     public Color c1 = Color.blue;
     public Color c2 = Color.red;
@@ -11,13 +11,17 @@ public class ComLines : MonoBehaviour
     //GameObject[] robots = GameObject.FindGameObjectsWithTag("Robot"); //This does not work here
 
     // initialization of comLines
-    void Start () {
+    void Start()
+    {
         //int n = robots.Length;
         int n = 5;
-        for(int i = 0; i < (n*(n-1)/2); i++)
+        for (int i = 0; i < (n * (n - 1) / 2); i++)
         {
+            GameObject go = new GameObject();
+            go.name = "LineRendererObject" + i.ToString();
+            go.transform.parent = gameObject.transform;
             // creates a linerenderer for each pair
-            LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
+            LineRenderer lineRenderer = go.AddComponent<LineRenderer>();
             lineRenderer.enabled = true;
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.widthMultiplier = 1.2f;
@@ -34,26 +38,40 @@ public class ComLines : MonoBehaviour
                 );
             lineRenderer.colorGradient = gradient;
         }
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         GameObject[] robots = GameObject.FindGameObjectsWithTag("Robot");
-        LineRenderer[] lineRenderers = gameObject.GetComponents<LineRenderer>();
+        LineRenderer[] lineRenderers = gameObject.GetComponentsInChildren<LineRenderer>();
         // n is the number of robots with lines
         int n = 5;
         // k is the number of lines (# of unique robot pairs)
-        int k = n*(n-1)/2;
+        //int k = n * (n - 1) / 2;
         // for the number of robots minus 1
-        for (int i=0;i<n;i++)
+        int k = 0;
+        for (int i = 0; i < n - 1; i++)
         {
+            Debug.Log("Robot" + i.ToString());
             // iterate through the number of robots, going through 1 fewer robot each iteration
-            for (int j=i+1;j<n-i-1;j++)
+            for (int j = 0; j < n - i - 1; j++)
             {
-                lineRenderers[k].enabled = true;
-                lineRenderers[k].SetPosition(0, robots[i].transform.position);
-                lineRenderers[k].SetPosition(1, robots[j].transform.position);
+                Debug.Log("(i: " + i.ToString() + ", j+i:" + (i+j).ToString() + ", k: " + k.ToString() + ")");
+                TrackableBehaviour robotATracker = robots[i].GetComponent<TrackableBehaviour>();
+                TrackableBehaviour robotBTracker = robots[j + i + 1].GetComponent<TrackableBehaviour>();
+                if (robotATracker.CurrentStatus == TrackableBehaviour.Status.TRACKED && 
+                    robotBTracker.CurrentStatus == TrackableBehaviour.Status.TRACKED)
+                {
+                    lineRenderers[k].enabled = true;
+                    lineRenderers[k].SetPosition(0, robots[i].transform.position);
+                    lineRenderers[k].SetPosition(1, robots[i + j + 1].transform.position);
+                } else
+                {
+                    lineRenderers[k].enabled = false;
+                }
+
                 k++;
             }
         }
@@ -90,6 +108,6 @@ public class ComLines : MonoBehaviour
             
             
         }*/
-		
-	}
+
+    }
 }
