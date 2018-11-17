@@ -30,7 +30,7 @@ public class PieGraph : MonoBehaviour {
         }
 
         string robotName = transform.parent.parent.gameObject.name; //name of the image target
-        dict = DataModel.Instance.GetRobotDict(robotName);
+        dict = DataManager.Instance.GetRobotDict(robotName);
         dict.SetValue("percent", 0f);
         dict.GetObservableValue<float>("percent").Subscribe(percent => { //assume float for now
             data[0] = percent;

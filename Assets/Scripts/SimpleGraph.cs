@@ -50,7 +50,7 @@ public class SimpleGraph : MonoBehaviour
 
         // Subscribe to data
         string robotName = transform.parent.gameObject.name;
-        VariableDict dict = DataModel.Instance.GetRobotDict(robotName);
+        VariableDict dict = DataManager.Instance.GetRobotDict(robotName);
         dict.GetObservableValue<float>(variableName).Subscribe(value =>
         {
             yMin = (value < yMin) ? value : yMin;

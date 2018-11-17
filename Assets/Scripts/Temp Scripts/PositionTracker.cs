@@ -12,7 +12,7 @@ public class PositionTracker : MonoBehaviour {
         lastPosition = new Vector3(0, 0, 0);
 
         string robotName = gameObject.name;
-        dict = DataModel.Instance.GetRobotDict(robotName);
+        dict = DataManager.Instance.GetRobotDict(robotName);
     }
 
     // Update is called once per frame

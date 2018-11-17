@@ -22,7 +22,7 @@ public class FillBarTest : MonoBehaviour {
         originalSize = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z * 2);
 
         string robotName = transform.parent.gameObject.name; //name of the image target
-        dict = DataModel.Instance.GetRobotDict(robotName);
+        dict = DataManager.Instance.GetRobotDict(robotName);
         dict.SetValue("percentage", 0.25f);
         dict.GetObservableValue<float>("percentage").Subscribe(percentage => {
             transform.localScale = new Vector3(originalSize.x, originalSize.y, originalSize.z * percentage);
