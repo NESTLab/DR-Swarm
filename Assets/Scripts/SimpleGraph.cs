@@ -14,8 +14,10 @@ public class SimpleGraph : MonoBehaviour
 
     private RectTransform graphContainer;
     
-    List<GameObject> circles;
-    List<GameObject> connectingLines;
+    private List<GameObject> circles;
+    private List<GameObject> connectingLines;
+
+    private float yMax = float.NegativeInfinity, yMin = float.PositiveInfinity;
 
     private void Awake()
     {
@@ -49,25 +51,14 @@ public class SimpleGraph : MonoBehaviour
         // Subscribe to data
         string robotName = transform.parent.gameObject.name;
         VariableDict dict = DataModel.Instance.GetRobotDict(robotName);
-        dict.GetObservableValue(variableName).Subscribe(value =>
+        dict.GetObservableValue<float>(variableName).Subscribe(value =>
         {
-            if (value == null)
-                return;
+            yMin = (value < yMin) ? value : yMin;
+            yMax = (value > yMax) ? value : yMax;
 
-            float newCirclePosition = 0.0f;
-            if (value.GetType() == typeof(Vector3))
-            {
-                newCirclePosition = 1000 * ((Vector3)value).z;
-            } else if (value.GetType() == typeof(float))
-            {
-                newCirclePosition = (float)value;
-            } else if (value.GetType() == typeof(int))
-            {
-                newCirclePosition = (int)value;
-            }
-
-            float yMax = 100.0f;
-            newCirclePosition = graphContainer.sizeDelta.y * (newCirclePosition / yMax);
+            float newCirclePosition = 0;
+            if (yMax - yMin != 0)
+                newCirclePosition = graphContainer.sizeDelta.y * ((value - yMin) / (yMax - yMin));
 
             // Update circle positions
             // For every circle i, set i.y = (i+1).y

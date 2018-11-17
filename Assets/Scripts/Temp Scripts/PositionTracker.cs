@@ -13,15 +13,21 @@ public class PositionTracker : MonoBehaviour {
 
         string robotName = gameObject.name;
         dict = DataModel.Instance.GetRobotDict(robotName);
-        dict.SetValue("position", lastPosition);
     }
 
     // Update is called once per frame
    	void Update() {
         if ((lastPosition - transform.position).magnitude > 0.005)
         {
-            dict.SetValue("position", transform.position);
+            SetPosition(transform.position);
             lastPosition = transform.position;
         }
 	}
+
+    void SetPosition(Vector3 position)
+    {
+        dict.SetValue("position_x", position.x);
+        dict.SetValue("position_y", position.y);
+        dict.SetValue("position_z", position.z);
+    }
 }

@@ -24,18 +24,15 @@ public class FillBarTest : MonoBehaviour {
         string robotName = transform.parent.gameObject.name; //name of the image target
         dict = DataModel.Instance.GetRobotDict(robotName);
         dict.SetValue("percentage", 0.25f);
-        dict.GetObservableValue("percentage").Subscribe(percentage => {
-            if (percentage == null)
-                return;
-
-            transform.localScale = new Vector3(originalSize.x, originalSize.y, originalSize.z * (float)percentage);
-            emptyContainer.transform.localScale = new Vector3(originalSize.x, originalSize.y, originalSize.z * (1 - (float)percentage));
+        dict.GetObservableValue<float>("percentage").Subscribe(percentage => {
+            transform.localScale = new Vector3(originalSize.x, originalSize.y, originalSize.z * percentage);
+            emptyContainer.transform.localScale = new Vector3(originalSize.x, originalSize.y, originalSize.z * (1 - percentage));
         });
     }
 	
 	// Update is called once per frame
 	void Update () {
-        float value = (float)dict.GetValue("percentage");
+        float value = dict.GetValue<float>("percentage");
 
         if(value < 1) {
             value += 0.01f;
