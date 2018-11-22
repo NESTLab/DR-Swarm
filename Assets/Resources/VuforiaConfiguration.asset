@@ -64,7 +64,7 @@ MonoBehaviour:
     autoInitTracker: 0
     autoStartTracker: 0
   webcam:
-    deviceNameSetInEditor: Logitech HD Webcam C270
+    deviceNameSetInEditor: Microsoft Camera Rear
     flipHorizontally: 0
-    turnOffWebCam: 0
+    turnOffWebCam: 1
     renderTextureLayer: 30

@@ -8,19 +8,16 @@ using System.Linq.Expressions;
 
 public class LineGraphContainer : VisualizationContainer {
 
-    Dictionary<Robot, List<float>> xAxisData;
-    Dictionary<Robot, List<float>> yAxisData;
+    Dictionary<Robot, List<float>> xAxisData = new Dictionary<Robot, List<float>>();
+    Dictionary<Robot, List<float>> yAxisData = new Dictionary<Robot, List<float>>();
 
-    int resolution;
+    int resolution = 100;
     private List<GameObject> circles;
     private List<GameObject> connectingLines;
 
-    public LineGraphContainer(LineGraph lineGraph, int resolution) : base(lineGraph)
+    protected override void Start()
     {
-        xAxisData = new Dictionary<Robot, List<float>>();
-        yAxisData = new Dictionary<Robot, List<float>>();
-
-        this.resolution = resolution;
+        base.Start();
 
         this.circles = new List<GameObject>();
         this.connectingLines = new List<GameObject>();
@@ -53,21 +50,27 @@ public class LineGraphContainer : VisualizationContainer {
         IEnumerable<float> xEnumerable = xAxisData.Values.SelectMany(l => l);
         IEnumerable<float> yEnumerable = yAxisData.Values.SelectMany(l => l);
 
-        float xMax = xEnumerable.Min();
-        float xMin = xEnumerable.Max();
-
-        float yMax = yEnumerable.Min();
-        float yMin = yEnumerable.Max();
-
         IEnumerable<Vector2> dataPoints = Enumerable.Zip<float, float, Vector2>(xEnumerable, yEnumerable, (x, y) => new Vector2(x, y));
+        IEnumerable<Vector2> lastDataPoints = dataPoints.Skip(Mathf.Max(0, dataPoints.Count() - resolution));
+
+        if (dataPoints.Count() == 0)
+            return;
+
+        Debug.Log(lastDataPoints.Count());
+
+        float xMax = lastDataPoints.Select(v => v.x).Min();
+        float xMin = lastDataPoints.Select(v => v.x).Max();
+
+        float yMax = lastDataPoints.Select(v => v.y).Min();
+        float yMin = lastDataPoints.Select(v => v.y).Max();
 
         RectTransform lastCircle = null;
         int i = 0;
-        foreach (Vector2 dataPoint in dataPoints)
+        foreach (Vector2 dataPoint in lastDataPoints)
         {
             float x = container.sizeDelta.x * (dataPoint.x - xMin) / (xMax - xMin);
-            float y = container.sizeDelta.y * (dataPoint.x - yMin) / (yMax - yMin);
-            RectTransform circle = circles[i++].GetComponent<RectTransform>();
+            float y = container.sizeDelta.y * (dataPoint.y - yMin) / (yMax - yMin);
+            RectTransform circle = circles[i].GetComponent<RectTransform>();
             circle.anchoredPosition = new Vector2(x, y);
 
             if (lastCircle != null)
@@ -75,6 +78,7 @@ public class LineGraphContainer : VisualizationContainer {
                 UpdateConnectionLine(connectingLines[i - 1], lastCircle.anchoredPosition, circle.anchoredPosition);
             }
             lastCircle = circle;
+            i++;
         }
     }
 
@@ -82,6 +86,12 @@ public class LineGraphContainer : VisualizationContainer {
     {
         foreach (Robot r in data.Keys)
         {
+            if (!xAxisData.ContainsKey(r))
+            {
+                xAxisData[r] = new List<float>();
+                yAxisData[r] = new List<float>();
+            }
+
             xAxisData[r].Add(data[r][0]);
             yAxisData[r].Add(data[r][1]);
         }

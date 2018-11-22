@@ -37,7 +37,8 @@ public class LineGraph : IVisualization
 
     public IObservable<Dictionary<Robot, List<float>>> getObservableData()
     {
-        return Observable.CombineLatest(xAxisObs, yAxisObs).Select(values =>
+        // TODO: Zip probably isn't right here, consider options
+        return Observable.Zip(xAxisObs, yAxisObs).Select(values =>
         {
             Dictionary<Robot, List<float>> returnDict = new Dictionary<Robot, List<float>>();
             Dictionary<Robot, float> xAxis = values[0];
