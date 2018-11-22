@@ -16,7 +16,7 @@ public class PieGraph : MonoBehaviour {
     private float total = 15f; //constant just for now
     private float zRotation = 0f;
     
-    private VariableDict dict;
+    private Robot robot;
 
     // Use this for initialization
     void Start() {
@@ -30,9 +30,9 @@ public class PieGraph : MonoBehaviour {
         }
 
         string robotName = transform.parent.parent.gameObject.name; //name of the image target
-        dict = DataManager.Instance.GetRobotDict(robotName);
-        dict.SetValue("percent", 0f);
-        dict.GetObservableValue<float>("percent").Subscribe(percent => { //assume float for now
+        robot = DataManager.Instance.GetRobot(robotName);
+        robot.SetVariable("percent", 0f);
+        robot.GetObservableVariable<float>("percent").Subscribe(percent => { //assume float for now
             data[0] = percent;
             data[1] = total - data[0];
             MakeGraph();
@@ -85,7 +85,7 @@ public class PieGraph : MonoBehaviour {
         MakeGraph();
         */
 
-        float value = dict.GetValue<float>("percent");
+        float value = robot.GetVariable<float>("percent");
 
         if(value/total < 1) {
             value += 0.01f;
@@ -94,7 +94,7 @@ public class PieGraph : MonoBehaviour {
             value = total;
         }
 
-        dict.SetValue("percent", value);
+        robot.SetVariable("percent", value);
 
         //MakeGraph();
     }

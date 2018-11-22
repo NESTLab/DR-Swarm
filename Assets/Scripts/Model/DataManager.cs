@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour {
 
-    Dictionary<string, VariableDict> robotVariables;
+    Dictionary<string, Robot> robots;
 
     public DataManager()
     {
-        robotVariables = new Dictionary<string, VariableDict>();
+        robots = new Dictionary<string, Robot>();
     }
 
-    #region SINGLETON PATTERN
+        #region SINGLETON PATTERN
     // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
     private static DataManager _instance;
     public static DataManager Instance
@@ -34,14 +34,14 @@ public class DataManager : MonoBehaviour {
     }
     #endregion
 
-    public VariableDict GetRobotDict(string robotName)
+    public Robot GetRobot(string robotName)
     {
-        if (!robotVariables.ContainsKey(robotName))
+        if (!robots.ContainsKey(robotName))
         {
-            robotVariables[robotName] = new VariableDict();
+            robots[robotName] = new Robot(robotName);
         }
 
-        return robotVariables[robotName];
+        return robots[robotName];
     }
 
     // Use this for initialization

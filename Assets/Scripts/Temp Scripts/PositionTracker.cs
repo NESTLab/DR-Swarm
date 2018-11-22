@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PositionTracker : MonoBehaviour {
 
-    VariableDict dict;
+    Robot robot;
     Vector3 lastPosition;
 
     // Use this for initialization
@@ -12,7 +12,7 @@ public class PositionTracker : MonoBehaviour {
         lastPosition = new Vector3(0, 0, 0);
 
         string robotName = gameObject.name;
-        dict = DataManager.Instance.GetRobotDict(robotName);
+        robot = DataManager.Instance.GetRobot(robotName);
     }
 
     // Update is called once per frame
@@ -26,8 +26,8 @@ public class PositionTracker : MonoBehaviour {
 
     void SetPosition(Vector3 position)
     {
-        dict.SetValue("position_x", position.x);
-        dict.SetValue("position_y", position.y);
-        dict.SetValue("position_z", position.z);
+        robot.SetVariable("position_x", position.x);
+        robot.SetVariable("position_y", position.y);
+        robot.SetVariable("position_z", position.z);
     }
 }

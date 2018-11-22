@@ -1,12 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
 
 public class VariableDict {
 
     HashSet<string> variableNames;
-    Dictionary<System.Type, IDictionary> dictionaries;
+    Dictionary<Type, IDictionary> dictionaries;
 
     public VariableDict()
     {
