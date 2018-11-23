@@ -9,6 +9,9 @@ public abstract class VisualizationContainer : MonoBehaviour {
 
     protected GameObject canvas;
     protected RectTransform container;
+
+    private bool started = false;
+
     private IVisualization _visualization;
     public IVisualization visualization
     {
@@ -22,6 +25,7 @@ public abstract class VisualizationContainer : MonoBehaviour {
             _visualization = value;
             _visualization.getObservableData().Subscribe(v => {
                 this.UpdateData(v);
+                if (started) this.Draw();
             });
         }
     }
@@ -30,7 +34,9 @@ public abstract class VisualizationContainer : MonoBehaviour {
 	protected virtual void Start () {
         canvas = (GameObject)Instantiate(Resources.Load("VisualizationCanvas"), transform);
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
-	}
+
+        started = true;
+    }
 
     // Update is called once per frame
     protected virtual void Update () {
@@ -39,8 +45,6 @@ public abstract class VisualizationContainer : MonoBehaviour {
         // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
         // when instead we want it pointing away from the camera
         canvas.transform.Rotate(new Vector3(0, 180, 0), Space.Self);
-
-        this.Draw();
     }
     
     protected abstract void UpdateData(Dictionary<Robot, List<float>> data);

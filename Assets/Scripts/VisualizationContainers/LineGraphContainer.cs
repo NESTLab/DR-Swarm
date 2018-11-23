@@ -4,81 +4,53 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System.Linq;
-using System.Linq.Expressions;
 
 public class LineGraphContainer : VisualizationContainer {
 
-    Dictionary<Robot, List<float>> xAxisData = new Dictionary<Robot, List<float>>();
-    Dictionary<Robot, List<float>> yAxisData = new Dictionary<Robot, List<float>>();
+    List<Robot> robots = new List<Robot>();
+    Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();
 
-    int resolution = 100;
-    private List<GameObject> circles;
-    private List<GameObject> connectingLines;
+    Dictionary<Robot, Color> robotColors;
+
+    int resolution = 10;
+    private Dictionary<int, GameObject> circles;
+    private Dictionary<int, GameObject> connectingLines;
+
+    private Rect drawArea = new Rect(0, 0, 0, 0);
 
     protected override void Start()
     {
         base.Start();
 
-        this.circles = new List<GameObject>();
-        this.connectingLines = new List<GameObject>();
+        this.circles = new Dictionary<int, GameObject>();
+        this.connectingLines = new Dictionary<int, GameObject>();
 
-        // Create circles and connecting lines
-        GameObject lastCircle = null;
-        for (int i = 0; i < resolution; i++)
-        {
-            int xPos = Mathf.RoundToInt(i * (container.sizeDelta.x / resolution));
-
-            GameObject circle = CreateCircle();
-            circle.GetComponent<RectTransform>().anchoredPosition = new Vector2(xPos, 0);
-            this.circles.Add(circle);
-
-            if (lastCircle != null)
-            {
-                GameObject connectionObject = new GameObject("connection", typeof(Image));
-                connectionObject.transform.SetParent(container, false);
-                connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
-                connectionObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
-
-                this.connectingLines.Add(connectionObject);
-            }
-            lastCircle = circle;
-        }
+        this.robotColors = new Dictionary<Robot, Color>();
     }
 
     protected override void Draw()
     {
-        IEnumerable<float> xEnumerable = xAxisData.Values.SelectMany(l => l);
-        IEnumerable<float> yEnumerable = yAxisData.Values.SelectMany(l => l);
-
-        IEnumerable<Vector2> dataPoints = Enumerable.Zip<float, float, Vector2>(xEnumerable, yEnumerable, (x, y) => new Vector2(x, y));
-        IEnumerable<Vector2> lastDataPoints = dataPoints.Skip(Mathf.Max(0, dataPoints.Count() - resolution));
-
-        if (dataPoints.Count() == 0)
-            return;
-
-        Debug.Log(lastDataPoints.Count());
-
-        float xMax = lastDataPoints.Select(v => v.x).Min();
-        float xMin = lastDataPoints.Select(v => v.x).Max();
-
-        float yMax = lastDataPoints.Select(v => v.y).Min();
-        float yMin = lastDataPoints.Select(v => v.y).Max();
-
-        RectTransform lastCircle = null;
-        int i = 0;
-        foreach (Vector2 dataPoint in lastDataPoints)
+        // Compute the min and max values for x and y
+        // TODO: This is kind of ugly, make cleaner
+        List<float> xValues = new List<float>();
+        List<float> yValues = new List<float>();
+        foreach (Robot r in robots)
         {
-            float x = container.sizeDelta.x * (dataPoint.x - xMin) / (xMax - xMin);
-            float y = container.sizeDelta.y * (dataPoint.y - yMin) / (yMax - yMin);
-            RectTransform circle = circles[i].GetComponent<RectTransform>();
-            circle.anchoredPosition = new Vector2(x, y);
+            IEnumerable<Vector2> values = dataPoints[r];
 
-            if (lastCircle != null)
-            {
-                UpdateConnectionLine(connectingLines[i - 1], lastCircle.anchoredPosition, circle.anchoredPosition);
-            }
-            lastCircle = circle;
-            i++;
+            xValues.AddRange(values.Select(v => v.x));
+            yValues.AddRange(values.Select(v => v.y));
+        }
+
+        float xMin = xValues.Min();
+        float xMax = xValues.Max();
+        float yMin = yValues.Min();
+        float yMax = yValues.Max();
+        drawArea = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+
+        foreach (Robot r in robots)
+        {
+            DrawRobot(r);
         }
     }
 
@@ -86,30 +58,95 @@ public class LineGraphContainer : VisualizationContainer {
     {
         foreach (Robot r in data.Keys)
         {
-            if (!xAxisData.ContainsKey(r))
+            if (!robots.Contains(r))
             {
-                xAxisData[r] = new List<float>();
-                yAxisData[r] = new List<float>();
+                robots.Add(r);
             }
 
-            xAxisData[r].Add(data[r][0]);
-            yAxisData[r].Add(data[r][1]);
+            if (!dataPoints.ContainsKey(r))
+            {
+                dataPoints[r] = new List<Vector2>();
+            }
+
+            dataPoints[r].Add(new Vector2(data[r][0], data[r][1]));
+            
+            if (dataPoints[r].Count > resolution)
+            {
+                dataPoints[r].RemoveAt(0);
+            }
         }
     }
 
     // Helper Functions
-    private GameObject CreateCircle()
+    private void DrawRobot(Robot robot)
     {
-        GameObject circleObject = new GameObject("circle", typeof(Image));
-        circleObject.transform.SetParent(container, false);
-        //circleObject.GetComponent<Image>().sprite = circleSprite;
+        IEnumerable<Vector2> data = dataPoints[robot];
 
-        RectTransform transform = circleObject.GetComponent<RectTransform>();
-        transform.sizeDelta = new Vector2(11, 11);
-        transform.anchorMin = new Vector2(0, 0);
-        transform.anchorMax = new Vector2(0, 0);
+        if (!robotColors.ContainsKey(robot))
+        {
+            robotColors[robot] = Random.ColorHSV(0, 1, 1, 1, 1, 1);
+        }
 
-        return circleObject;
+        int i = resolution * robots.IndexOf(robot);
+        Vector2 lastCirclePos = Vector2.negativeInfinity;
+        foreach (Vector2 dataPoint in data)
+        {
+            GameObject circle = GetCircle(i);
+            circle.GetComponent<Image>().color = robotColors[robot];
+            circle.SetActive(true);
+
+            float x = container.sizeDelta.x * (dataPoint.x - drawArea.xMin) / (drawArea.width);
+            float y = container.sizeDelta.y * (dataPoint.y - drawArea.yMin) / (drawArea.height);
+            RectTransform circleTransform = circle.GetComponent<RectTransform>();
+            circleTransform.anchoredPosition = new Vector2(x, y);
+
+            if (!lastCirclePos.Equals(Vector2.negativeInfinity))
+            {
+                GameObject connectingLine = GetConnectingLine(i);
+                connectingLine.GetComponent<Image>().color = robotColors[robot];
+                connectingLine.SetActive(true);
+                UpdateConnectionLine(connectingLine, lastCirclePos, circleTransform.anchoredPosition);
+            }
+            lastCirclePos = circleTransform.anchoredPosition;
+            i++;
+        }
+    }
+
+    private GameObject GetCircle(int index)
+    {
+        if (!circles.ContainsKey(index))
+        {
+            GameObject circleObject = new GameObject("circle", typeof(Image));
+            circleObject.SetActive(false);
+            circleObject.transform.SetParent(container, false);
+            //circleObject.GetComponent<Image>().sprite = circleSprite;
+
+            RectTransform transform = circleObject.GetComponent<RectTransform>();
+            transform.sizeDelta = new Vector2(11, 11);
+            transform.anchorMin = new Vector2(0, 0);
+            transform.anchorMax = new Vector2(0, 0);
+
+            circles[index] = circleObject;
+            return circleObject;
+        }
+
+        return circles[index];
+    }
+
+    private GameObject GetConnectingLine(int index) {
+        if (!connectingLines.ContainsKey(index))
+        {
+            GameObject connectionObject = new GameObject("connection", typeof(Image));
+            connectionObject.SetActive(false);
+            connectionObject.transform.SetParent(container, false);
+            connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+            connectionObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+
+            connectingLines[index] = connectionObject;
+            return connectionObject;
+        }
+
+        return connectingLines[index];
     }
 
     private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
@@ -127,8 +164,7 @@ public class LineGraphContainer : VisualizationContainer {
 
     private float GetAngleFromVectorFloat(Vector2 dir)
     {
-        float difference = (dir.y / dir.x);
-        float angleRot = Mathf.Atan(difference) * 180 / Mathf.PI;
+        float angleRot = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
         return angleRot;
     }
 }
