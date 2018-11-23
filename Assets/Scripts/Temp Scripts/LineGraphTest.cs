@@ -17,11 +17,13 @@ public class LineGraphTest : MonoBehaviour {
         r2.SetVariable("x", 0.0f);
         r2.SetVariable("y", 0.0f);
 
-        GameObject obj = GameObject.Find("RobotTarget1");
         LineGraph lg = new LineGraph("x", "y", r1, r2);
-        LineGraphContainer c = obj.AddComponent<LineGraphContainer>();
+        LineGraphContainer c = GameObject.Find("RobotTarget1").AddComponent<LineGraphContainer>();
         c.visualization = lg;
-	}
+
+        LineGraphContainer c2 = GameObject.Find("RobotTarget2").AddComponent<LineGraphContainer>();
+        c2.visualization = lg;
+    }
 	
 	// Update is called once per frame
 	void Update () {

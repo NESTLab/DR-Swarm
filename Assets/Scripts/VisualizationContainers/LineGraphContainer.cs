@@ -5,12 +5,12 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
+// TODO: Something in here is a little slow, look into this
+// I would like to get 100 data points on screen per robot, on 5 different graphs
 public class LineGraphContainer : VisualizationContainer {
 
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();
-
-    Dictionary<Robot, Color> robotColors;
 
     int resolution = 10;
     private Dictionary<int, GameObject> circles;
@@ -24,8 +24,6 @@ public class LineGraphContainer : VisualizationContainer {
 
         this.circles = new Dictionary<int, GameObject>();
         this.connectingLines = new Dictionary<int, GameObject>();
-
-        this.robotColors = new Dictionary<Robot, Color>();
     }
 
     protected override void Draw()
@@ -79,20 +77,13 @@ public class LineGraphContainer : VisualizationContainer {
 
     // Helper Functions
     private void DrawRobot(Robot robot)
-    {
-        IEnumerable<Vector2> data = dataPoints[robot];
-
-        if (!robotColors.ContainsKey(robot))
-        {
-            robotColors[robot] = Random.ColorHSV(0, 1, 1, 1, 1, 1);
-        }
-
+    {   
         int i = resolution * robots.IndexOf(robot);
         Vector2 lastCirclePos = Vector2.negativeInfinity;
-        foreach (Vector2 dataPoint in data)
+        foreach (Vector2 dataPoint in dataPoints[robot])
         {
             GameObject circle = GetCircle(i);
-            circle.GetComponent<Image>().color = robotColors[robot];
+            circle.GetComponent<Image>().color = robot.color;
             circle.SetActive(true);
 
             float x = container.sizeDelta.x * (dataPoint.x - drawArea.xMin) / (drawArea.width);
@@ -103,7 +94,7 @@ public class LineGraphContainer : VisualizationContainer {
             if (!lastCirclePos.Equals(Vector2.negativeInfinity))
             {
                 GameObject connectingLine = GetConnectingLine(i);
-                connectingLine.GetComponent<Image>().color = robotColors[robot];
+                connectingLine.GetComponent<Image>().color = robot.color;
                 connectingLine.SetActive(true);
                 UpdateConnectionLine(connectingLine, lastCirclePos, circleTransform.anchoredPosition);
             }
@@ -140,7 +131,11 @@ public class LineGraphContainer : VisualizationContainer {
             connectionObject.SetActive(false);
             connectionObject.transform.SetParent(container, false);
             connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
-            connectionObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+
+            RectTransform transform = connectionObject.GetComponent<RectTransform>();
+            transform.sizeDelta = new Vector2(0, 0);
+            transform.anchorMin = new Vector2(0, 0);
+            transform.anchorMax = new Vector2(0, 0);
 
             connectingLines[index] = connectionObject;
             return connectionObject;
@@ -149,14 +144,13 @@ public class LineGraphContainer : VisualizationContainer {
         return connectingLines[index];
     }
 
+    // TODO: This function is particularly slow for some reason
     private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
     {
         Vector2 dir = (positionB - positionA).normalized;
         float distance = Vector2.Distance(positionA, positionB);
 
         RectTransform transform = line.GetComponent<RectTransform>();
-        transform.anchorMin = new Vector2(0, 0);
-        transform.anchorMax = new Vector2(0, 0);
         transform.sizeDelta = new Vector2(distance, 3.0f);
         transform.anchoredPosition = positionA + dir * distance * 0.5f;
         transform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
