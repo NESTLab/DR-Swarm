@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LineGraphTest : MonoBehaviour {
 
-    Robot r1, r2;
+    Robot r1, r2, r3, r4, r5;
     float x = 0, y = 0;
 
 	// Use this for initialization
@@ -17,7 +17,19 @@ public class LineGraphTest : MonoBehaviour {
         r2.SetVariable("x", 0.0f);
         r2.SetVariable("y", 0.0f);
 
-        LineGraph lg = new LineGraph("x", "y", r1, r2);
+        r3 = new Robot("c");
+        r3.SetVariable("x", 0.0f);
+        r3.SetVariable("y", 0.0f);
+
+        r4 = new Robot("d");
+        r4.SetVariable("x", 0.0f);
+        r4.SetVariable("y", 0.0f);
+
+        r5 = new Robot("e");
+        r5.SetVariable("x", 0.0f);
+        r5.SetVariable("y", 0.0f);
+
+        LineGraph lg = new LineGraph("x", "y", r1, r2, r3, r4, r5);
         LineGraphContainer c = GameObject.Find("RobotTarget1").AddComponent<LineGraphContainer>();
         c.visualization = lg;
 
@@ -39,6 +51,15 @@ public class LineGraphTest : MonoBehaviour {
         r1.SetVariable("y", Mathf.Sin(theta));
 
         r2.SetVariable("x", x);
-        r2.SetVariable("y", Mathf.Cos(theta));
+        r2.SetVariable("y", Mathf.Sin(theta) + 2);
+
+        r3.SetVariable("x", x);
+        r3.SetVariable("y", Mathf.Sin(theta) + 4);
+
+        r4.SetVariable("x", x);
+        r4.SetVariable("y", Mathf.Sin(theta) + 6);
+
+        r5.SetVariable("x", x);
+        r5.SetVariable("y", Mathf.Sin(theta) + 8);
     }
 }

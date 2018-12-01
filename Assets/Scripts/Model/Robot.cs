@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class Robot
 {
-    private string name;
-    private VariableDict data;
+    private string _name;
+    public string name
+    {
+        get { return _name;  }
+    }
 
     private Color _color;
     public Color color
@@ -15,11 +18,13 @@ public class Robot
         }
     }
 
+    private VariableDict data;
+
     public Robot(string name)
     {
-        this.name = name;
-        this.data = new VariableDict();
+        this._name = name;
         this._color = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+        this.data = new VariableDict();
     }
 
     public T GetVariable<T>(string name)

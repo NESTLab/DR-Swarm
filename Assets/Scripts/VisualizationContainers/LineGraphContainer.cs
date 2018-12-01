@@ -12,9 +12,9 @@ public class LineGraphContainer : VisualizationContainer {
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();
 
-    int resolution = 10;
+    int resolution = 100;
     private Dictionary<int, GameObject> circles;
-    private Dictionary<int, GameObject> connectingLines;
+    private Dictionary<Robot, GameObject> connectingLines;
 
     private Rect drawArea = new Rect(0, 0, 0, 0);
 
@@ -23,7 +23,7 @@ public class LineGraphContainer : VisualizationContainer {
         base.Start();
 
         this.circles = new Dictionary<int, GameObject>();
-        this.connectingLines = new Dictionary<int, GameObject>();
+        this.connectingLines = new Dictionary<Robot, GameObject>();
     }
 
     protected override void Draw()
@@ -77,28 +77,33 @@ public class LineGraphContainer : VisualizationContainer {
 
     // Helper Functions
     private void DrawRobot(Robot robot)
-    {   
-        int i = resolution * robots.IndexOf(robot);
-        Vector2 lastCirclePos = Vector2.negativeInfinity;
-        foreach (Vector2 dataPoint in dataPoints[robot])
+    {
+        IEnumerable<Vector2> data = dataPoints[robot].Select(v =>
         {
-            GameObject circle = GetCircle(i);
+            float x = container.sizeDelta.x * (v.x - drawArea.xMin) / (drawArea.width);
+            float y = container.sizeDelta.y * (v.y - drawArea.yMin) / (drawArea.height);
+
+            return new Vector2(x, y);
+        });
+
+        /*LineRenderer line = GetConnectingLine(robot).GetComponent<LineRenderer>();
+        if (line.positionCount != data.Count())
+        {
+            line.positionCount = data.Count();
+        }
+        line.SetPositions(data.Select(v => new Vector3(v.x, v.y, -0.001f)).ToArray());
+        */
+
+        int i = 0;
+        foreach (Vector2 dataPoint in data)
+        {
+            GameObject circle = GetCircle(i + resolution * robots.IndexOf(robot));
             circle.GetComponent<Image>().color = robot.color;
             circle.SetActive(true);
 
-            float x = container.sizeDelta.x * (dataPoint.x - drawArea.xMin) / (drawArea.width);
-            float y = container.sizeDelta.y * (dataPoint.y - drawArea.yMin) / (drawArea.height);
             RectTransform circleTransform = circle.GetComponent<RectTransform>();
-            circleTransform.anchoredPosition = new Vector2(x, y);
+            circleTransform.anchoredPosition = new Vector2(dataPoint.x, dataPoint.y);
 
-            if (!lastCirclePos.Equals(Vector2.negativeInfinity))
-            {
-                GameObject connectingLine = GetConnectingLine(i);
-                connectingLine.GetComponent<Image>().color = robot.color;
-                connectingLine.SetActive(true);
-                UpdateConnectionLine(connectingLine, lastCirclePos, circleTransform.anchoredPosition);
-            }
-            lastCirclePos = circleTransform.anchoredPosition;
             i++;
         }
     }
@@ -124,41 +129,34 @@ public class LineGraphContainer : VisualizationContainer {
         return circles[index];
     }
 
-    private GameObject GetConnectingLine(int index) {
-        if (!connectingLines.ContainsKey(index))
+    private GameObject GetConnectingLine(Robot robot) {
+        if (!connectingLines.ContainsKey(robot))
         {
-            GameObject connectionObject = new GameObject("connection", typeof(Image));
-            connectionObject.SetActive(false);
-            connectionObject.transform.SetParent(container, false);
-            connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+            GameObject connectionObject = new GameObject(robot.name + "Line", typeof(Image));
+            connectionObject.transform.SetParent(container.transform);
 
-            RectTransform transform = connectionObject.GetComponent<RectTransform>();
-            transform.sizeDelta = new Vector2(0, 0);
-            transform.anchorMin = new Vector2(0, 0);
-            transform.anchorMax = new Vector2(0, 0);
+            LineRenderer line = connectionObject.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.startWidth = 0.01f;
+            line.endWidth = 0.01f;
+            line.material.color = robot.color;
 
-            connectingLines[index] = connectionObject;
+            RectTransform t = connectionObject.GetComponent<RectTransform>();
+            t.sizeDelta = new Vector2(600, 440);
+            t.anchorMin = Vector2.zero;
+            t.anchorMax = Vector2.zero;
+            t.pivot = Vector2.zero;
+            t.localPosition = Vector3.zero;
+            t.localScale = Vector3.one;
+            t.localRotation = new Quaternion(0, 0, 0, 0);
+
+            Image i = connectionObject.GetComponent<Image>();
+            i.color = Color.clear;
+
+            connectingLines.Add(robot, connectionObject);
             return connectionObject;
         }
 
-        return connectingLines[index];
-    }
-
-    // TODO: This function is particularly slow for some reason
-    private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
-    {
-        Vector2 dir = (positionB - positionA).normalized;
-        float distance = Vector2.Distance(positionA, positionB);
-
-        RectTransform transform = line.GetComponent<RectTransform>();
-        transform.sizeDelta = new Vector2(distance, 3.0f);
-        transform.anchoredPosition = positionA + dir * distance * 0.5f;
-        transform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
-    }
-
-    private float GetAngleFromVectorFloat(Vector2 dir)
-    {
-        float angleRot = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
-        return angleRot;
+        return connectingLines[robot];
     }
 }
