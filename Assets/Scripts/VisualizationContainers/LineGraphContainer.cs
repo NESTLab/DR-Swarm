@@ -12,9 +12,11 @@ public class LineGraphContainer : VisualizationContainer {
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();
 
-    int resolution = 100;
+    int resolution = 25;
     private Dictionary<int, GameObject> circles;
     private Dictionary<Robot, GameObject> connectingLines;
+    private Dictionary<int, GameObject> axisLabels;
+    private Dictionary<int, GameObject> gridLines;
 
     private Rect drawArea = new Rect(0, 0, 0, 0);
 
@@ -22,8 +24,10 @@ public class LineGraphContainer : VisualizationContainer {
     {
         base.Start();
 
-        this.circles = new Dictionary<int, GameObject>();
-        this.connectingLines = new Dictionary<Robot, GameObject>();
+        circles = new Dictionary<int, GameObject>();
+        connectingLines = new Dictionary<Robot, GameObject>();
+        axisLabels = new Dictionary<int, GameObject>();
+        gridLines = new Dictionary<int, GameObject>();
     }
 
     protected override void Draw()
@@ -45,6 +49,41 @@ public class LineGraphContainer : VisualizationContainer {
         float yMin = yValues.Min();
         float yMax = yValues.Max();
         drawArea = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+
+        int numAxisLabels = 10;
+
+        for (int i = 0; i < numAxisLabels; i++)
+        {
+            // X Axis
+            float xPos = i * container.sizeDelta.x / (numAxisLabels - 1);
+            GameObject xLabel = GetAxisLabel(2 * i);
+            GameObject xLine = GetGridLine(2 * i);
+
+            RectTransform xTransform = xLabel.GetComponent<RectTransform>();
+            xTransform.anchoredPosition = new Vector2(xPos, -12.5f);
+
+            string xLabelText = string.Format("{0:0.##}", xPos * drawArea.width / container.sizeDelta.x + drawArea.xMin);
+            xLabel.GetComponent<Text>().text = xLabelText;
+
+            RectTransform xGridTransform = xLine.GetComponent<RectTransform>();
+            xGridTransform.sizeDelta = new Vector2(1, container.sizeDelta.y);
+            xGridTransform.anchoredPosition = new Vector2(xPos, 0);
+
+            // Y Axis
+            float yPos = i * container.sizeDelta.y / (numAxisLabels - 1);
+            GameObject yLabel = GetAxisLabel(2 * i + 1);
+            GameObject yLine = GetGridLine(2 * i + 1);
+
+            RectTransform yTransform = yLabel.GetComponent<RectTransform>();
+            yTransform.anchoredPosition = new Vector2(-12.5f, yPos);
+
+            string yLabelText = string.Format("{0:0.##}", yPos * drawArea.height / container.sizeDelta.y + drawArea.yMin);
+            yLabel.GetComponent<Text>().text = yLabelText;
+
+            RectTransform yGridTransform = yLine.GetComponent<RectTransform>();
+            yGridTransform.sizeDelta = new Vector2(container.sizeDelta.x, 1);
+            yGridTransform.anchoredPosition = new Vector2(0, yPos);
+        }
 
         foreach (Robot r in robots)
         {
@@ -86,13 +125,12 @@ public class LineGraphContainer : VisualizationContainer {
             return new Vector2(x, y);
         });
 
-        /*LineRenderer line = GetConnectingLine(robot).GetComponent<LineRenderer>();
+        LineRenderer line = GetConnectingLine(robot).GetComponent<LineRenderer>();
         if (line.positionCount != data.Count())
         {
             line.positionCount = data.Count();
         }
         line.SetPositions(data.Select(v => new Vector3(v.x, v.y, -0.001f)).ToArray());
-        */
 
         int i = 0;
         foreach (Vector2 dataPoint in data)
@@ -158,5 +196,67 @@ public class LineGraphContainer : VisualizationContainer {
         }
 
         return connectingLines[robot];
+    }
+
+    private GameObject CreateAxisLabel()
+    {
+        GameObject axisLabel = new GameObject("axisLabel", typeof(Text));
+        axisLabel.transform.SetParent(container.transform);
+
+        RectTransform t = axisLabel.GetComponent<RectTransform>();
+        t.sizeDelta = new Vector2(0, 0);
+        t.anchorMin = Vector2.zero;
+        t.anchorMax = Vector2.zero;
+        t.pivot = Vector2.zero;
+        t.localPosition = Vector3.zero;
+        t.localScale = Vector3.one;
+        t.localRotation = new Quaternion(0, 0, 0, 0);
+
+        Text text = axisLabel.GetComponent<Text>();
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
+        text.alignment = TextAnchor.MiddleCenter;
+
+        text.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+        text.color = Color.white;
+
+        return axisLabel;
+    }
+
+    private GameObject GetAxisLabel(int index)
+    {
+        if (!axisLabels.ContainsKey(index))
+        {
+            axisLabels.Add(index, CreateAxisLabel());
+        }
+
+        return axisLabels[index];
+    }
+
+    private GameObject CreateGridLine()
+    {
+        GameObject gridLine = new GameObject("gridLine", typeof(Image));
+        gridLine.transform.SetParent(container, false);
+
+        RectTransform transform = gridLine.GetComponent<RectTransform>();
+        transform.pivot = new Vector2(0, 0);
+        transform.sizeDelta = new Vector2(1, 1);
+        transform.anchorMin = new Vector2(0, 0);
+        transform.anchorMax = new Vector2(0, 0);
+
+        Image i = gridLine.GetComponent<Image>();
+        i.color = Color.white;
+
+        return gridLine;
+    }
+
+    private GameObject GetGridLine(int index)
+    {
+        if (!gridLines.ContainsKey(index))
+        {
+            gridLines.Add(index, CreateGridLine());
+        }
+
+        return gridLines[index];
     }
 }
