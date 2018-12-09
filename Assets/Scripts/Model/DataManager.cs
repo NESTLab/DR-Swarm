@@ -2,30 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataModel : MonoBehaviour {
+public class DataManager : MonoBehaviour {
 
-    Dictionary<string, VariableDict> robotVariables;
+    Dictionary<string, Robot> robots;
 
-    public DataModel()
+    public DataManager()
     {
-        robotVariables = new Dictionary<string, VariableDict>();
+        robots = new Dictionary<string, Robot>();
     }
 
-    #region SINGLETON PATTERN
+        #region SINGLETON PATTERN
     // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
-    private static DataModel _instance;
-    public static DataModel Instance
+    private static DataManager _instance;
+    public static DataManager Instance
     {
         get
         {
             if (_instance == null)
             {
-                _instance = GameObject.FindObjectOfType<DataModel>();
+                _instance = GameObject.FindObjectOfType<DataManager>();
 
                 if (_instance == null)
                 {
                     GameObject container = new GameObject("DataModel");
-                    _instance = container.AddComponent<DataModel>();
+                    _instance = container.AddComponent<DataManager>();
                 }
             }
 
@@ -34,14 +34,14 @@ public class DataModel : MonoBehaviour {
     }
     #endregion
 
-    public VariableDict GetRobotDict(string robotName)
+    public Robot GetRobot(string robotName)
     {
-        if (!robotVariables.ContainsKey(robotName))
+        if (!robots.ContainsKey(robotName))
         {
-            robotVariables[robotName] = new VariableDict();
+            robots[robotName] = new Robot(robotName);
         }
 
-        return robotVariables[robotName];
+        return robots[robotName];
     }
 
     // Use this for initialization
