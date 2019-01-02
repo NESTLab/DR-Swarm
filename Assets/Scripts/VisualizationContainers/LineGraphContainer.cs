@@ -7,7 +7,7 @@ using System.Linq;
 
 // TODO: Something in here is a little slow, look into this
 // I would like to get 100 data points on screen per robot, on 5 different graphs
-public class LineGraphContainer : VisualizationContainer {
+public class LineGraphContainer : VisualizationContainer<LineGraph> {
 
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();

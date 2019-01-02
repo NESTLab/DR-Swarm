@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UniRx;
 
-public abstract class VisualizationContainer : MonoBehaviour {
+public abstract class VisualizationContainer<T> : MonoBehaviour {
 
     protected GameObject canvas;
     protected RectTransform container;
@@ -20,6 +20,9 @@ public abstract class VisualizationContainer : MonoBehaviour {
 
         set
         {
+            if (value.GetType() != typeof(T))
+                throw new System.Exception("Assigned visualization type must be equal to container's specified visualization type");
+
             _visualization = value;
             _visualization.getObservableData().Subscribe(v => {
                 this.UpdateData(v);
@@ -28,7 +31,7 @@ public abstract class VisualizationContainer : MonoBehaviour {
     }
 
 	// Use this for initialization
-	protected virtual void Start () {
+	protected virtual void Start() {
         canvas = (GameObject)Instantiate(Resources.Load("VisualizationCanvas"), transform);
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
     }
