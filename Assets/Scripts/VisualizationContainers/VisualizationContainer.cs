@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using UnityEditor;
 using UniRx;
 
-public abstract class VisualizationContainer<T> : MonoBehaviour {
-
+public abstract class VisualizationContainer<T> : MonoBehaviour
+{
     protected GameObject canvas;
     protected RectTransform container;
     
@@ -24,7 +24,7 @@ public abstract class VisualizationContainer<T> : MonoBehaviour {
                 throw new System.Exception("Assigned visualization type must be equal to container's specified visualization type");
 
             _visualization = value;
-            _visualization.getObservableData().Subscribe(v => {
+            _visualization.GetObservableData().Subscribe(v => {
                 this.UpdateData(v);
             });
         }

@@ -10,10 +10,11 @@ public class PieChart : IVisualization
 {
     // Feel free to use any data type to store the intermittent data
     IObservable<Dictionary<Robot, float>> dataSource;
+    List<Robot> robotList;
 
     public PieChart(string variableName, Robot firstRobot, params Robot[] robots)
     {
-        List<Robot> robotList = new List<Robot>(robots);
+        robotList = new List<Robot>(robots);
         robotList.Insert(0, firstRobot);
 
         // Create a single data source observable by creating
@@ -28,17 +29,22 @@ public class PieChart : IVisualization
         });
     }
 
-    public ParameterCount getNumDataSources()
+    public List<Robot> GetRobots()
+    {
+        return robotList;
+    }
+
+    public ParameterCount GetNumDataSources()
     {
         return ParameterCount.One;
     }
 
-    public ParameterCount getNumRobots()
+    public ParameterCount GetNumRobots()
     {
         return ParameterCount.One;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> getObservableData()
+    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
         // into a Dictionary<Robot, List<float>> by taking the
