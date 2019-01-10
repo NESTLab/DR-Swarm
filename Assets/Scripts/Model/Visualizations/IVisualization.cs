@@ -16,7 +16,7 @@ public interface IVisualization
     IObservable<Dictionary<Robot, List<float>>> GetObservableData();
 
     // Get the list of robots providing data to this visualization
-    List<Robot> GetRobots();
+    ISet<Robot> GetRobots();
 
     // Return the (constant) number of data sources and robots for this
     // visualization type. This data can be used for the visualization

@@ -10,12 +10,12 @@ public class Indicator : IVisualization
 {
     // Feel free to use any data type to store the intermittent data
     IObservable<Dictionary<Robot, float>> dataSource;
-    List<Robot> robotList;
+    HashSet<Robot> robotList;
 
     public Indicator(string variableName, Robot firstRobot, params Robot[] robots)
     {
-        robotList = new List<Robot>(robots);
-        robotList.Insert(0, firstRobot);
+        robotList = new HashSet<Robot>(robots);
+        robotList.Add(firstRobot);
         
         // Create a single data source observable by creating
         // an observable for each robot, and then combining them
@@ -29,7 +29,7 @@ public class Indicator : IVisualization
         });
     }
 
-    public List<Robot> GetRobots()
+    public ISet<Robot> GetRobots()
     {
         return robotList;
     }
