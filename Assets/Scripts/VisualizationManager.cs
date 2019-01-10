@@ -4,15 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-// Workflow
-// Add Vis:     UI -> Create IVis object -> Add to manager -> Vis added to Robots
-// Edit Vis:    UI -> Change IVis object -> Send to manager -> 
-// Add To:      UI -> Select robot -> Send to manager -> 
-
-public class VisualizationManager : MonoBehaviour {
+public class VisualizationManager : MonoBehaviour
+{
 
     // TODO: See if there is a better data structure for this class, this works for now though
-    Dictionary<Robot, List<string>> robotVisualizations; // TODO: find a better name for this
+    Dictionary<Robot, HashSet<string>> robotVisualizations; // TODO: find a better name for this
     Dictionary<string, BehaviorSubject<IVisualization>> visualizations;
 
     #region SINGLETON PATTERN
@@ -42,18 +38,10 @@ public class VisualizationManager : MonoBehaviour {
     {
         if (!visualizations.ContainsKey(name))
         {
-            visualizations[name] = new BehaviorSubject<IVisualization>(visualization);
-
-            foreach (Robot robot in visualization.GetRobots())
-            {
-                if (!robotVisualizations.ContainsKey(robot))
-                {
-                    robotVisualizations[robot] = new List<string>();
-                }
-
-                robotVisualizations[robot].Add(name);
-            }
-        } else
+            visualizations.Add(name, new BehaviorSubject<IVisualization>(visualization));
+            UpdateRobotVisualizations(name, visualization);
+        }
+        else
         {
             throw new Exception(String.Format("Cannot add visualization ('{0}'), already exists.", name));
         }
@@ -61,9 +49,11 @@ public class VisualizationManager : MonoBehaviour {
 
     public void EditVisualization(string name, IVisualization visualization)
     {
-        if (visualizations.ContainsKey(name))
+        BehaviorSubject<IVisualization> observable;
+        if (visualizations.TryGetValue(name, out observable))
         {
-            visualizations[name].OnNext(visualization);
+            observable.OnNext(visualization);
+            UpdateRobotVisualizations(name, visualization);
         }
         else
         {
@@ -73,17 +63,20 @@ public class VisualizationManager : MonoBehaviour {
 
     public void RemoveVisualization(string name)
     {
-        if (!visualizations.ContainsKey(name))
+        BehaviorSubject<IVisualization> observable;
+        if (visualizations.TryGetValue(name, out observable))
         {
-            visualizations[name].OnCompleted();
+            observable.OnCompleted();
 
-            foreach (Robot robot in visualizations[name].Value.GetRobots())
+            foreach (Robot robot in observable.Value.GetRobots())
             {
                 if (robotVisualizations.ContainsKey(robot))
                 {
                     robotVisualizations[robot].Remove(name);
                 }
             }
+
+            visualizations.Remove(name);
         }
         else
         {
@@ -91,30 +84,46 @@ public class VisualizationManager : MonoBehaviour {
         }
     }
 
-    public List<string> GetVisualizationsForRobot(Robot robot)
+    public ISet<string> GetVisualizationsForRobot(Robot robot)
     {
         return robotVisualizations[robot];
     }
 
-    private IObservable<IVisualization> GetObservableVisualization(string name)
+    public IObservable<IVisualization> GetObservableVisualization(string name)
     {
         if (visualizations.ContainsKey(name))
         {
             return visualizations[name].AsObservable();
-        } else
+        }
+        else
         {
             throw new Exception(String.Format("Cannot get visualization ('{0}'), does not exist", name));
         }
     }
 
-    // Use this for initialization
-    void Start() {
-        visualizations = new Dictionary<string, BehaviorSubject<IVisualization>>();
-        robotVisualizations = new Dictionary<Robot, List<string>>();
+    private void UpdateRobotVisualizations(string name, IVisualization visualization)
+    {
+        foreach (Robot robot in visualization.GetRobots())
+        {
+            if (!robotVisualizations.ContainsKey(robot))
+            {
+                robotVisualizations[robot] = new HashSet<string>();
+            }
+
+            robotVisualizations[robot].Add(name);
+        }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    // Use this for initialization
+    void Start()
+    {
+        visualizations = new Dictionary<string, BehaviorSubject<IVisualization>>();
+        robotVisualizations = new Dictionary<Robot, HashSet<string>>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }
