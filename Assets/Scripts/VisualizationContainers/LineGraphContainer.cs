@@ -180,7 +180,7 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
             line.material.color = robot.color;
 
             RectTransform t = connectionObject.GetComponent<RectTransform>();
-            t.sizeDelta = new Vector2(600, 440);
+            t.sizeDelta = container.GetComponent<RectTransform>().sizeDelta;
             t.anchorMin = Vector2.zero;
             t.anchorMax = Vector2.zero;
             t.pivot = Vector2.zero;

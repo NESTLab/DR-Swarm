@@ -8,6 +8,8 @@ public class LineGraphTest : MonoBehaviour {
     float x = 0, y = 0;
     float a = 0, b = 0;
 
+    IVisualization lg, lg2;
+
 	// Use this for initialization
 	void Start () {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
@@ -30,11 +32,8 @@ public class LineGraphTest : MonoBehaviour {
         r5.SetVariable("x", 0.0f);
         r5.SetVariable("y", 0.0f);
 
-        IVisualization lg = new LineGraph("x", "y", r1, r2, r3);
-        VisualizationManager.Instance.AddVisualization("testvis", lg);
-
-        IVisualization lg2 = new LineGraph("a", "b", r1);
-        VisualizationManager.Instance.AddVisualization("testvis2", lg2);
+        lg = new LineGraph("x", "y", r1, r2, r3);
+        lg2 = new LineGraph("a", "b", r1);
     }
 	
 	// Update is called once per frame
@@ -65,5 +64,19 @@ public class LineGraphTest : MonoBehaviour {
 
         r5.SetVariable("x", x);
         r5.SetVariable("y", Mathf.Sin(theta) + 8);
+
+        if (Input.GetKeyDown("1"))
+        {
+            VisualizationManager.Instance.AddVisualization("testvis2", lg2);
+        } else if (Input.GetKeyDown("2"))
+        {
+            VisualizationManager.Instance.RemoveVisualization("testvis2");
+        } else if (Input.GetKeyDown("3"))
+        {
+            VisualizationManager.Instance.AddVisualization("testvis", lg);
+        } else if (Input.GetKeyDown("4"))
+        {
+            VisualizationManager.Instance.RemoveVisualization("testvis");
+        }
     }
 }
