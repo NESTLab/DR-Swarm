@@ -30,7 +30,7 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
         gridLines = new Dictionary<int, GameObject>();
     }
 
-    protected override void Draw()
+    public override void Draw()
     {
         // Compute the min and max values for x and y
         // TODO: This is kind of ugly, make cleaner

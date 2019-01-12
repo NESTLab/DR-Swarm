@@ -6,10 +6,20 @@ using UniRx;
 
 public class VisualizationManager : MonoBehaviour
 {
-
     // TODO: See if there is a better data structure for this class, this works for now though
-    Dictionary<Robot, HashSet<string>> robotVisualizations; // TODO: find a better name for this
+    Dictionary<Robot, BehaviorSubject<HashSet<string>>> robotVisualizations; // TODO: find a better name for this
     Dictionary<string, BehaviorSubject<IVisualization>> visualizations;
+
+    private enum UpdateKind {
+        Add,
+        Remove
+    }
+
+    public VisualizationManager()
+    {
+        visualizations = new Dictionary<string, BehaviorSubject<IVisualization>>();
+        robotVisualizations = new Dictionary<Robot, BehaviorSubject<HashSet<string>>>();
+    }
 
     #region SINGLETON PATTERN
     // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
@@ -34,12 +44,13 @@ public class VisualizationManager : MonoBehaviour
     }
     #endregion
 
+    #region Add/Edit/Remove Visualizations
     public void AddVisualization(string name, IVisualization visualization)
     {
         if (!visualizations.ContainsKey(name))
         {
             visualizations.Add(name, new BehaviorSubject<IVisualization>(visualization));
-            UpdateRobotVisualizations(name, visualization);
+            UpdateRobotVisualizations(name, visualization, UpdateKind.Add);
         }
         else
         {
@@ -53,7 +64,7 @@ public class VisualizationManager : MonoBehaviour
         if (visualizations.TryGetValue(name, out observable))
         {
             observable.OnNext(visualization);
-            UpdateRobotVisualizations(name, visualization);
+            UpdateRobotVisualizations(name, visualization, UpdateKind.Add);
         }
         else
         {
@@ -70,10 +81,7 @@ public class VisualizationManager : MonoBehaviour
 
             foreach (Robot robot in observable.Value.GetRobots())
             {
-                if (robotVisualizations.ContainsKey(robot))
-                {
-                    robotVisualizations[robot].Remove(name);
-                }
+                UpdateRobotVisualizations(name, observable.Value, UpdateKind.Remove);
             }
 
             visualizations.Remove(name);
@@ -83,10 +91,60 @@ public class VisualizationManager : MonoBehaviour
             throw new Exception(String.Format("Cannot remove visualization ('{0}'), does not exist.", name));
         }
     }
+    #endregion
 
-    public ISet<string> GetVisualizationsForRobot(Robot robot)
+    #region Observable Visualization List
+    private void UpdateRobotVisualizations(string name, IVisualization visualization, UpdateKind type)
     {
-        return robotVisualizations[robot];
+        foreach (Robot robot in visualization.GetRobots())
+        {
+            BehaviorSubject<HashSet<string>> visualizationNamesObs = GetRobotVisualizationSubject(robot);
+            HashSet<string> nameSet = visualizationNamesObs.Value;
+            switch (type)
+            {
+                case UpdateKind.Add:
+                    nameSet.Add(name);
+                    break;
+
+                case UpdateKind.Remove:
+                    nameSet.Remove(name);
+                    break;
+            }
+            visualizationNamesObs.OnNext(nameSet);
+        }
+    }
+
+    private BehaviorSubject<HashSet<string>> GetRobotVisualizationSubject(Robot robot)
+    {
+        BehaviorSubject<HashSet<string>> visualizationNamesObs;
+        if (robotVisualizations.TryGetValue(robot, out visualizationNamesObs))
+        {
+            return visualizationNamesObs;
+        } else
+        {
+            visualizationNamesObs = new BehaviorSubject<HashSet<string>>(new HashSet<string>());
+            robotVisualizations.Add(robot, visualizationNamesObs);
+            return visualizationNamesObs;
+        }
+    }
+
+    public IObservable<ISet<string>> GetObservableVisualizationsForRobot(Robot robot)
+    {
+        return GetRobotVisualizationSubject(robot).AsObservable();
+    }
+    #endregion
+
+    #region Observable Visualizations
+    public Type GetVisualizationType(string name)
+    {
+        if (visualizations.ContainsKey(name))
+        {
+            return visualizations[name].Value.GetType();
+        }
+        else
+        {
+            throw new Exception(String.Format("Cannot get visualization type ('{0}'), does not exist", name));
+        }
     }
 
     public IObservable<IVisualization> GetObservableVisualization(string name)
@@ -100,30 +158,15 @@ public class VisualizationManager : MonoBehaviour
             throw new Exception(String.Format("Cannot get visualization ('{0}'), does not exist", name));
         }
     }
-
-    private void UpdateRobotVisualizations(string name, IVisualization visualization)
-    {
-        foreach (Robot robot in visualization.GetRobots())
-        {
-            if (!robotVisualizations.ContainsKey(robot))
-            {
-                robotVisualizations[robot] = new HashSet<string>();
-            }
-
-            robotVisualizations[robot].Add(name);
-        }
-    }
+    #endregion
 
     // Use this for initialization
     void Start()
     {
-        visualizations = new Dictionary<string, BehaviorSubject<IVisualization>>();
-        robotVisualizations = new Dictionary<Robot, HashSet<string>>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
     }
 }
