@@ -6,12 +6,13 @@ using UniRx;
 public class LineGraph : IVisualization
 {
     IObservable<Dictionary<Robot, float>> xAxisObs, yAxisObs;
+    HashSet<Robot> robotList;
 
     // TODO: Hmm, not sure about passing in variable names here ... maybe change later?
     public LineGraph(string xAxisName, string yAxisName, Robot firstRobot, params Robot[] robots)
     {
-        List<Robot> robotList = new List<Robot>(robots);
-        robotList.Insert(0, firstRobot);
+        robotList = new HashSet<Robot>(robots);
+        robotList.Add(firstRobot);
 
         // TODO: Maybe make this a helper function somewhere
         xAxisObs = robotList.ToObservable().SelectMany(r =>
@@ -25,17 +26,22 @@ public class LineGraph : IVisualization
         });
     }
 
-    public ParameterCount getNumDataSources()
+    public ISet<Robot> GetRobots()
+    {
+        return robotList;
+    }
+
+    public ParameterCount GetNumDataSources()
     {
         return ParameterCount.Two;
     }
 
-    public ParameterCount getNumRobots()
+    public ParameterCount GetNumRobots()
     {
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> getObservableData()
+    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
     {
         // TODO: Zip probably isn't right here, consider options
         return Observable.Zip(xAxisObs, yAxisObs).Select(values =>

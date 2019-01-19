@@ -7,14 +7,16 @@ using System.Linq;
 
 // TODO: Something in here is a little slow, look into this
 // I would like to get 100 data points on screen per robot, on 5 different graphs
-public class LineGraphContainer : VisualizationContainer {
+public class LineGraphContainer : VisualizationContainer<LineGraph> {
 
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, List<Vector2>> dataPoints = new Dictionary<Robot, List<Vector2>>();
 
-    int resolution = 10;
+    int resolution = 25;
     private Dictionary<int, GameObject> circles;
-    private Dictionary<int, GameObject> connectingLines;
+    private Dictionary<Robot, GameObject> connectingLines;
+    private Dictionary<int, GameObject> axisLabels;
+    private Dictionary<int, GameObject> gridLines;
 
     private Rect drawArea = new Rect(0, 0, 0, 0);
 
@@ -22,11 +24,13 @@ public class LineGraphContainer : VisualizationContainer {
     {
         base.Start();
 
-        this.circles = new Dictionary<int, GameObject>();
-        this.connectingLines = new Dictionary<int, GameObject>();
+        circles = new Dictionary<int, GameObject>();
+        connectingLines = new Dictionary<Robot, GameObject>();
+        axisLabels = new Dictionary<int, GameObject>();
+        gridLines = new Dictionary<int, GameObject>();
     }
 
-    protected override void Draw()
+    public override void Draw()
     {
         // Compute the min and max values for x and y
         // TODO: This is kind of ugly, make cleaner
@@ -45,6 +49,41 @@ public class LineGraphContainer : VisualizationContainer {
         float yMin = yValues.Min();
         float yMax = yValues.Max();
         drawArea = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+
+        int numAxisLabels = 10;
+
+        for (int i = 0; i < numAxisLabels; i++)
+        {
+            // X Axis
+            float xPos = i * container.sizeDelta.x / (numAxisLabels - 1);
+            GameObject xLabel = GetAxisLabel(2 * i);
+            GameObject xLine = GetGridLine(2 * i);
+
+            RectTransform xTransform = xLabel.GetComponent<RectTransform>();
+            xTransform.anchoredPosition = new Vector2(xPos, -12.5f);
+
+            string xLabelText = string.Format("{0:0.##}", xPos * drawArea.width / container.sizeDelta.x + drawArea.xMin);
+            xLabel.GetComponent<Text>().text = xLabelText;
+
+            RectTransform xGridTransform = xLine.GetComponent<RectTransform>();
+            xGridTransform.sizeDelta = new Vector2(1, container.sizeDelta.y);
+            xGridTransform.anchoredPosition = new Vector2(xPos, 0);
+
+            // Y Axis
+            float yPos = i * container.sizeDelta.y / (numAxisLabels - 1);
+            GameObject yLabel = GetAxisLabel(2 * i + 1);
+            GameObject yLine = GetGridLine(2 * i + 1);
+
+            RectTransform yTransform = yLabel.GetComponent<RectTransform>();
+            yTransform.anchoredPosition = new Vector2(-12.5f, yPos);
+
+            string yLabelText = string.Format("{0:0.##}", yPos * drawArea.height / container.sizeDelta.y + drawArea.yMin);
+            yLabel.GetComponent<Text>().text = yLabelText;
+
+            RectTransform yGridTransform = yLine.GetComponent<RectTransform>();
+            yGridTransform.sizeDelta = new Vector2(container.sizeDelta.x, 1);
+            yGridTransform.anchoredPosition = new Vector2(0, yPos);
+        }
 
         foreach (Robot r in robots)
         {
@@ -77,28 +116,32 @@ public class LineGraphContainer : VisualizationContainer {
 
     // Helper Functions
     private void DrawRobot(Robot robot)
-    {   
-        int i = resolution * robots.IndexOf(robot);
-        Vector2 lastCirclePos = Vector2.negativeInfinity;
-        foreach (Vector2 dataPoint in dataPoints[robot])
+    {
+        IEnumerable<Vector2> data = dataPoints[robot].Select(v =>
         {
-            GameObject circle = GetCircle(i);
+            float x = container.sizeDelta.x * (v.x - drawArea.xMin) / (drawArea.width);
+            float y = container.sizeDelta.y * (v.y - drawArea.yMin) / (drawArea.height);
+
+            return new Vector2(x, y);
+        });
+
+        LineRenderer line = GetConnectingLine(robot).GetComponent<LineRenderer>();
+        if (line.positionCount != data.Count())
+        {
+            line.positionCount = data.Count();
+        }
+        line.SetPositions(data.Select(v => new Vector3(v.x, v.y, -0.001f)).ToArray());
+
+        int i = 0;
+        foreach (Vector2 dataPoint in data)
+        {
+            GameObject circle = GetCircle(i + resolution * robots.IndexOf(robot));
             circle.GetComponent<Image>().color = robot.color;
             circle.SetActive(true);
 
-            float x = container.sizeDelta.x * (dataPoint.x - drawArea.xMin) / (drawArea.width);
-            float y = container.sizeDelta.y * (dataPoint.y - drawArea.yMin) / (drawArea.height);
             RectTransform circleTransform = circle.GetComponent<RectTransform>();
-            circleTransform.anchoredPosition = new Vector2(x, y);
+            circleTransform.anchoredPosition = new Vector2(dataPoint.x, dataPoint.y);
 
-            if (!lastCirclePos.Equals(Vector2.negativeInfinity))
-            {
-                GameObject connectingLine = GetConnectingLine(i);
-                connectingLine.GetComponent<Image>().color = robot.color;
-                connectingLine.SetActive(true);
-                UpdateConnectionLine(connectingLine, lastCirclePos, circleTransform.anchoredPosition);
-            }
-            lastCirclePos = circleTransform.anchoredPosition;
             i++;
         }
     }
@@ -124,41 +167,96 @@ public class LineGraphContainer : VisualizationContainer {
         return circles[index];
     }
 
-    private GameObject GetConnectingLine(int index) {
-        if (!connectingLines.ContainsKey(index))
+    private GameObject GetConnectingLine(Robot robot) {
+        if (!connectingLines.ContainsKey(robot))
         {
-            GameObject connectionObject = new GameObject("connection", typeof(Image));
-            connectionObject.SetActive(false);
-            connectionObject.transform.SetParent(container, false);
-            connectionObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+            GameObject connectionObject = new GameObject(robot.name + "Line", typeof(Image));
+            connectionObject.transform.SetParent(container.transform);
 
-            RectTransform transform = connectionObject.GetComponent<RectTransform>();
-            transform.sizeDelta = new Vector2(0, 0);
-            transform.anchorMin = new Vector2(0, 0);
-            transform.anchorMax = new Vector2(0, 0);
+            LineRenderer line = connectionObject.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.startWidth = 0.01f;
+            line.endWidth = 0.01f;
+            line.material.color = robot.color;
 
-            connectingLines[index] = connectionObject;
+            RectTransform t = connectionObject.GetComponent<RectTransform>();
+            t.sizeDelta = container.GetComponent<RectTransform>().sizeDelta;
+            t.anchorMin = Vector2.zero;
+            t.anchorMax = Vector2.zero;
+            t.pivot = Vector2.zero;
+            t.localPosition = Vector3.zero;
+            t.localScale = Vector3.one;
+            t.localRotation = new Quaternion(0, 0, 0, 0);
+
+            Image i = connectionObject.GetComponent<Image>();
+            i.color = Color.clear;
+
+            connectingLines.Add(robot, connectionObject);
             return connectionObject;
         }
 
-        return connectingLines[index];
+        return connectingLines[robot];
     }
 
-    // TODO: This function is particularly slow for some reason
-    private void UpdateConnectionLine(GameObject line, Vector2 positionA, Vector2 positionB)
+    private GameObject CreateAxisLabel()
     {
-        Vector2 dir = (positionB - positionA).normalized;
-        float distance = Vector2.Distance(positionA, positionB);
+        GameObject axisLabel = new GameObject("axisLabel", typeof(Text));
+        axisLabel.transform.SetParent(container.transform);
 
-        RectTransform transform = line.GetComponent<RectTransform>();
-        transform.sizeDelta = new Vector2(distance, 3.0f);
-        transform.anchoredPosition = positionA + dir * distance * 0.5f;
-        transform.localEulerAngles = new Vector3(0, 0, GetAngleFromVectorFloat(dir));
+        RectTransform t = axisLabel.GetComponent<RectTransform>();
+        t.sizeDelta = new Vector2(0, 0);
+        t.anchorMin = Vector2.zero;
+        t.anchorMax = Vector2.zero;
+        t.pivot = Vector2.zero;
+        t.localPosition = Vector3.zero;
+        t.localScale = Vector3.one;
+        t.localRotation = new Quaternion(0, 0, 0, 0);
+
+        Text text = axisLabel.GetComponent<Text>();
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
+        text.alignment = TextAnchor.MiddleCenter;
+
+        text.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+        text.color = Color.white;
+
+        return axisLabel;
     }
 
-    private float GetAngleFromVectorFloat(Vector2 dir)
+    private GameObject GetAxisLabel(int index)
     {
-        float angleRot = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
-        return angleRot;
+        if (!axisLabels.ContainsKey(index))
+        {
+            axisLabels.Add(index, CreateAxisLabel());
+        }
+
+        return axisLabels[index];
+    }
+
+    private GameObject CreateGridLine()
+    {
+        GameObject gridLine = new GameObject("gridLine", typeof(Image));
+        gridLine.transform.SetParent(container, false);
+
+        RectTransform transform = gridLine.GetComponent<RectTransform>();
+        transform.pivot = new Vector2(0, 0);
+        transform.sizeDelta = new Vector2(1, 1);
+        transform.anchorMin = new Vector2(0, 0);
+        transform.anchorMax = new Vector2(0, 0);
+
+        Image i = gridLine.GetComponent<Image>();
+        i.color = Color.white;
+
+        return gridLine;
+    }
+
+    private GameObject GetGridLine(int index)
+    {
+        if (!gridLines.ContainsKey(index))
+        {
+            gridLines.Add(index, CreateGridLine());
+        }
+
+        return gridLines[index];
     }
 }

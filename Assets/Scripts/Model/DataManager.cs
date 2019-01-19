@@ -11,7 +11,7 @@ public class DataManager : MonoBehaviour {
         robots = new Dictionary<string, Robot>();
     }
 
-        #region SINGLETON PATTERN
+    #region SINGLETON PATTERN
     // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
     private static DataManager _instance;
     public static DataManager Instance
