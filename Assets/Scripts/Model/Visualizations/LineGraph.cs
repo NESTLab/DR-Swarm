@@ -41,12 +41,12 @@ public class LineGraph : IVisualization
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
+    public IObservable<Dictionary<Robot, IList<float>>> GetObservableData()
     {
         // TODO: Zip probably isn't right here, consider options
         return Observable.Zip(xAxisObs, yAxisObs).Select(values =>
         {
-            Dictionary<Robot, List<float>> returnDict = new Dictionary<Robot, List<float>>();
+            Dictionary<Robot, IList<float>> returnDict = new Dictionary<Robot, IList<float>>();
             Dictionary<Robot, float> xAxis = values[0];
             Dictionary<Robot, float> yAxis = values[1];
 

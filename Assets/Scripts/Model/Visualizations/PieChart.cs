@@ -44,7 +44,7 @@ public class PieChart : IVisualization
         return ParameterCount.One;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
+    public IObservable<Dictionary<Robot, IList<float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
         // into a Dictionary<Robot, List<float>> by taking the
@@ -55,7 +55,7 @@ public class PieChart : IVisualization
         // one or more values per robot
         return dataSource.Select(dict =>
         {
-            Dictionary<Robot, List<float>> dataDict = new Dictionary<Robot, List<float>>();
+            Dictionary<Robot, IList<float>> dataDict = new Dictionary<Robot, IList<float>>();
 
             foreach (Robot r in dict.Keys)
             {
