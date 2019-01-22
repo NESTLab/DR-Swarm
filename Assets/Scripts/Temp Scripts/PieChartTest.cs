@@ -32,9 +32,11 @@ public class PieChartTest : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown("1")) {
+            Debug.Log("add pc2");
             VisualizationManager.Instance.AddVisualization("testvis2", pc2);
         }
         else if (Input.GetKeyDown("2")) {
+            Debug.Log("remove pc2");
             VisualizationManager.Instance.RemoveVisualization("testvis2");
         }
         else if (Input.GetKeyDown("3")) {

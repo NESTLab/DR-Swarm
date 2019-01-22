@@ -20,7 +20,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
     private Image wedgePrefab;
     //private List<Image> wedges;
-    private Dictionary<Robot, Image> wedges;
+    private Dictionary<Robot, GameObject> wedges;
 
     private float total; // sum of all data in pie chart
     private float zRotation = 0f;
@@ -33,11 +33,13 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         // make a bunch of dictionaries?
         wedgeColors = new Dictionary<Robot, Color>();
         //wedges = new List<Image>();
-        wedges = new Dictionary<Robot, Image>();
+        wedges = new Dictionary<Robot, GameObject>();
 
         foreach (Robot r in robots) {
             // I think having it this way prevents adding any new robots, but dunno how else to do it
-            Image blankWedge = Instantiate(wedgePrefab) as Image; 
+            //Image blankWedge = Instantiate(wedgePrefab) as Image; 
+            GameObject blankWedge = new GameObject(r.name + "Wedge", typeof(Image));
+            blankWedge.transform.SetParent(container, false); //not sure if this is correct
             wedges[r] = blankWedge;
             Color randColor = new Color(Random.Range(0f, 1f),
                                   Random.Range(0f, 1f),
@@ -51,11 +53,12 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     {
         zRotation = 0f;
         foreach (Robot r in robots) {
-            wedges[r].transform.SetParent(transform, false);
-            wedges[r].color = wedgeColors[r];
-            wedges[r].fillAmount = dataDict[r]/total;
+            wedges[r].transform.SetParent(container.transform, false); //no idea if this is correct
+            // this is sort of how Jerry does it, but no clue if it's right
+            wedges[r].GetComponent<Image>().color = wedgeColors[r];
+            wedges[r].GetComponent<Image>().fillAmount = dataDict[r]/total;
             wedges[r].transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
-            zRotation -= wedges[r].fillAmount * 360f;
+            zRotation -= wedges[r].GetComponent<Image>().fillAmount * 360f;
         }
     }
 
