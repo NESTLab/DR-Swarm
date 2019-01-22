@@ -12,53 +12,50 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
     List<Robot> robots = new List<Robot>();
-    //private List<float> data;
-    public List<Color> wedgeColors; //randomize this for now
-
-    private Image wedgePrefab;
-    private List<Image> wedges;
-
-    private float total; //sum of all data in pie chart
-    private float zRotation = 0f;
-
-    //NEW STUFF
     Dictionary<Robot, float> dataDict = new Dictionary<Robot, float>();
 
+    //private List<float> data;
+    //public List<Color> wedgeColors; //randomize this for now
+    public Dictionary<Robot, Color> wedgeColors;
+
+    private Image wedgePrefab;
+    //private List<Image> wedges;
+    private Dictionary<Robot, Image> wedges;
+
+    private float total; // sum of all data in pie chart
+    private float zRotation = 0f;
+
     // Initialize things
-    protected override void Start()
+    protected override void Start() 
     {
-        //wedges = new Image[2];
+        base.Start(); 
 
-        //initialize the wedges
-        for (int i = 0; i < data.Length; i++) {
-            Debug.Log("making new wedge");
-            Image newWedge = Instantiate(wedgePrefab) as Image;
-            wedges.Add(newWedge);
+        // make a bunch of dictionaries?
+        wedgeColors = new Dictionary<Robot, Color>();
+        //wedges = new List<Image>();
+        wedges = new Dictionary<Robot, Image>();
+
+        foreach (Robot r in robots) {
+            // I think having it this way prevents adding any new robots, but dunno how else to do it
+            Image blankWedge = Instantiate(wedgePrefab) as Image; 
+            wedges[r] = blankWedge;
+            Color randColor = new Color(Random.Range(0f, 1f),
+                                  Random.Range(0f, 1f),
+                                  Random.Range(0f, 1f));
+            wedgeColors[r] = randColor;
         }
-
-        string robotName = transform.parent.parent.gameObject.name; //name of the image target
-        robot = DataManager.Instance.GetRobot(robotName);
-        robot.SetVariable("percent", 0f);
-        robot.GetObservableVariable<float>("percent").Subscribe(percent => { //assume float for now
-            data[0] = percent;
-            data[1] = total - data[0];
-            MakeGraph();
-        });
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
-    public override void Draw()
+    public override void Draw() 
     {
         zRotation = 0f;
-        for (int i = 0; i < data.Length; i++) {
-            Debug.Log("updating wedge");
-            Image wedge = wedges[i];
-            wedge.transform.SetParent(transform, false);
-            wedge.color = wedgeColors[i];
-            wedge.fillAmount = data[i] / total;
-            wedge.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
-            zRotation -= wedge.fillAmount * 360f;
-            wedges[i] = wedge; //this probably isn't necessary, but might as well
+        foreach (Robot r in robots) {
+            wedges[r].transform.SetParent(transform, false);
+            wedges[r].color = wedgeColors[r];
+            wedges[r].fillAmount = dataDict[r]/total;
+            wedges[r].transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
+            zRotation -= wedges[r].fillAmount * 360f;
         }
     }
 
