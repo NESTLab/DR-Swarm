@@ -53,11 +53,14 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     {
         zRotation = 0f;
         foreach (Robot r in robots) {
-            wedges[r].transform.SetParent(container.transform, false); //no idea if this is correct
+            wedges[r].transform.SetParent(container.transform, false); //now causing a null reference error
             // this is sort of how Jerry does it, but no clue if it's right
             wedges[r].GetComponent<Image>().color = wedgeColors[r];
             wedges[r].GetComponent<Image>().fillAmount = dataDict[r]/total;
-            wedges[r].transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
+            Debug.Log("robot " + r.name + " data: " + dataDict[r]);
+            Debug.Log("total: " + total);
+            Debug.Log("robot " + r.name + " fill amount: " + wedges[r].GetComponent<Image>().fillAmount);
+            wedges[r].transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
             zRotation -= wedges[r].GetComponent<Image>().fillAmount * 360f;
         }
     }
@@ -73,8 +76,10 @@ public class PieChartContainer : VisualizationContainer<PieChart>
             }
 
             dataDict[r] = data[r][0]; 
+        }
 
-            //probably want to update the total at this point too
+        //probably want to update the total at this point too
+        foreach (Robot r in dataDict.Keys) {
             newTotal += data[r][0];
         }
 
