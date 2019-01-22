@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CreateVarPanel : MonoBehaviour
 {
     public Dropdown d1;
-        List<string> m_DropOptions = new List<string> { "Option 1", "Option 2"};
+        List<string> m_DropOptions = new List<string> {};
     public GameObject varPanel;
     public Text t1;
     // Start is called before the first frame update
@@ -16,7 +16,9 @@ public class CreateVarPanel : MonoBehaviour
     public List<Dropdown> dropdowns = new List<Dropdown>{};
 
     void Start()
-    {
+    {// this.data.Keys.ToArray();
+        Robot r1 = DataManager.Instance.GetRobot("RobotTarget1");
+        //m_DropOptions=r1.data.Keys.ToArray();
         varPanel =  GameObject.Find("OptionPanel");
         d1.ClearOptions();
         d1.AddOptions(m_DropOptions);
