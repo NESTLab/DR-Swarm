@@ -9,20 +9,6 @@ public class VisualizationManager : MonoBehaviour
     // TODO: See if there is a better data structure for this class, this works for now though
     Dictionary<Robot, BehaviorSubject<HashSet<string>>> robotVisualizations; // TODO: find a better name for this
     Dictionary<string, BehaviorSubject<IVisualization>> visualizations;
-    
-    public string _GraphType = "";
-    public int Options = 1;
-    public string GraphType {
-        get {return _GraphType;}
-        set {
-            _GraphType = value;
-            if(_GraphType == "Line") { Options = 2; }
-            else if (_GraphType == "Pie") { Options = 1;}
-        }
-    }
-
-
-
 
     private enum UpdateKind {
         Add,

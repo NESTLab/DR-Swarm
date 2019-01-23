@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CreateVarPanel : MonoBehaviour
 {
     public Dropdown d1;
-    List<string> m_DropOptions = new List<string> {};
+    List<string> m_DropOptions = new List<string> {"x", "y"};
     public GameObject varPanel;
     public Text t1;
     // Start is called before the first frame update
@@ -22,7 +22,7 @@ public class CreateVarPanel : MonoBehaviour
         //varPanel =  GameObject.Find("OptionPanel");
         d1.ClearOptions();
         d1.AddOptions(m_DropOptions);
-        int options = VisualizationManager.Instance.Options;
+        int options = UIManager.Instance.Options;
         if (options > 1) {
             for(int i = 0; i < options - 1 ; i++) {
                 Vector3 pos = new Vector3(d1.transform.position.x, (d1.transform.position.y + offset), d1.transform.position.z);
@@ -44,10 +44,10 @@ public class CreateVarPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        d1.ClearOptions();
-        d1.AddOptions(m_DropOptions);
-        int options = VisualizationManager.Instance.Options;
+        /* 
+        //d1.ClearOptions();
+        //d1.AddOptions(m_DropOptions);
+        int options = UIManager.Instance.Options;
         if (options > currOptions) {
             for(int i = 0; i < options - 1 ; i++) {
                 Vector3 pos = new Vector3(d1.transform.position.x, (d1.transform.position.y + offset), d1.transform.position.z);
@@ -68,6 +68,7 @@ public class CreateVarPanel : MonoBehaviour
               //  Destroy(x);
             }
         }
+        */
         
 
     }

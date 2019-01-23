@@ -6,6 +6,6 @@ public class SendGraphType : MonoBehaviour
 {       
 
     public void setToGraph(string i) {
-        VisualizationManager.Instance.GraphType = i;
+        UIManager.Instance.GraphType = i;
     }
 }
