@@ -5,16 +5,17 @@ using UnityEngine;
 public class PieChartTest : MonoBehaviour {
 
     Robot r1, r2, r3, r4, r5;
+    float theta = 0;
 
     IVisualization pc1, pc2;
 
 	// Use this for initialization
 	void Start () {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
-        r1.SetVariable("val", 0.5f);
+        r1.SetVariable("val", 0.0f);
 
         r2 = DataManager.Instance.GetRobot("RobotTarget2");
-        r2.SetVariable("val", 0.5f);
+        r2.SetVariable("val", 0.0f);
 
         r3 = DataManager.Instance.GetRobot("RobotTarget3");
         r3.SetVariable("val", 1f);
@@ -31,6 +32,13 @@ public class PieChartTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        theta += 0.01f;
+
+        r1.SetVariable("val", Mathf.Sin(theta) * Mathf.Sin(theta));
+
+        r2.SetVariable("val", Mathf.Cos(theta) * Mathf.Cos(theta));
+
         if (Input.GetKeyDown("1")) {
             Debug.Log("add pc2");
             VisualizationManager.Instance.AddVisualization("testvis2", pc2);
