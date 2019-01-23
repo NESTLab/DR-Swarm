@@ -6,6 +6,8 @@ using UniRx;
 using System.Linq;
 
 // TODO: add another for PieChartMultiVar
+// TODO: resize the piechart to be bigger
+// TODO: add legend
 public class PieChartContainer : VisualizationContainer<PieChart>
 {
     // Instances of VisualizationContainer have access to the container
@@ -13,6 +15,8 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, float> dataDict = new Dictionary<Robot, float>();
+
+    Dictionary<Robot, GameObject> legend;
 
     private Image wedgePrefab;
     private Dictionary<Robot, GameObject> wedges;
@@ -27,6 +31,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         base.Start(); 
         
         wedges = new Dictionary<Robot, GameObject>();
+        legend = new Dictionary<Robot, GameObject>();
     }
 
     private GameObject GetWedge(Robot robot) {
@@ -38,6 +43,14 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
         return wedges[robot];
     } 
+
+    private GameObject GetLegendKey(Robot robot) {
+        if (!legend.ContainsKey(robot)) {
+            // TODO: figure out what goes in here
+        }
+
+        return legend[robot];
+    }
 
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() 
@@ -51,6 +64,11 @@ public class PieChartContainer : VisualizationContainer<PieChart>
             wedge.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
+
+            // TODO: add stuff for legend
+            GameObject key = GetLegendKey(r);
+            key.transform.SetParent(container.transform, false);
+            wedge.GetComponent<Image>().color = r.color;
         }
     }
 
