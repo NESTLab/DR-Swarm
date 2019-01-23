@@ -13,18 +13,23 @@ public class PieChartTest : MonoBehaviour {
 	void Start () {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
         r1.SetVariable("val", 0.0f);
+        r1.color = new Color(1f, 1f, 1f); // white
 
         r2 = DataManager.Instance.GetRobot("RobotTarget2");
         r2.SetVariable("val", 0.0f);
+        r2.color = new Color(0f, 1f, 1f); // cyan
 
         r3 = DataManager.Instance.GetRobot("RobotTarget3");
         r3.SetVariable("val", 1f);
+        r3.color = new Color(1f, 0f, 1f); // magenta
 
         r4 = DataManager.Instance.GetRobot("RobotTarget4");
         r4.SetVariable("val", 0.8f);
+        r4.color = new Color(0f, 1f, 0f); // green
 
         r5 = DataManager.Instance.GetRobot("RobotTarget5");
         r5.SetVariable("val", 0.2f);
+        r5.color = new Color(1f, 1f, 0f); // yellow
 
         pc1 = new PieChart("val", r1, r2); 
         pc2 = new PieChart("val", r1, r2, r3, r4, r5);
