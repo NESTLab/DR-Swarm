@@ -24,6 +24,8 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     private float total; // sum of all data in pie chart
     private float zRotation = 0f;
 
+    private GameObject chartContainer;
+
     // Initialize things
     protected override void Start() 
     {
@@ -32,12 +34,24 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         
         wedges = new Dictionary<Robot, GameObject>();
         legend = new Dictionary<Robot, GameObject>();
+
+        chartContainer = new GameObject("PieChart", typeof(Image));
+        chartContainer.transform.SetParent(container.transform, false);
+        RectTransform t = chartContainer.GetComponent<RectTransform>();
+        // this is currently all the way to the left, but the bottom corner insted of centered
+        t.sizeDelta = new Vector2(200f, 200f);
+        t.localScale = Vector3.one;
+        t.localRotation = new Quaternion(0, 0, 0, 0);
+        t.pivot = new Vector2(0f, 0.5f);
+        t.anchorMax = new Vector2(0f, 0.5f);
+        t.anchorMin = new Vector2(0f, 0.5f);
+        t.localPosition = Vector3.zero;
     }
 
     private GameObject GetWedge(Robot robot) {
         if (!wedges.ContainsKey(robot)) {
-            GameObject blankWedge = (GameObject)Instantiate(Resources.Load("Wedge"), transform); 
-            blankWedge.transform.SetParent(container, false); 
+            GameObject blankWedge = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
+            blankWedge.transform.SetParent(chartContainer.transform, false); 
             wedges[robot] = blankWedge;
         }
 
@@ -58,17 +72,19 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         zRotation = 0f;
         foreach (Robot r in robots) {
             GameObject wedge = GetWedge(r);
-            wedge.transform.SetParent(container.transform, false);
+            wedge.transform.SetParent(chartContainer.transform, false);
             wedge.GetComponent<Image>().color = r.color;
             wedge.GetComponent<Image>().fillAmount = dataDict[r]/total;
             wedge.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
 
+            /*
             // TODO: add stuff for legend
             GameObject key = GetLegendKey(r);
             key.transform.SetParent(container.transform, false);
-            wedge.GetComponent<Image>().color = r.color;
+            key.GetComponent<Image>().color = r.color;
+            */
         }
     }
 
