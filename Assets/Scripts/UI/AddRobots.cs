@@ -29,7 +29,7 @@ public class AddRobots : MonoBehaviour
         if(t2.isOn) {
             UIManager.Instance.AddRobot("r2");
         }
-        UIManager.Instance.add = true;
+        UIManager.Instance.addGraph = true;
         
     }
 

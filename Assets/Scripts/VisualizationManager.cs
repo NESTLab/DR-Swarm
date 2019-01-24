@@ -47,6 +47,7 @@ public class VisualizationManager : MonoBehaviour
     #region Add/Edit/Remove Visualizations
     public void AddVisualization(string name, IVisualization visualization)
     {
+        //TODO: Remove name, have IVisualization have a function to get name
         if (!visualizations.ContainsKey(name))
         {
             visualizations.Add(name, new BehaviorSubject<IVisualization>(visualization));

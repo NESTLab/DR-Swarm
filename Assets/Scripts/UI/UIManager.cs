@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour
 public List<string> variables = new List<string> {"x", "y"};
 
 //ADD ROBOTS
-    public List<Robot> robots;
+    public List<Robot> robots = new List<Robot>{};
 
     public void AddRobot(string r) {
         if(r == "r1"){
@@ -61,26 +61,29 @@ public List<string> variables = new List<string> {"x", "y"};
     }
 
 //ADD GRAPH
-    public bool add = false;
-    public bool _add {
-        get {return _add;}
+    public bool _addGraph = false;
+    public bool addGraph {
+        get {return _addGraph;}
         set {
-            _add = value;
-            if(_add ==true) { }// Add graph here
+            _addGraph = value;
+            Debug.Log("add");
+            if(_addGraph ==true) {createGraph(); }// Add graph here
 
         }
     }
 
 
     public void createGraph(){
+        Debug.Log("GraphEntered");
         if(GraphType =="Line"){
+            Debug.Log("Graph");
             string xvar = variables[0];
             string yvar = variables[1];
             Robot r1 = robots[0];
             robots.RemoveAt(0);
-            IVisualization lg = new LineGraph("x", "y", r1); //TODO: How to give it the list?
+            IVisualization lg = new LineGraph("x", "y", r1, robots.ToArray());
             string title = xvar+","+yvar+" Line";//TODO: Add another unique symbol to this?
-            VisualizationManager.Instance.AddVisualization("title", lg);
+            VisualizationManager.Instance.AddVisualization(title, lg);
 
         }
     }
