@@ -18,7 +18,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
     Dictionary<Robot, GameObject> legend;
 
-    private Image wedgePrefab;
+    //private Image wedgePrefab;
     private Dictionary<Robot, GameObject> wedges;
 
     private float total; // sum of all data in pie chart
@@ -40,12 +40,12 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         RectTransform t = chartContainer.GetComponent<RectTransform>();
         // this is currently all the way to the left, but the bottom corner insted of centered
         t.sizeDelta = new Vector2(200f, 200f);
-        t.localScale = Vector3.one;
-        t.localRotation = new Quaternion(0, 0, 0, 0);
-        t.pivot = new Vector2(0f, 0.5f);
         t.anchorMax = new Vector2(0f, 0.5f);
         t.anchorMin = new Vector2(0f, 0.5f);
-        t.localPosition = Vector3.zero;
+        t.pivot = new Vector2(0f, 0.5f);
+        t.localScale = Vector3.one;
+        t.localRotation = new Quaternion(0, 0, 0, 0);
+        t.anchoredPosition = Vector2.zero;
     }
 
     private GameObject GetWedge(Robot robot) {
