@@ -25,6 +25,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     private float zRotation = 0f;
 
     private GameObject chartContainer;
+    private GameObject legendContainer; // instantiate this
 
     // Initialize things
     protected override void Start() 
@@ -35,10 +36,10 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         wedges = new Dictionary<Robot, GameObject>();
         legend = new Dictionary<Robot, GameObject>();
 
+        // set up pie chart container
         chartContainer = new GameObject("PieChart", typeof(Image));
         chartContainer.transform.SetParent(container.transform, false);
         RectTransform t = chartContainer.GetComponent<RectTransform>();
-        // this is currently all the way to the left, but the bottom corner insted of centered
         t.sizeDelta = new Vector2(200f, 200f);
         t.anchorMax = new Vector2(0f, 0.5f);
         t.anchorMin = new Vector2(0f, 0.5f);
@@ -46,6 +47,18 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         t.localScale = Vector3.one;
         t.localRotation = new Quaternion(0, 0, 0, 0);
         t.anchoredPosition = Vector2.zero;
+
+        // set up legend container
+        legendContainer = new GameObject("Legend", typeof(Image));
+        legendContainer.transform.SetParent(container.transform, false);
+        RectTransform lt = legendContainer.GetComponent<RectTransform>();
+        lt.sizeDelta = new Vector2(300f, 300f);
+        lt.anchorMax = new Vector2(1f, 0.5f);
+        lt.anchorMin = new Vector2(1f, 0.5f);
+        lt.pivot = new Vector2(1f, 0.5f);
+        lt.localScale = Vector3.one;
+        lt.localRotation = new Quaternion(0, 0, 0, 0);
+        lt.anchoredPosition = Vector2.zero;
     }
 
     private GameObject GetWedge(Robot robot) {
@@ -61,6 +74,11 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     private GameObject GetLegendKey(Robot robot) {
         if (!legend.ContainsKey(robot)) {
             // TODO: figure out what goes in here
+
+            // need to actually make the prefab
+            GameObject blankKey = (GameObject)Instantiate(Resources.Load("LegendKey"), transform);
+            blankKey.transform.SetParent(legendContainer.transform, false);
+            legend[robot] = blankKey;
         }
 
         return legend[robot];
@@ -76,6 +94,9 @@ public class PieChartContainer : VisualizationContainer<PieChart>
             wedge.GetComponent<Image>().color = r.color;
             wedge.GetComponent<Image>().fillAmount = dataDict[r]/total;
             wedge.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
+
+            RectTransform parent = chartContainer.GetComponent<RectTransform>();
+            wedge.GetComponent<RectTransform>().sizeDelta = new Vector2(parent.rect.width, parent.rect.height);
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
 
