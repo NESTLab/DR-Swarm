@@ -59,6 +59,8 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         lt.localScale = Vector3.one;
         lt.localRotation = new Quaternion(0, 0, 0, 0);
         lt.anchoredPosition = Vector2.zero;
+
+        legendContainer.GetComponent<Image>().color = Color.black;
     }
 
     private GameObject GetWedge(Robot robot) {
@@ -100,12 +102,16 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
 
-            /*
             // TODO: add stuff for legend
             GameObject key = GetLegendKey(r);
-            key.transform.SetParent(container.transform, false);
-            key.GetComponent<Image>().color = r.color;
-            */
+            key.transform.SetParent(legendContainer.transform, false);
+            // key.GetComponent<Image>().color = r.color;
+            GameObject icon = key.transform.Find("Icon").gameObject;
+            icon.GetComponent<Image>().color = r.color;
+
+            GameObject text = key.transform.Find("Text").gameObject;
+            text.GetComponent<Text>().text = r.name;
+            
         }
     }
 
