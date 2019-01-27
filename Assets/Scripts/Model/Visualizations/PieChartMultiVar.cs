@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Operators;
 
-// TODO: Implement this class.
 // Anything and everything can be changed. Comments can be removed,
 // they're just here to explain everything as best I can
-
-// TODO: make another pie chart class for one robot, many variables
 
 public class PieChartMultiVar : IVisualization
 {
