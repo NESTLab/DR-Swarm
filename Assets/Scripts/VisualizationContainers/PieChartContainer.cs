@@ -6,8 +6,6 @@ using UniRx;
 using System.Linq;
 
 // TODO: add another for PieChartMultiVar
-// TODO: resize the piechart to be bigger
-// TODO: add legend
 public class PieChartContainer : VisualizationContainer<PieChart>
 {
     // Instances of VisualizationContainer have access to the container
@@ -16,16 +14,15 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     List<Robot> robots = new List<Robot>();
     Dictionary<Robot, float> dataDict = new Dictionary<Robot, float>();
 
-    Dictionary<Robot, GameObject> legend;
-
     //private Image wedgePrefab;
     private Dictionary<Robot, GameObject> wedges;
+    private Dictionary<Robot, GameObject> legend;
 
     private float total; // sum of all data in pie chart
     private float zRotation = 0f;
 
     private GameObject chartContainer;
-    private GameObject legendContainer; // instantiate this
+    private GameObject legendContainer; 
 
     // Initialize things
     protected override void Start() 
