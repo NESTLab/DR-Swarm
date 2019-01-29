@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class AddRobots : MonoBehaviour
+public class SendVars : MonoBehaviour
 {
     // Start is called before the first frame update
 
@@ -37,5 +37,10 @@ public class AddRobots : MonoBehaviour
         
     }
 
-    
+    public void setToGraph(string i)
+    {
+        UIManager.Instance.sentGraphType = i;
+    }
+
+
 }
