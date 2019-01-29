@@ -128,7 +128,7 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, List<float>> data) {
         float newTotal = 0;
-        
+        // this should only ever be one robot
         foreach (Robot r in data.Keys) {
             /*
             // this should only be one robot ever
@@ -141,16 +141,16 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
 
             // can new variables be added dynamically? If so, how do we deal with this?
             // how do we connect the values to the variables?
-            foreach (float v in data[r]) {
-                if (!variables.Contains(v)) {
-                    variables.Add(v);
-                }
+            foreach (float f in data[r]) {
+                //if (!variables.Contains(v)) { 
+                //    variables.Add(v);
+                //}
             }
         }
 
         // update the total 
-        foreach (Robot r in dataDict.Keys) {
-            newTotal += dataDict[r];
+        foreach (string v in dataDict.Keys) {
+            newTotal += dataDict[v];
         }
 
         total = newTotal;
