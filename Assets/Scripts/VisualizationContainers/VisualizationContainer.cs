@@ -14,6 +14,8 @@ public abstract class VisualizationContainer<T> : MonoBehaviour where T : IVisua
     private IDisposable _visualizationDataSubscription;
     private IObservable<IVisualization> _visualizationObs;
 
+    protected IVisualization visualization;
+
     string _visualizationName;
     public string visualizationName
     {
@@ -45,6 +47,9 @@ public abstract class VisualizationContainer<T> : MonoBehaviour where T : IVisua
                 // Make sure that the subscribed visualization is the correct type
                 if (visualization.GetType() != typeof(T))
                     throw new System.Exception("Assigned visualization type must be equal to container's specified visualization type");
+
+                // Store the visualization for reference later
+                this.visualization = visualization;
 
                 // If the visualization has changed, dispose of the subscription to the old one's data
                 if (_visualizationDataSubscription != null)

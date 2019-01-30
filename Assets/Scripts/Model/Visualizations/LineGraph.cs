@@ -6,21 +6,24 @@ using UniRx;
 public class LineGraph : IVisualization
 {
     IObservable<Dictionary<Robot, float>> xAxisObs, yAxisObs;
-    HashSet<Robot> robotList;
+    HashSet<Robot> robotSet;
+    HashSet<string> variableSet;
 
     // TODO: Hmm, not sure about passing in variable names here ... maybe change later?
     public LineGraph(string xAxisName, string yAxisName, Robot firstRobot, params Robot[] robots)
     {
-        robotList = new HashSet<Robot>(robots);
-        robotList.Add(firstRobot);
+        robotSet = new HashSet<Robot>(robots);
+        robotSet.Add(firstRobot);
+
+        variableSet = new HashSet<string>() { xAxisName, yAxisName };
 
         // TODO: Maybe make this a helper function somewhere
-        xAxisObs = robotList.ToObservable().SelectMany(r =>
+        xAxisObs = robotSet.ToObservable().SelectMany(r =>
         {
             return r.GetObservableVariable<float>(xAxisName).Select(v => new Dictionary<Robot, float> { { r, v } });
         });
 
-        yAxisObs = robotList.ToObservable().SelectMany(r =>
+        yAxisObs = robotSet.ToObservable().SelectMany(r =>
         {
             return r.GetObservableVariable<float>(yAxisName).Select(v => new Dictionary<Robot, float> { { r, v } });
         });
@@ -28,7 +31,12 @@ public class LineGraph : IVisualization
 
     public ISet<Robot> GetRobots()
     {
-        return robotList;
+        return robotSet;
+    }
+
+    public ISet<string> GetVariables()
+    {
+        return variableSet;
     }
 
     public ParameterCount GetNumDataSources()
