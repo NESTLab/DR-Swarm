@@ -127,6 +127,9 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, List<float>> data) {
+        // add the desired variables into the variables list
+        variables = (List<string>) this.visualization.GetVariables(); //did I cast correctly?
+
         float newTotal = 0;
         // this should only ever be one robot
         foreach (Robot r in data.Keys) {

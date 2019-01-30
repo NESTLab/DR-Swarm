@@ -41,6 +41,10 @@ public class PieChartMultiVar : IVisualization
         return robotList;
     }
 
+    public ISet<string> GetVariables() {
+        return varSet;
+    }
+
     public ParameterCount GetNumDataSources()
     {
         // TODO: make a two or more option

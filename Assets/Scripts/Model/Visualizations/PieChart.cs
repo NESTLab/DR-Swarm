@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-// TODO: Implement this class.
 // Anything and everything can be changed. Comments can be removed,
 // they're just here to explain everything as best I can
 
@@ -14,6 +13,7 @@ public class PieChart : IVisualization
     // Feel free to use any data type to store the intermittent data
     IObservable<Dictionary<Robot, float>> dataSource;
     HashSet<Robot> robotList;
+    HashSet<string> varSet;
 
     public PieChart(string variableName, Robot firstRobot, Robot secondRobot, params Robot[] robots)
     {
@@ -21,6 +21,9 @@ public class PieChart : IVisualization
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
         robotList.Add(secondRobot);
+
+        varSet = new HashSet<string>();
+        varSet.Add(variableName);
 
         // Create a single data source observable by creating
         // an observable for each robot, and then combining them
@@ -41,7 +44,8 @@ public class PieChart : IVisualization
 
     public ISet<string> GetVariables()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        return varSet;
     }
 
     public ParameterCount GetNumDataSources()
