@@ -10,7 +10,7 @@ using UniRx.Operators;
 public class PieChartMultiVar : IVisualization
 {
     // Feel free to use any data type to store the intermittent data
-    IObservable<Dictionary<Robot, List<float>>> dataSource;
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
@@ -23,17 +23,25 @@ public class PieChartMultiVar : IVisualization
         varSet = new HashSet<string>(variables);
         varSet.Add(variableOne);
 
-        List<IObservable<float>> observableVarList = new List<IObservable<float>>();
+        List<IObservable<Dictionary<string, float>>> observableVarList = new List<IObservable<Dictionary<string, float>>>();
         foreach (string var in varSet) {
-            observableVarList.Add(robot.GetObservableVariable<float>(var));
+            observableVarList.Add(robot.GetObservableVariable<float>(var).Select(v => new Dictionary<string, float>() { { var, v } }));
         }
 
         // Create a single data source observable by creating
         // an observable for each robot, and then combining them
         // (this is what select many does)
-        
+
         // TODO: Jerry refactor for IList
-        dataSource = Observable.CombineLatest(observableVarList).Select(list => new Dictionary<Robot, List<float>> { { robot, new List<float>(list) } });
+        //dataSource = Observable.CombineLatest(observableVarList).Select(list => new Dictionary<Robot, List<float>> { { robot, new List<float>(list) } });
+
+        dataSource = Observable.CombineLatest(observableVarList).Select(varList => {
+            Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
+            foreach (Dictionary<string, float> varDict in varList) {
+                dict.Add(robot, varDict);
+            }
+            return dict;
+        });
     }
 
     public ISet<Robot> GetRobots()
@@ -56,7 +64,7 @@ public class PieChartMultiVar : IVisualization
         return ParameterCount.One;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
         // into a Dictionary<Robot, List<float>> by taking the

@@ -10,7 +10,7 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
     List<Robot> robots = new List<Robot>(); // there's only going to be one this time
-    List<string> variables = new List<string>(); // I think this is what we want
+    HashSet<string> variables = new HashSet<string>(); // I think this is what we want
     // don't think this s relevant anymore
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
 
@@ -126,34 +126,26 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, List<float>> data) {
-        // add the desired variables into the variables list
-        variables = (List<string>) this.visualization.GetVariables(); //did I cast correctly?
-
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         float newTotal = 0;
-        // this should only ever be one robot
+        // TODO: make set account for removed variables as well
+        variables.UnionWith(this.visualization.GetVariables());
+
         foreach (Robot r in data.Keys) {
-            /*
-            // this should only be one robot ever
+            // I think this is useless at this point
             if (!robots.Contains(r)) {
-                robots.Add(r); // currently never using this
+                robots.Add(r);
             }
 
-            dataDict[r] = data[r][0];
-            */
-
-            // can new variables be added dynamically? If so, how do we deal with this?
-            // how do we connect the values to the variables?
-            foreach (float f in data[r]) {
-                //if (!variables.Contains(v)) { 
-                //    variables.Add(v);
-                //}
+            foreach (string var in variables) {
+                dataDict[var] = data[r][var];
             }
         }
 
+        // TODO: incorporate this into the other for loop - doesn't need to be separate
         // update the total 
-        foreach (string v in dataDict.Keys) {
-            newTotal += dataDict[v];
+        foreach (string var in dataDict.Keys) {
+            newTotal += dataDict[var];
         }
 
         total = newTotal;

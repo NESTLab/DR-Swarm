@@ -11,7 +11,7 @@ using UniRx;
 public class PieChart : IVisualization
 {
     // Feel free to use any data type to store the intermittent data
-    IObservable<Dictionary<Robot, float>> dataSource;
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
@@ -32,8 +32,12 @@ public class PieChart : IVisualization
         {
             // get the observable variable from the robot
             // then transform the values from the observable
-            // into a Dictionary<Robot, float>
-            return r.GetObservableVariable<float>(variableName).Select(v => new Dictionary<Robot, float> { { r, v } });
+            // into a Dictionary<Robot, Dictionary<string, float>>
+            return r.GetObservableVariable<float>(variableName).Select(v => {
+                Dictionary <Robot, Dictionary<string, float>>  dict = new Dictionary<Robot, Dictionary<string, float>>();
+                dict.Add(r, new Dictionary<string, float>() { { variableName, v } });
+                return dict;
+            });
         });
     }
 
@@ -66,6 +70,6 @@ public class PieChart : IVisualization
         // This is a dictionary that maps robots to a dict
         // which maps variable name (string) to value (float)
 
-        throw new NotImplementedException();
+        return dataSource;
     }
 }
