@@ -81,7 +81,7 @@ public class CreateVarPanel : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { if (overallPanel != null)
+    { if (overallPanel != null && varPanel != null)
         {
             if (overallPanel.activeSelf)
             {

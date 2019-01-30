@@ -100,6 +100,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
+    public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
+
+
     //Create a graph, Needed are robots, variables, type
     //Calls VizManager to add the graph, currently adds title as well
     private void createGraph(){
@@ -114,7 +118,8 @@ public class UIManager : MonoBehaviour
             long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = xvar+","+yvar+" Line " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
-
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
         }
         _addGraph = false;
     }
