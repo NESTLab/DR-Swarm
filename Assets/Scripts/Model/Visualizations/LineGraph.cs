@@ -7,7 +7,8 @@ public class LineGraph : IVisualization
 {
     IObservable<Dictionary<Robot, float>> xAxisObs, yAxisObs;
     HashSet<Robot> robotSet;
-    HashSet<string> variableSet;
+
+    string xAxisName, yAxisName;
 
     // TODO: Hmm, not sure about passing in variable names here ... maybe change later?
     public LineGraph(string xAxisName, string yAxisName, Robot firstRobot, params Robot[] robots)
@@ -15,7 +16,8 @@ public class LineGraph : IVisualization
         robotSet = new HashSet<Robot>(robots);
         robotSet.Add(firstRobot);
 
-        variableSet = new HashSet<string>() { xAxisName, yAxisName };
+        this.xAxisName = xAxisName;
+        this.yAxisName = yAxisName;
 
         // TODO: Maybe make this a helper function somewhere
         xAxisObs = robotSet.ToObservable().SelectMany(r =>
@@ -36,7 +38,7 @@ public class LineGraph : IVisualization
 
     public ISet<string> GetVariables()
     {
-        return variableSet;
+        return new HashSet<string>() { xAxisName, yAxisName }; ;
     }
 
     public ParameterCount GetNumDataSources()
@@ -49,18 +51,20 @@ public class LineGraph : IVisualization
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
         // TODO: Zip probably isn't right here, consider options
         return Observable.Zip(xAxisObs, yAxisObs).Select(values =>
         {
-            Dictionary<Robot, List<float>> returnDict = new Dictionary<Robot, List<float>>();
+            Dictionary<Robot, Dictionary<string, float>> returnDict = new Dictionary<Robot, Dictionary<string, float>>();
             Dictionary<Robot, float> xAxis = values[0];
             Dictionary<Robot, float> yAxis = values[1];
 
             foreach (Robot r in xAxis.Keys)
             {
-                returnDict[r] = new List<float> { xAxis[r], yAxis[r] };
+                returnDict[r] = new Dictionary<string, float>();
+                returnDict[r].Add("x,"+xAxisName, xAxis[r]);
+                returnDict[r].Add("y,"+yAxisName, yAxis[r]);
             }
 
             return returnDict;
