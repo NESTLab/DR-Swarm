@@ -19,17 +19,21 @@ public class VisualizationWindow : MonoBehaviour {
         visualizationContainers = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
 
+        // Subscribe to the set of visualizations for this robot
+        // A callback gets called if a visualization was added or removed for the robot
         VisualizationManager.Instance.GetObservableVisualizationsForRobot(robot).Subscribe(VisualizationListUpdated);
     }
 
     private void VisualizationListUpdated(ISet<string> visualizationSet)
     { 
+        // Compute the set of visualizations added and removed
         HashSet<string> addedVisualizations = new HashSet<string>(visualizationSet);
         addedVisualizations.ExceptWith(visualizationContainers);
 
         HashSet<string> removedVisualizations = new HashSet<string>(visualizationContainers);
         removedVisualizations.ExceptWith(visualizationSet);
 
+        // Create and destory containers for added and removed visualizations
         foreach (string visualizationName in removedVisualizations)
         {
             Destroy(container.transform.Find(visualizationName).gameObject);
@@ -45,10 +49,12 @@ public class VisualizationWindow : MonoBehaviour {
 
     private void CreateVisualizationContainer(string visualizationName)
     {
+        // Create an empty 2D gameobject for the container to be stored in
         GameObject gameObject = new GameObject(visualizationName, typeof(Image));
         gameObject.transform.SetParent(container);
         gameObject.GetComponent<Image>().color = Color.clear;
 
+        // Set the origin of the container to be in the bottom left
         RectTransform transform = gameObject.GetComponent<RectTransform>();
         transform.sizeDelta = container.GetComponent<RectTransform>().sizeDelta;
         transform.anchorMin = Vector2.zero;
@@ -58,7 +64,8 @@ public class VisualizationWindow : MonoBehaviour {
         transform.localScale = Vector3.one;
         transform.localRotation = new Quaternion(0, 0, 0, 0);
 
-        // TODO: I don't think this is good OO, there may be some pattern to do this better
+        // Create a container based off of the visualization type
+        // TODO: Try using "visitor" pattern here
         Type visualizationType = VisualizationManager.Instance.GetVisualizationType(visualizationName);
         if (visualizationType == typeof(LineGraph))
         {
