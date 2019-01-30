@@ -11,6 +11,7 @@ public class CreateVizPanel : MonoBehaviour
     public List<IVisualization> allVizs = new List<IVisualization>();
     public List<string> allVizsNames = new List<string>();
     public int totalViz = 0;
+    float offset = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,8 @@ public class CreateVizPanel : MonoBehaviour
                     t.anchoredPosition = new Vector2(1f, initpos);
                     t.pivot = new Vector2(.5f, .5f);
                     totalViz++;
+                    offset = offset + -70f;
+
                 }
             }
         }
@@ -48,12 +51,11 @@ public class CreateVizPanel : MonoBehaviour
             if (allVizs.Count != totalViz)
             {
                 i = 0;
-
                 foreach (Transform child in vizPanel.transform)
                 {
                     Destroy(child.gameObject);
                 }
-                
+                offset = 0;
                 if (allVizs.Count > 0 )
                 {
                     foreach (IVisualization viz in allVizs)
@@ -64,7 +66,7 @@ public class CreateVizPanel : MonoBehaviour
                         t.sizeDelta = new Vector2(0, 75f);
                         t.anchorMax = new Vector2(1f, 1f);
                         t.anchorMin = new Vector2(0f, 1f);
-                        t.anchoredPosition = new Vector2(1f, initpos);
+                        t.anchoredPosition = new Vector2(1f, initpos + offset);
                         t.pivot = new Vector2(.5f, .5f);
                         totalViz++;
                         Text t2 = vizPrefab.transform.Find("Name").GetComponent<Text>();
@@ -73,6 +75,7 @@ public class CreateVizPanel : MonoBehaviour
                         string name = allVizsNames[i];
                         remv.onClick.AddListener(delegate { removeViz(name, i, viz); });
                         i++;
+                        offset = offset + -70f;
 
                     }
                     totalViz = allVizs.Count;

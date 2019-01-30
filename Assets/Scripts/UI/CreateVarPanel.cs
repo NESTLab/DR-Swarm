@@ -197,12 +197,14 @@ public class CreateVarPanel : MonoBehaviour
 
     void sendVars()
     {
+        var.Clear();
         foreach (Dropdown d in allDropdownObjects){
             List<Dropdown.OptionData> list = d.options;
             int value = d.value;
             var.Add(list[d.value].text);
         }
         Debug.Log(var);
+
         UIManager.Instance.wantedVars = var;
     }
 

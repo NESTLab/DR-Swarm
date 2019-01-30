@@ -23,7 +23,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, List<float>> data)
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
     {
     }
 }

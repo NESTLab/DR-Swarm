@@ -34,6 +34,11 @@ public class PieChart : IVisualization
         return robotList;
     }
 
+    public ISet<string> GetVariables()
+    {
+        throw new NotImplementedException();
+    }
+
     public ParameterCount GetNumDataSources()
     {
         return ParameterCount.One;
@@ -44,25 +49,13 @@ public class PieChart : IVisualization
         return ParameterCount.One;
     }
 
-    public IObservable<Dictionary<Robot, List<float>>> GetObservableData()
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
-        // into a Dictionary<Robot, List<float>> by taking the
-        // current value for each robot and adding it to each
-        // robot's own list
+        // into a Dictionary<Robot, Dictionary<string, float>>
+        // This is a dictionary that maps robots to a dict
+        // which maps variable name (string) to value (float)
 
-        // This encodes the data source into a dictionary containing
-        // one or more values per robot
-        return dataSource.Select(dict =>
-        {
-            Dictionary<Robot, List<float>> dataDict = new Dictionary<Robot, List<float>>();
-
-            foreach (Robot r in dict.Keys)
-            {
-                dataDict[r] = new List<float> { dict[r] };
-            }
-
-            return dataDict;
-        });
+        throw new NotImplementedException();
     }
 }

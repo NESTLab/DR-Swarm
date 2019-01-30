@@ -13,10 +13,13 @@ public interface IVisualization
     // data points for every robot. For example, a Line Graph's observable data
     // will have the latest (x, y) coordinate for each robot. A bar graph will
     // instead have the latest single value for each robot.
-    IObservable<Dictionary<Robot, List<float>>> GetObservableData();
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData();
 
-    // Get the list of robots providing data to this visualization
+    // Get the set of robots providing data to this visualization
     ISet<Robot> GetRobots();
+
+    // Get the set of variables used in this visualization
+    ISet<string> GetVariables();
 
     // Return the (constant) number of data sources and robots for this
     // visualization type. This data can be used for the visualization
