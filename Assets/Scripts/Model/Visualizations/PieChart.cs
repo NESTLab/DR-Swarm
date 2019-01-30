@@ -39,6 +39,11 @@ public class PieChart : IVisualization
         return robotList;
     }
 
+    public ISet<string> GetVariables()
+    {
+        throw new NotImplementedException();
+    }
+
     public ParameterCount GetNumDataSources()
     {
         return ParameterCount.One;
