@@ -68,6 +68,6 @@ public abstract class VisualizationContainer<T> : MonoBehaviour where T : IVisua
         this.Draw();
     }
 
-    protected abstract void UpdateData(Dictionary<Robot, List<float>> data);
+    protected abstract void UpdateData(Dictionary<Robot, Dictionary<string, float>> data);
     public abstract void Draw();
 }
