@@ -91,7 +91,7 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
         }
     }
 
-    protected override void UpdateData(Dictionary<Robot, List<float>> data)
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
     {
         foreach (Robot r in data.Keys)
         {
@@ -105,7 +105,11 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
                 dataPoints[r] = new List<Vector2>();
             }
 
-            dataPoints[r].Add(new Vector2(data[r][0], data[r][1]));
+            // Get the x and y axis named, which always contain x, or y, as the first two characters
+            string xAxisKey = data[r].Keys.Where(v => v.Substring(0, 2) == "x,").First();
+            string yAxisKey = data[r].Keys.Where(v => v.Substring(0, 2) == "y,").First();
+
+            dataPoints[r].Add(new Vector2(data[r][xAxisKey], data[r][yAxisKey]));
             
             if (dataPoints[r].Count > resolution)
             {
