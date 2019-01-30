@@ -63,8 +63,32 @@ public class VisualizationManager : MonoBehaviour
         BehaviorSubject<IVisualization> observable;
         if (visualizations.TryGetValue(name, out observable))
         {
+            // Compute the set of robots that were added and the set that were removed by the edit
+            ISet<Robot> addedRobots = new HashSet<Robot>(visualization.GetRobots());
+            addedRobots.ExceptWith(observable.Value.GetRobots());
+
+            ISet<Robot> removedRobots = new HashSet<Robot>(observable.Value.GetRobots());
+            removedRobots.ExceptWith(visualization.GetRobots());
+
+            // Update the observable set of visualizations for each added/removed robot
+            foreach (Robot robot in addedRobots)
+            {
+                BehaviorSubject<HashSet<string>> visualizationNamesObs = GetRobotVisualizationSubject(robot);
+                HashSet<string> nameSet = visualizationNamesObs.Value;
+                nameSet.Add(name);
+                visualizationNamesObs.OnNext(nameSet);
+            }
+
+            foreach (Robot robot in removedRobots)
+            {
+                BehaviorSubject<HashSet<string>> visualizationNamesObs = GetRobotVisualizationSubject(robot);
+                HashSet<string> nameSet = visualizationNamesObs.Value;
+                nameSet.Remove(name);
+                visualizationNamesObs.OnNext(nameSet);
+            }
+
+            // Update the visualization subject
             observable.OnNext(visualization);
-            UpdateRobotVisualizations(name, visualization, UpdateKind.Add);
         }
         else
         {

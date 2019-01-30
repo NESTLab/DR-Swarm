@@ -32,7 +32,7 @@ public class LineGraphTest : MonoBehaviour {
         r5.SetVariable("x", 0.0f);
         r5.SetVariable("y", 0.0f);
 
-        lg = new LineGraph("x", "y", r1, r2, r3);
+        lg = new LineGraph("x", "y", r1, r2);
         lg2 = new LineGraph("a", "b", r1);
     }
 	
@@ -73,10 +73,7 @@ public class LineGraphTest : MonoBehaviour {
             VisualizationManager.Instance.RemoveVisualization("testvis2");
         } else if (Input.GetKeyDown("3"))
         {
-            VisualizationManager.Instance.AddVisualization("testvis", lg);
-        } else if (Input.GetKeyDown("4"))
-        {
-            VisualizationManager.Instance.RemoveVisualization("testvis");
+            VisualizationManager.Instance.EditVisualization("testvis2", lg);
         }
     }
 }
