@@ -79,6 +79,12 @@ public class VisualizationWindow : MonoBehaviour {
             container.visualizationName = visualizationName;
             container.container = transform;
         }
+        else if (visualizationType == typeof(PieChartMultiVar)) 
+        {
+            PieChartMultiVarContainer container = gameObject.AddComponent<PieChartMultiVarContainer>();
+            container.visualizationName = visualizationName;
+            container.container = transform;
+        }
         else if (visualizationType == typeof(Indicator))
         {
             IndicatorContainer container = gameObject.AddComponent<IndicatorContainer>();
