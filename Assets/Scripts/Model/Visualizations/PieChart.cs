@@ -6,8 +6,6 @@ using UniRx;
 // Anything and everything can be changed. Comments can be removed,
 // they're just here to explain everything as best I can
 
-// TODO: make another pie chart class for one robot, many variables
-
 public class PieChart : IVisualization
 {
     // Feel free to use any data type to store the intermittent data

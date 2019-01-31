@@ -37,7 +37,6 @@ public class PieChartTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
         theta += 0.01f;
 
         r1.SetVariable("val", Mathf.Sin(theta) * Mathf.Sin(theta));

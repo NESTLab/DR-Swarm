@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-// TODO: add another for PieChartMultiVar
 public class PieChartContainer : VisualizationContainer<PieChart>
 {
     // Instances of VisualizationContainer have access to the container
@@ -88,7 +87,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     {
         zRotation = 0f;
         float keySpacing = 10f;
-        int keyCount = 0; // this may not be necessary
+        int keyCount = 0; 
 
         foreach (Robot r in robots) {
             GameObject wedge = GetWedge(r);
