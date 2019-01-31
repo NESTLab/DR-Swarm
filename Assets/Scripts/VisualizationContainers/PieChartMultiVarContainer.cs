@@ -9,9 +9,8 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
-    List<Robot> robots = new List<Robot>(); // there's only going to be one this time
-    HashSet<string> variables = new HashSet<string>(); // I think this is what we want
-    // don't think this s relevant anymore
+
+    HashSet<string> variables = new HashSet<string>(); 
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
 
     private Dictionary<string, GameObject> wedges;
@@ -19,6 +18,7 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
 
     private float total; // sum of all data in pie chart
     private float zRotation = 0f;
+    private float curHVal = 0f; // current hue of HSV color
 
     private GameObject chartContainer;
     private GameObject legendContainer; 
@@ -64,6 +64,11 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
         if (!wedges.ContainsKey(var)) {
             GameObject blankWedge = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
             blankWedge.transform.SetParent(chartContainer.transform, false);
+
+            // set new color distinct from nearby wedges
+            blankWedge.GetComponent<Image>().color = Color.HSVToRGB(curHVal, 1, 1);
+            curHVal = (curHVal + 0.7f) % 1.0f; // TODO: find a step that will never allow two of the same color (eg. 0.5 only allows for 2 unique colors)
+
             wedges[var] = blankWedge;
         }
 
@@ -84,12 +89,11 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     public override void Draw() {
         zRotation = 0f;
         float keySpacing = 10f;
-        int keyCount = 0; // this may not be necessary
+        int keyCount = 0; 
 
         foreach (string v in variables) {
             GameObject wedge = GetWedge(v);
             wedge.transform.SetParent(chartContainer.transform, false);
-            wedge.GetComponent<Image>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             wedge.GetComponent<Image>().fillAmount = dataDict[v] / total; 
             wedge.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
 
@@ -98,12 +102,11 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
 
-            // set color and text values for each robot
+            // set color and text values for each variable
             GameObject key = GetLegendKey(v);
             key.transform.SetParent(legendContainer.transform, false);
 
             GameObject icon = key.transform.Find("Icon").gameObject;
-            // probably a better way to do this
             icon.GetComponent<Image>().color = wedge.GetComponent<Image>().color;  // same color as wedge
 
             GameObject text = key.transform.Find("Text").gameObject;
@@ -132,11 +135,6 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
         variables.UnionWith(this.visualization.GetVariables());
 
         foreach (Robot r in data.Keys) {
-            // I think this is useless at this point
-            if (!robots.Contains(r)) {
-                robots.Add(r);
-            }
-
             foreach (string var in variables) {
                 dataDict[var] = data[r][var];
             }

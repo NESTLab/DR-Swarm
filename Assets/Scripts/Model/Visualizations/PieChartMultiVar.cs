@@ -33,12 +33,16 @@ public class PieChartMultiVar : IVisualization
         // (this is what select many does)
 
         // TODO: Jerry refactor for IList
-        //dataSource = Observable.CombineLatest(observableVarList).Select(list => new Dictionary<Robot, List<float>> { { robot, new List<float>(list) } });
-
         dataSource = Observable.CombineLatest(observableVarList).Select(varList => {
             Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
             foreach (Dictionary<string, float> varDict in varList) {
-                dict.Add(robot, varDict);
+                if (!dict.ContainsKey(robot)) {
+                    dict[robot] = new Dictionary<string, float>();
+                }
+
+                foreach (string key in varDict.Keys) {
+                    dict[robot][key] = varDict[key];
+                }
             }
             return dict;
         });
@@ -66,11 +70,6 @@ public class PieChartMultiVar : IVisualization
 
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
-        // Take the Dictionary<Robot, float> and transform it
-        // into a Dictionary<Robot, List<float>> by taking the
-        // current value for each robot and adding it to each
-        // robot's own list
-
         // This encodes the data source into a dictionary containing
         // one or more values per robot
         return dataSource;
