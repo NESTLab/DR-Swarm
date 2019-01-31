@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour
 
 
     //ADD VARS
-    //TODO: Make this automatic? From robots, from datamangager?
+    //TODO: Make this automatic? From robots, from datamangager? <<YES
     public List<string> variables = new List<string> {"x", "y"};
     public List<string> wantedVars = new List<string>();
 

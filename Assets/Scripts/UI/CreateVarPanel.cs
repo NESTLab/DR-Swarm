@@ -15,12 +15,12 @@ public class CreateVarPanel : MonoBehaviour
     float initpos = -30f;
     int totalDropdowns = 1;
     public List<Dropdown> allDropdownObjects = new List<Dropdown>();
-    int namei = 1;
+    public int namei = 1;
     public Button addVarButton;
-    public Button rmvVarButton;
     public Button sendVarsButton;
 
     public GameObject overallPanel;
+    public List<int> selectedVars = new List<int>();
 
 
     void Start()
@@ -39,13 +39,16 @@ public class CreateVarPanel : MonoBehaviour
         Dropdown td = dropdownPrefab.transform.Find("DropdownVar1").GetComponent<Dropdown>();
         td.ClearOptions();
         td.AddOptions(m_DropOptions);
-  
+        Button remv = dropdownPrefab.transform.Find("rmvButton").GetComponent<Button>();
+        remv.onClick.AddListener(() => { getSelectedVars(0); Destroy(dropdownPrefab);  UIManager.Instance.Options--;  });
+
+
         Robot r1 = DataManager.Instance.GetRobot("RobotTarget1");
         allDropdownObjects.Add(td);
         int options = UIManager.Instance.Options;
 
         addVarButton.onClick.AddListener(AddVar);
-        rmvVarButton.onClick.AddListener(RemoveVar);
+        //rmvVarButton.onClick.AddListener(RemoveVar);
         sendVarsButton.onClick.AddListener(sendVars);
 
         if (options > 1) {
@@ -65,8 +68,11 @@ public class CreateVarPanel : MonoBehaviour
                 Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
                 d2.ClearOptions();
                 d2.AddOptions(m_DropOptions);
+                d2.value = 1;
                 Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
                 t2.text = "Variable " + (i + 2);
+                Button remv1 = dropdownPrefab2.transform.Find("rmvButton").GetComponent<Button>();
+                remv1.onClick.AddListener(() => { getSelectedVars(i + 1); Destroy(dropdownPrefab);UIManager.Instance.Options--;  });
 
                 offset = offset + offset;
                 totalDropdowns++;
@@ -113,13 +119,24 @@ public class CreateVarPanel : MonoBehaviour
                             Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
                             d2.ClearOptions();
                             d2.AddOptions(m_DropOptions);
+                            if(selectedVars.Count >0)
+                            {
+                                d2.value = selectedVars[i];
+                            }
+
                             Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
                             t2.text = "Variable " + (i + 1);
+                            Button remv = dropdownPrefab2.transform.Find("rmvButton").GetComponent<Button>();
+                            int x = i;
+                            remv.onClick.AddListener(() => { getSelectedVars(x); Destroy(dropdownPrefab2); UIManager.Instance.Options--; });
+
+
                             offset = offset + -50f;
                             totalDropdowns++;
                             allDropdownObjects.Add(d2);
                             namei = i;
                         }
+                        //selectedVars.Clear();
 
                         currOptions = options;
                     }
@@ -128,6 +145,20 @@ public class CreateVarPanel : MonoBehaviour
         }
 
 
+    }
+
+    void getSelectedVars(int i)
+    {
+        selectedVars.Clear();
+        foreach (Dropdown d in allDropdownObjects)
+        {
+            int value = d.value;
+            selectedVars.Add(d.value);
+        }
+        Debug.Log("Removing " + i);
+        Debug.Log("THE VARS ARE" + selectedVars.Count);
+
+        selectedVars.RemoveAt(i);
     }
 
     void AddVar()
@@ -153,46 +184,13 @@ public class CreateVarPanel : MonoBehaviour
         allDropdownObjects.Add(d2);
         UIManager.Instance.Options++;
         namei++;
+
+        Button remv = dropdownPrefab2.transform.Find("rmvButton").GetComponent<Button>();
+        int x = namei-1;
+        remv.onClick.AddListener(() => { getSelectedVars(x); Destroy(dropdownPrefab2);UIManager.Instance.Options--; });
     }
 
-    void RemoveVar()
-    {
-        int total = totalDropdowns - 1;
-        foreach (Transform child in varPanel.transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
-        offset = 0f;
-        totalDropdowns = 0;
-        allDropdownObjects.Clear();
-        UIManager.Instance.Options = total ;
-
-
-        for (int i = 0; i < total; i++)
-        {
-            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("VarDropDownPanel"), varPanel.transform);
-            dropdownPrefab2.transform.SetParent(varPanel.transform, false);
-            RectTransform dropTransform = dropdownPrefab2.GetComponent<RectTransform>();
-            dropTransform.sizeDelta = new Vector2(0, 50f);
-            dropTransform.anchorMax = new Vector2(0f, 1f);
-            dropTransform.anchorMin = new Vector2(0f, 1f);
-            dropTransform.anchoredPosition = new Vector2(1f, initpos + offset);
-            dropTransform.pivot = new Vector2(.5f, .5f);
-            dropTransform.localScale = Vector3.one;
-            dropTransform.localRotation = new Quaternion(0, 0, 0, 0);
-
-            Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
-            d2.ClearOptions();
-            d2.AddOptions(m_DropOptions);
-            Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
-            t2.text = "Variable " + (i + 1);
-            offset = offset + -50f;
-            totalDropdowns++;
-            allDropdownObjects.Add(d2);
-            namei = i + 1;
-
-        }
-    }
+    
     public List<string> var = new List<string>();
 
     void sendVars()
