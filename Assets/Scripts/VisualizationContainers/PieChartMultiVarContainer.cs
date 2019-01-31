@@ -1,37 +1,35 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-public class PieChartContainer : VisualizationContainer<PieChart>
-{
+public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
-    List<Robot> robots = new List<Robot>();
-    HashSet<string> variables = new HashSet<string>();
 
-    Dictionary<Robot, float> dataDict = new Dictionary<Robot, float>();
+    HashSet<string> variables = new HashSet<string>(); 
+    Dictionary<string, float> dataDict = new Dictionary<string, float>();
 
-    private Dictionary<Robot, GameObject> wedges;
-    private Dictionary<Robot, GameObject> legend;
+    private Dictionary<string, GameObject> wedges;
+    private Dictionary<string, GameObject> legend;
 
     private float total; // sum of all data in pie chart
     private float zRotation = 0f;
+    private float curHVal = 0f; // current hue of HSV color
 
     private GameObject chartContainer;
     private GameObject legendContainer; 
 
-    // Initialize things
-    protected override void Start() 
-    {
+    // Use this for initialization
+    protected override void Start () {
         // TODO: maybe remove
-        base.Start(); 
-        
-        wedges = new Dictionary<Robot, GameObject>();
-        legend = new Dictionary<Robot, GameObject>();
+        base.Start();
+
+        wedges = new Dictionary<string, GameObject>();
+        legend = new Dictionary<string, GameObject>();
 
         // set up pie chart container
         chartContainer = new GameObject("PieChart", typeof(Image));
@@ -62,38 +60,41 @@ public class PieChartContainer : VisualizationContainer<PieChart>
         legendContainer.GetComponent<Image>().color = Color.clear;
     }
 
-    private GameObject GetWedge(Robot robot) {
-        if (!wedges.ContainsKey(robot)) {
+    private GameObject GetWedge(string var) {
+        if (!wedges.ContainsKey(var)) {
             GameObject blankWedge = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
-            blankWedge.transform.SetParent(chartContainer.transform, false); 
-            wedges[robot] = blankWedge;
+            blankWedge.transform.SetParent(chartContainer.transform, false);
+
+            // set new color distinct from nearby wedges
+            blankWedge.GetComponent<Image>().color = Color.HSVToRGB(curHVal, 1, 1);
+            curHVal = (curHVal + 0.7f) % 1.0f; // TODO: find a step that will never allow two of the same color (eg. 0.5 only allows for 2 unique colors)
+
+            wedges[var] = blankWedge;
         }
 
-        return wedges[robot];
-    } 
+        return wedges[var];
+    }
 
-    private GameObject GetLegendKey(Robot robot) {
-        if (!legend.ContainsKey(robot)) {
+    private GameObject GetLegendKey(string var) {
+        if (!legend.ContainsKey(var)) {
             GameObject blankKey = (GameObject)Instantiate(Resources.Load("LegendKey"), transform);
             blankKey.transform.SetParent(legendContainer.transform, false);
-            legend[robot] = blankKey;
+            legend[var] = blankKey;
         }
 
-        return legend[robot];
+        return legend[var];
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
-    public override void Draw() 
-    {
+    public override void Draw() {
         zRotation = 0f;
         float keySpacing = 10f;
         int keyCount = 0; 
 
-        foreach (Robot r in robots) {
-            GameObject wedge = GetWedge(r);
+        foreach (string v in variables) {
+            GameObject wedge = GetWedge(v);
             wedge.transform.SetParent(chartContainer.transform, false);
-            wedge.GetComponent<Image>().color = r.color;
-            wedge.GetComponent<Image>().fillAmount = dataDict[r]/total;
+            wedge.GetComponent<Image>().fillAmount = dataDict[v] / total; 
             wedge.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, zRotation));
 
             RectTransform parent = chartContainer.GetComponent<RectTransform>();
@@ -101,15 +102,15 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
             zRotation -= wedge.GetComponent<Image>().fillAmount * 360f;
 
-            // set color and text values for each robot
-            GameObject key = GetLegendKey(r);
+            // set color and text values for each variable
+            GameObject key = GetLegendKey(v);
             key.transform.SetParent(legendContainer.transform, false);
 
             GameObject icon = key.transform.Find("Icon").gameObject;
-            icon.GetComponent<Image>().color = r.color;
+            icon.GetComponent<Image>().color = wedge.GetComponent<Image>().color;  // same color as wedge
 
             GameObject text = key.transform.Find("Text").gameObject;
-            text.GetComponent<Text>().text = r.name;
+            text.GetComponent<Text>().text = v;
 
             // set key position
             RectTransform t = key.GetComponent<RectTransform>();
@@ -128,25 +129,21 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
-    {
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         float newTotal = 0;
         // TODO: make set account for removed variables as well
-        variables.UnionWith(this.visualization.GetVariables()); 
+        variables.UnionWith(this.visualization.GetVariables());
+
         foreach (Robot r in data.Keys) {
-            if (!robots.Contains(r)) {
-                robots.Add(r);
-            }
-            
             foreach (string var in variables) {
-                dataDict[r] = data[r][var]; 
+                dataDict[var] = data[r][var];
             }
         }
 
         // TODO: incorporate this into the other for loop - doesn't need to be separate
         // update the total 
-        foreach (Robot r in dataDict.Keys) {
-            newTotal += dataDict[r]; 
+        foreach (string var in dataDict.Keys) {
+            newTotal += dataDict[var];
         }
 
         total = newTotal;
