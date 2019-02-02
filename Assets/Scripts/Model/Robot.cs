@@ -9,21 +9,14 @@ public class Robot
         get { return _name;  }
     }
 
-    private Color _color;
-    public Color color
-    {
-        get
-        {
-            return _color;
-        }
-    }
+    public Color color;
 
     private VariableDict data;
 
     public Robot(string name)
     {
         this._name = name;
-        this._color = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+        this.color = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
         this.data = new VariableDict();
     }
 

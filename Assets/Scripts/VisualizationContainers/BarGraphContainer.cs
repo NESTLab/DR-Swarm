@@ -47,13 +47,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, List<float>> data) {
-        foreach (Robot r in data.Keys) {
-            if (!robots.Contains(r)) {
-                robots.Add(r);
-            }
-
-            dataDict[r] = data[r][0];
-        }
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
+    {
     }
 }
