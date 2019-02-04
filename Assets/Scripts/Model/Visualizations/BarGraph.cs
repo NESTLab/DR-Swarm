@@ -4,29 +4,31 @@ using System.Collections.Generic;
 using UniRx;
 
 // TODO: Implement this class.
+
+// TODO: implement another class for multivariable?
+
 // Anything and everything can be changed. Comments can be removed,
 // they're just here to explain everything as best I can
 public class BarGraph : IVisualization
 {
     // Feel free to use any data type to store the intermittent data
-    IObservable<Dictionary<Robot, float>> dataSource;
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotList;
+    HashSet<string> varSet;
 
-    public BarGraph(string variableName, Robot firstRobot, params Robot[] robots)
+    // subscribe like line chart 
+    // xaxis, yaxis?
+    public BarGraph(Robot firstRobot, HashSet<Robot> robots, string firstVar, HashSet<string> variables) // don't think this can change to include more variables
     {
+        // TODO: Jerry needs to rename to robotSet
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
+        //robotList.Add(firstRobot);
 
-        // Create a single data source observable by creating
-        // an observable for each robot, and then combining them
-        // (this is what select many does)
-        dataSource = robotList.ToObservable().SelectMany(r =>
-        {
-            // get the observable variable from the robot
-            // then transform the values from the observable
-            // into a Dictionary<Robot, float>
-            return r.GetObservableVariable<float>(variableName).Select(v => new Dictionary<Robot, float> { { r, v } });
-        });
+        varSet = variables;
+        varSet.Add(firstVar);
+        //varSet.Add(variableName);
+
     }
 
     public ISet<Robot> GetRobots()
@@ -36,7 +38,7 @@ public class BarGraph : IVisualization
 
     public ISet<string> GetVariables()
     {
-        throw new NotImplementedException();
+        return varSet;
     }
 
     public ParameterCount GetNumDataSources()
@@ -46,7 +48,7 @@ public class BarGraph : IVisualization
 
     public ParameterCount GetNumRobots()
     {
-        return ParameterCount.One;
+        return ParameterCount.N;
     }
 
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
@@ -56,6 +58,23 @@ public class BarGraph : IVisualization
         // This is a dictionary that maps robots to a dict
         // which maps variable name (string) to value (float)
 
-        throw new NotImplementedException();
+        // TODO: 
+        // the datasource needs to be a dictionary<Robot, dictionary<string, float>>
+        // so we need to loop through each robot and create a dictionary of strings to observable floats
+        // then we need to make a dictionary of all of those observables
+
+        
+        foreach (Robot r in robotList) {
+            Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
+
+            List<IObservable<Dictionary<string, float>>> observableVarList = new List<IObservable<Dictionary<string, float>>>();
+            foreach (string var in varSet) {
+                observableVarList.Add(r.GetObservableVariable<float>(var).Select(v => new Dictionary<string, float>() { { var, v } }));
+            }
+
+
+        }
+
+        //return dataSource;
     }
 }
