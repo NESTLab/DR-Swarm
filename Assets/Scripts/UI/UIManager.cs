@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     {
         Line,
         Pie,
+        PieMulti,
         NoGraph
     }
 
@@ -52,6 +53,11 @@ public class UIManager : MonoBehaviour
                 GraphType = graph.Pie;
                 Options = 1;
                 TotalOptions = 1;
+            } else if (_sentGraphType == "PieMulti")
+            {
+                GraphType = graph.PieMulti;
+                Options = 2;
+                
             }
         }
     }
@@ -117,6 +123,29 @@ public class UIManager : MonoBehaviour
             DateTime foo = DateTime.UtcNow;
             long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = xvar+","+yvar+" Line " + unixTime;//TODO: Add another unique symbol to this?
+            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
+        } else if (GraphType == graph.Pie)
+        {
+            Robot r2 = robots[0];
+            robots.RemoveAt(0);
+            string var = wantedVars[0];
+            IVisualization graphToAdd = new PieChart(var, r1, r2, robots.ToArray());
+            DateTime foo = DateTime.UtcNow;
+            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
+            title = var + "," + " Pie " + unixTime;//TODO: Add another unique symbol to this?
+            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
+        } else if (GraphType == graph.PieMulti)
+        {
+            string var = wantedVars[0];
+            wantedVars.RemoveAt(0);
+            IVisualization graphToAdd = new PieChartMultiVar(r1, var, wantedVars.ToArray());
+            DateTime foo = DateTime.UtcNow;
+            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
+            title = var + "," + "Multi Pie " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
