@@ -29,6 +29,31 @@ public class BarGraph : IVisualization
         varSet.Add(firstVar);
         //varSet.Add(variableName);
 
+        IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
+        dataSource = robotList.ToObservable().SelectMany(robot => {
+            List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
+            foreach (string variable in variables) {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v =>
+                {
+                    return new Dictionary<string, float>() { { variable, v } };
+                }));
+            }
+
+            return Observable.CombineLatest(variableList).Select(varList => {
+                Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
+                foreach (Dictionary<string, float> varDict in varList) {
+                    if (!dict.ContainsKey(robot)) {
+                        dict[robot] = new Dictionary<string, float>();
+                    }
+
+                    foreach (string key in varDict.Keys) {
+                        dict[robot][key] = varDict[key];
+                    }
+                }
+
+                return dict;
+            });
+        });
     }
 
     public ISet<Robot> GetRobots()
@@ -63,18 +88,6 @@ public class BarGraph : IVisualization
         // so we need to loop through each robot and create a dictionary of strings to observable floats
         // then we need to make a dictionary of all of those observables
 
-        
-        foreach (Robot r in robotList) {
-            Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
-
-            List<IObservable<Dictionary<string, float>>> observableVarList = new List<IObservable<Dictionary<string, float>>>();
-            foreach (string var in varSet) {
-                observableVarList.Add(r.GetObservableVariable<float>(var).Select(v => new Dictionary<string, float>() { { var, v } }));
-            }
-
-
-        }
-
-        //return dataSource;
+        return dataSource;
     }
 }
