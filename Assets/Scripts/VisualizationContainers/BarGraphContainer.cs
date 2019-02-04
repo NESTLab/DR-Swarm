@@ -38,7 +38,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         if (!barContainers.ContainsKey(robot)) { //this is wrong - needs to be a container for the bars
             // TODO: create bar prefab
             //GameObject blankBar = (GameObject)Instantiate(Resources.Load("Bar"), transform);
-            GameObject container = new GameObject();
+            GameObject container = new GameObject("barContainer", typeof(Image));
             //blankWedge.transform.SetParent(chartContainer.transform, false);
             // TODO: set parent for bar
             barContainers[robot] = container;
@@ -72,12 +72,30 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     public override void Draw() {
         float containerSpacing = 0f;
         float barSpacing = 0f;
+        float barCount = 0f;
+        float containerCount = 0f;
 
         foreach (Robot r in robots) {
+            barCount = 0f;
             GameObject container = GetBarContainer(r);
             // set parent for this
             container.transform.SetParent(transform);
-            
+
+            //container.transform.localScale = Vector3.one;
+            //container.transform.localRotation = new Quaternion(0, 0, 0, 0);
+
+            container.GetComponent<Image>().color = Color.white;
+
+            RectTransform t = container.GetComponent<RectTransform>();
+            t.anchorMax = new Vector2(0.5f, 0.5f);
+            t.anchorMin = new Vector2(0.5f, 0.5f);
+            t.pivot = new Vector2(0.5f, 0.5f);
+            t.localScale = Vector3.one;
+            t.localRotation = new Quaternion(0, 0, 0, 0);
+            t.sizeDelta = new Vector2(200f, 200f); // change this eventually
+            t.anchoredPosition = new Vector2((containerSpacing + t.rect.width) * containerCount, 0f);
+
+
             // now that we have the container, we need to fill it with the bars
             foreach (string var in variables) {
                 GameObject bar = GetBar(r, var);
@@ -86,8 +104,19 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 bar.transform.SetParent(container.transform, false);
 
                 // set size
+                float value = dataDict[r][var];
+                RectTransform tb = bar.GetComponent<RectTransform>();
+                tb.sizeDelta = new Vector2(30f, value * 100f); // for now
+                tb.anchorMax = new Vector2(0f, 0f);
+                tb.anchorMin = new Vector2(0f, 0f);
+                tb.pivot = new Vector2(0f, 0f);
+                tb.anchoredPosition = new Vector2((barSpacing + tb.rect.width) * barCount, 0f);
 
+
+                barCount += 1;
             }
+
+            containerCount += 1;
         }
     }
 

@@ -29,7 +29,6 @@ public class BarGraph : IVisualization
         varSet.Add(firstVar);
         //varSet.Add(variableName);
 
-        IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
             foreach (string variable in variables) {
