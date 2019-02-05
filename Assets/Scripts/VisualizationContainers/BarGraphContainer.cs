@@ -17,12 +17,14 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     private Dictionary<Robot, GameObject> barContainers; 
     private Dictionary<Robot, Dictionary<string, GameObject>> bars;
-
-    private Dictionary<string, GameObject> axes;
+    private Dictionary<string, GameObject> legend;
 
     private Dictionary<string, Color> varColors = new Dictionary<string, Color>(); 
     private float curHVal = 0f;
     private float invphi = 1f / 1.618f; // golden ratio
+
+    private GameObject graphContainer;
+    private GameObject legendContainer;
 
     // Initialize things
     protected override void Start()
@@ -32,46 +34,77 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
         barContainers = new Dictionary<Robot, GameObject>();
         bars = new Dictionary<Robot, Dictionary<string, GameObject>>();
-        axes = new Dictionary<string, GameObject>();
+        legend = new Dictionary<string, GameObject>();
+
+        // set up bar graph container
+        graphContainer = new GameObject("BarGraph", typeof(Image));
+        graphContainer.transform.SetParent(container.transform, false);
+        RectTransform gt = graphContainer.GetComponent<RectTransform>();
+        gt.sizeDelta = new Vector2(container.sizeDelta.x, 250f);
+        gt.anchorMax = new Vector2(0.5f, 1f);
+        gt.anchorMin = new Vector2(0.5f, 1f);
+        gt.pivot = new Vector2(0.5f, 1f);
+        gt.localScale = Vector3.one;
+        gt.localRotation = new Quaternion(0, 0, 0, 0);
+        gt.anchoredPosition = Vector2.zero;
+
+        graphContainer.GetComponent<Image>().color = Color.blue;
+
+        // set up legend container
+        legendContainer = new GameObject("Legend", typeof(Image));
+        legendContainer.transform.SetParent(container.transform, false);
+        RectTransform lt = legendContainer.GetComponent<RectTransform>();
+        lt.sizeDelta = new Vector2(container.sizeDelta.x, 150f);
+        lt.anchorMax = new Vector2(0.5f, 0f);
+        lt.anchorMin = new Vector2(0.5f, 0f);
+        lt.pivot = new Vector2(0.5f, 0f);
+        lt.localScale = Vector3.one;
+        lt.localRotation = new Quaternion(0, 0, 0, 0);
+        lt.anchoredPosition = Vector2.zero;
+
+        legendContainer.GetComponent<Image>().color = Color.blue;
 
         // Y axis
         GameObject yaxis = new GameObject("y-axis", typeof(Image));
-        yaxis.transform.SetParent(transform);
+        yaxis.transform.SetParent(gt, false);
         yaxis.GetComponent<Image>().color = Color.white;
         RectTransform yt = yaxis.GetComponent<RectTransform>();
         yt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
         yt.localScale = Vector3.one;
-        yt.sizeDelta = new Vector2(1f, 400f); // change this eventually
+        yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y); // change this eventually
         yt.anchorMin = Vector2.zero;
         yt.anchorMax = Vector2.zero;
         yt.pivot = Vector2.zero;
         yt.anchoredPosition = Vector2.zero;
         
-        axes["y"] = yaxis;
-
         // X axis
         GameObject xaxis = new GameObject("x-axis", typeof(Image));
-        xaxis.transform.SetParent(transform);
+        xaxis.transform.SetParent(gt, false);
         xaxis.GetComponent<Image>().color = Color.white;
         RectTransform xt = xaxis.GetComponent<RectTransform>();
         xt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
         xt.localScale = Vector3.one;
-        xt.sizeDelta = new Vector2(500f, 1f); // change this eventually
+        xt.sizeDelta = new Vector2(gt.sizeDelta.x, 1f); // change this eventually
         xt.anchorMin = Vector2.zero;
         xt.anchorMax = Vector2.zero;
         xt.pivot = Vector2.zero;
         xt.anchoredPosition = Vector2.zero;
+    }
 
-        axes["x"] = xaxis;
+    private GameObject GetLegendKey(string var) {
+        if (!legend.ContainsKey(var)) {
+            GameObject blankKey = (GameObject)Instantiate(Resources.Load("LegendKey"), transform);
+            blankKey.transform.SetParent(legendContainer.transform, false);
+            legend[var] = blankKey;
+        }
+
+        return legend[var];
     }
 
     private GameObject GetBarContainer(Robot robot) {
         if (!barContainers.ContainsKey(robot)) { //this is wrong - needs to be a container for the bars
-            // TODO: create bar prefab
-            //GameObject blankBar = (GameObject)Instantiate(Resources.Load("Bar"), transform);
+            // TODO: delete bar prefab
             GameObject container = new GameObject("barContainer", typeof(Image));
-            //blankWedge.transform.SetParent(chartContainer.transform, false);
-            // TODO: set parent for bar
             barContainers[robot] = container;
         }
 
@@ -105,26 +138,25 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         float barSpacing = 0f;
         float barCount = 0f;
         float containerCount = 0f;
-
-        GameObject yaxis = axes["y"];
-        GameObject xaxis = axes["x"];
+        int keyCount = 0;
+        float keySpacing = 2f;
 
         foreach (Robot r in robots) {
             barCount = 0f;
-            GameObject container = GetBarContainer(r);
+            GameObject barContainer = GetBarContainer(r);
             // set parent for this
-            container.transform.SetParent(transform);
+            barContainer.transform.SetParent(graphContainer.transform, false);
 
-            container.GetComponent<Image>().color = Color.white;
+            barContainer.GetComponent<Image>().color = Color.white;
 
-            RectTransform t = container.GetComponent<RectTransform>();
-            t.anchorMax = new Vector2(0.5f, 0.5f);
-            t.anchorMin = new Vector2(0.5f, 0.5f);
-            t.pivot = new Vector2(0.5f, 0.5f);
-            t.localScale = Vector3.one;
-            t.localRotation = new Quaternion(0, 0, 0, 0);
-            t.sizeDelta = new Vector2(200f, 200f); // change this eventually
-            t.anchoredPosition = new Vector2((containerSpacing + t.rect.width) * containerCount, 0f);
+            RectTransform ct = barContainer.GetComponent<RectTransform>();
+            ct.anchorMax = new Vector2(0f, 0f);
+            ct.anchorMin = new Vector2(0f, 0f);
+            ct.pivot = new Vector2(0f, 0f);
+            ct.localScale = Vector3.one;
+            ct.localRotation = new Quaternion(0, 0, 0, 0);
+            ct.sizeDelta = new Vector2(200f, 200f); // change this eventually
+            ct.anchoredPosition = new Vector2((containerSpacing + ct.rect.width) * containerCount, 0f);
 
 
             // now that we have the container, we need to fill it with the bars
@@ -132,7 +164,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 GameObject bar = GetBar(r, var);
 
                 // put the bar inside the container
-                bar.transform.SetParent(container.transform, false);
+                bar.transform.SetParent(barContainer.transform, false);
 
                 // set size
                 float value = dataDict[r][var];
@@ -148,6 +180,31 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             }
 
             containerCount += 1;
+        }
+
+        foreach (string var in variables) {
+            // set color and text values for each variable
+            GameObject key = GetLegendKey(var);
+            key.transform.SetParent(legendContainer.transform, false);
+
+            GameObject icon = key.transform.Find("Icon").gameObject;
+            icon.GetComponent<Image>().color = varColors[var];  // same color as bar
+
+            GameObject text = key.transform.Find("Text").gameObject;
+            text.GetComponent<Text>().text = var;
+
+            // set key position
+            RectTransform kt = key.GetComponent<RectTransform>();
+            kt.anchorMax = new Vector2(0f, 0.5f);
+            kt.anchorMin = new Vector2(0f, 0.5f);
+            kt.pivot = new Vector2(0f, 0.5f);
+            kt.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+            kt.localRotation = new Quaternion(0, 0, 0, 0);
+
+            // translate each key lower than the last
+            kt.anchoredPosition = new Vector2((keySpacing + kt.rect.width) * keyCount * kt.localScale.x, 0f);
+
+            keyCount++;
         }
     }
 
