@@ -15,21 +15,25 @@ public class BarChartTest : MonoBehaviour {
         r1.SetVariable("var1", 0.5f);
         r1.SetVariable("var2", 1f);
         r1.SetVariable("var3", 1.2f);
+        r1.SetVariable("var4", 2f);
 
         r2 = DataManager.Instance.GetRobot("RobotTarget2");
         r2.SetVariable("var1", 0.8f);
         r2.SetVariable("var2", 0.2f);
         r2.SetVariable("var3", 1.2f);
+        r2.SetVariable("var4", 2f);
 
         r3 = DataManager.Instance.GetRobot("RobotTarget3");
         r3.SetVariable("var1", 0.0f);
         r3.SetVariable("var2", 0.2f);
         r3.SetVariable("var3", 1.2f);
+        r3.SetVariable("var4", 2f);
 
         r4 = DataManager.Instance.GetRobot("RobotTarget4");
         r4.SetVariable("var1", 1.1f);
         r4.SetVariable("var2", 0.6f);
         r4.SetVariable("var3", 1.2f);
+        r4.SetVariable("var4", 2f);
 
         HashSet<Robot> robots = new HashSet<Robot>();
         robots.Add(r2);
@@ -39,6 +43,7 @@ public class BarChartTest : MonoBehaviour {
         HashSet<string> vars = new HashSet<string>();
         vars.Add("var2");
         vars.Add("var3");
+        vars.Add("var4");
 
         HashSet<Robot> lessRobots = new HashSet<Robot>();
         //lessRobots.Add(r2);

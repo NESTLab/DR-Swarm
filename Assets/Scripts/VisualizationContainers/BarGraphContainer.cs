@@ -52,7 +52,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         gt.localRotation = new Quaternion(0, 0, 0, 0);
         gt.anchoredPosition = Vector2.zero;
 
-        graphContainer.GetComponent<Image>().color = Color.black;
+        graphContainer.GetComponent<Image>().color = Color.clear;
 
         // set up legend container
         legendContainer = new GameObject("Legend", typeof(Image));
@@ -148,11 +148,11 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
         float containerSpacing = 0f;
-        float barSpacing = 0f;
-        float barCount = 0f;
         float containerCount = 0f;
-        int keyCount = 0;
+        float barSpacing = 0f;  // change this eventually
+        float barCount = 0f;
         float keySpacing = 2f;
+        int keyCount = 0;
 
         foreach (Robot r in robots) {
             barCount = 0f;
@@ -197,11 +197,15 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
                 // put the bar inside the container
                 bar.transform.SetParent(barContainer.transform, false);
+                RectTransform gparent = graphContainer.GetComponent<RectTransform>();
+
+                // width should be container width divided by number of robots
+                float barSize = (gparent.sizeDelta.x - axisOffset) / variables.Count;
 
                 // set size
                 float value = dataDict[r][var];
                 RectTransform tb = bar.GetComponent<RectTransform>();
-                tb.sizeDelta = new Vector2(30f, value * 100f); // for now
+                tb.sizeDelta = new Vector2(barSize, value * 100f); // for now
                 tb.anchorMax = new Vector2(0f, 0f);
                 tb.anchorMin = new Vector2(0f, 0f);
                 tb.pivot = new Vector2(0f, 0f);
@@ -227,14 +231,18 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
             // set key position
             RectTransform kt = key.GetComponent<RectTransform>();
-            kt.anchorMax = new Vector2(0f, 0.5f);
-            kt.anchorMin = new Vector2(0f, 0.5f);
-            kt.pivot = new Vector2(0f, 0.5f);
+            kt.anchorMax = new Vector2(0f, 1f);
+            kt.anchorMin = new Vector2(0f, 1f);
+            kt.pivot = new Vector2(0f, 1f);
             kt.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             kt.localRotation = new Quaternion(0, 0, 0, 0);
 
             // translate each key lower than the last
-            kt.anchoredPosition = new Vector2((keySpacing + kt.rect.width) * keyCount * kt.localScale.x, 0f);
+            float x = (keySpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
+            Debug.Log("x position: " + x.ToString());
+            float y = (-keySpacing - kt.rect.height) * ((keyCount + 1) % 2) * kt.localScale.y;
+            Debug.Log("y position: " + y.ToString());
+            kt.anchoredPosition = new Vector2(x, y);
 
             keyCount++;
         }
