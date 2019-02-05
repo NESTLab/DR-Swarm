@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-// TODO: add another for BarChartMultiVar
 public class BarGraphContainer : VisualizationContainer<BarGraph>
 {
     // Instances of VisualizationContainer have access to the container
@@ -18,13 +17,16 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     private Dictionary<Robot, GameObject> barContainers; 
     private Dictionary<Robot, Dictionary<string, GameObject>> bars;
     private Dictionary<string, GameObject> legend;
+    private Dictionary<string, Color> varColors = new Dictionary<string, Color>();
+    private Dictionary<Robot, GameObject> xLabels = new Dictionary<Robot, GameObject>();
 
-    private Dictionary<string, Color> varColors = new Dictionary<string, Color>(); 
     private float curHVal = 0f;
     private float invphi = 1f / 1.618f; // golden ratio
 
     private GameObject graphContainer;
     private GameObject legendContainer;
+
+    private float axisOffset;
 
     // Initialize things
     protected override void Start()
@@ -36,11 +38,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         bars = new Dictionary<Robot, Dictionary<string, GameObject>>();
         legend = new Dictionary<string, GameObject>();
 
+        axisOffset = 30f;
+
         // set up bar graph container
         graphContainer = new GameObject("BarGraph", typeof(Image));
         graphContainer.transform.SetParent(container.transform, false);
         RectTransform gt = graphContainer.GetComponent<RectTransform>();
-        gt.sizeDelta = new Vector2(container.sizeDelta.x, 250f);
+        gt.sizeDelta = new Vector2(container.sizeDelta.x, 270f);  // need to make this dynamically size
         gt.anchorMax = new Vector2(0.5f, 1f);
         gt.anchorMin = new Vector2(0.5f, 1f);
         gt.pivot = new Vector2(0.5f, 1f);
@@ -48,13 +52,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         gt.localRotation = new Quaternion(0, 0, 0, 0);
         gt.anchoredPosition = Vector2.zero;
 
-        graphContainer.GetComponent<Image>().color = Color.blue;
+        graphContainer.GetComponent<Image>().color = Color.black;
 
         // set up legend container
         legendContainer = new GameObject("Legend", typeof(Image));
         legendContainer.transform.SetParent(container.transform, false);
         RectTransform lt = legendContainer.GetComponent<RectTransform>();
-        lt.sizeDelta = new Vector2(container.sizeDelta.x, 150f);
+        lt.sizeDelta = new Vector2(container.sizeDelta.x, 150f);  // need to make this dynamically size
         lt.anchorMax = new Vector2(0.5f, 0f);
         lt.anchorMin = new Vector2(0.5f, 0f);
         lt.pivot = new Vector2(0.5f, 0f);
@@ -62,7 +66,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         lt.localRotation = new Quaternion(0, 0, 0, 0);
         lt.anchoredPosition = Vector2.zero;
 
-        legendContainer.GetComponent<Image>().color = Color.blue;
+        legendContainer.GetComponent<Image>().color = Color.clear;
 
         // Y axis
         GameObject yaxis = new GameObject("y-axis", typeof(Image));
@@ -71,12 +75,12 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         RectTransform yt = yaxis.GetComponent<RectTransform>();
         yt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
         yt.localScale = Vector3.one;
-        yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y); // change this eventually
+        yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y - axisOffset); // change this eventually
         yt.anchorMin = Vector2.zero;
         yt.anchorMax = Vector2.zero;
         yt.pivot = Vector2.zero;
-        yt.anchoredPosition = Vector2.zero;
-        
+        yt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
+
         // X axis
         GameObject xaxis = new GameObject("x-axis", typeof(Image));
         xaxis.transform.SetParent(gt, false);
@@ -84,11 +88,11 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         RectTransform xt = xaxis.GetComponent<RectTransform>();
         xt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
         xt.localScale = Vector3.one;
-        xt.sizeDelta = new Vector2(gt.sizeDelta.x, 1f); // change this eventually
+        xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 2f); // change this eventually
         xt.anchorMin = Vector2.zero;
         xt.anchorMax = Vector2.zero;
         xt.pivot = Vector2.zero;
-        xt.anchoredPosition = Vector2.zero;
+        xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
     }
 
     private GameObject GetLegendKey(string var) {
@@ -102,7 +106,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     }
 
     private GameObject GetBarContainer(Robot robot) {
-        if (!barContainers.ContainsKey(robot)) { //this is wrong - needs to be a container for the bars
+        if (!barContainers.ContainsKey(robot)) { 
             // TODO: delete bar prefab
             GameObject container = new GameObject("barContainer", typeof(Image));
             barContainers[robot] = container;
@@ -132,6 +136,15 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         return bars[robot][var];
     }
 
+    private GameObject GetXLabel(Robot r) {
+        if (!xLabels.ContainsKey(r)) {
+            GameObject label = new GameObject("x-label", typeof(Text));
+            xLabels[r] = label;
+        }
+
+        return xLabels[r];
+    }
+
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
         float containerSpacing = 0f;
@@ -146,8 +159,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             GameObject barContainer = GetBarContainer(r);
             // set parent for this
             barContainer.transform.SetParent(graphContainer.transform, false);
-
-            barContainer.GetComponent<Image>().color = Color.white;
+            barContainer.GetComponent<Image>().color = Color.clear;
 
             RectTransform ct = barContainer.GetComponent<RectTransform>();
             ct.anchorMax = new Vector2(0f, 0f);
@@ -155,9 +167,29 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             ct.pivot = new Vector2(0f, 0f);
             ct.localScale = Vector3.one;
             ct.localRotation = new Quaternion(0, 0, 0, 0);
-            ct.sizeDelta = new Vector2(200f, 200f); // change this eventually
-            ct.anchoredPosition = new Vector2((containerSpacing + ct.rect.width) * containerCount, 0f);
+            RectTransform parent = graphContainer.GetComponent<RectTransform>();
+            // width should be container width divided by number of robots
+            float containerSize = (parent.sizeDelta.x - axisOffset) / robots.Count;
+            ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset); // change this eventually
+            ct.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
 
+            // x labels
+            GameObject xLabel = GetXLabel(r);
+            xLabel.transform.SetParent(graphContainer.transform, false);
+            Text text = xLabel.GetComponent<Text>();
+            text.text = r.name;
+            text.color = Color.white;
+            text.fontSize = 14;
+            text.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+            text.alignment = TextAnchor.MiddleCenter;
+            RectTransform xTransform = xLabel.GetComponent<RectTransform>();
+            xTransform.anchorMin = new Vector2(0.5f, 0f);
+            xTransform.anchorMax = new Vector2(0.5f, 0f);
+            xTransform.pivot = new Vector2(0.5f, 0f);
+            xTransform.anchoredPosition = Vector2.zero;
+            xTransform.sizeDelta = new Vector2(100f, axisOffset);
 
             // now that we have the container, we need to fill it with the bars
             foreach (string var in variables) {
