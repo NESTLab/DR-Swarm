@@ -204,13 +204,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
                 // set size
                 float value = dataDict[r][var];
+                Debug.Log("robot: " + r + ", variable: " + var + ", value: " + value.ToString());
                 RectTransform tb = bar.GetComponent<RectTransform>();
-                tb.sizeDelta = new Vector2(barSize, value * 100f); // for now
+                tb.sizeDelta = new Vector2(barSize, value * 100f); // TODO: make better
                 tb.anchorMax = new Vector2(0f, 0f);
                 tb.anchorMin = new Vector2(0f, 0f);
                 tb.pivot = new Vector2(0f, 0f);
                 tb.anchoredPosition = new Vector2((barSpacing + tb.rect.width) * barCount, 0f);
-
 
                 barCount += 1;
             }
@@ -239,9 +239,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
             // translate each key lower than the last
             float x = (keySpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
-            Debug.Log("x position: " + x.ToString());
             float y = (-keySpacing - kt.rect.height) * ((keyCount + 1) % 2) * kt.localScale.y;
-            Debug.Log("y position: " + y.ToString());
             kt.anchoredPosition = new Vector2(x, y);
 
             keyCount++;
@@ -252,6 +250,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
     {
+        Debug.Log("number of robots: " + data.Count.ToString());
         // TODO: figure out how to handle maximum value - probably the same as linegraph
         foreach (Robot r in data.Keys) {
             if (!robots.Contains(r)) {
@@ -260,8 +259,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         }
 
         Robot robot = robots[0];
-        // TODO: do I need to keep track of the variable names too? 
-        foreach (string var in data[robot].Keys) {
+        Debug.Log("robot dictionary" + data[robot].Count.ToString());
+        foreach (string var in data[robot].Keys) {  // this is broken
             if (!variables.Contains(var)) {
                 variables.Add(var); 
 
