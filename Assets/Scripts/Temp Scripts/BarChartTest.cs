@@ -41,7 +41,7 @@ public class BarChartTest : MonoBehaviour {
         vars.Add("var3");
 
         HashSet<Robot> lessRobots = new HashSet<Robot>();
-        lessRobots.Add(r2);
+        //lessRobots.Add(r2);
 
         HashSet<string> lessVars = new HashSet<string>();
 

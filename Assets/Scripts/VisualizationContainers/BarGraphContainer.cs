@@ -13,12 +13,12 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
-    //Dictionary<Robot, float> dataDict = new Dictionary<Robot, float>();
     Dictionary<Robot, Dictionary<string, float>> dataDict = new Dictionary<Robot, Dictionary<string, float>>();
 
-    private Dictionary<Robot, GameObject> barContainers; // this is wrong - need a container for the bars that's connected to the robots
-    private Dictionary<Robot, Dictionary<string, GameObject>> bars; // is this what I really want?
-    // can I make a prefab that contains an unknown number of bars?
+    private Dictionary<Robot, GameObject> barContainers; 
+    private Dictionary<Robot, Dictionary<string, GameObject>> bars;
+
+    private Dictionary<string, GameObject> axes;
 
     private Dictionary<string, Color> varColors = new Dictionary<string, Color>(); 
     private float curHVal = 0f;
@@ -32,6 +32,37 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
         barContainers = new Dictionary<Robot, GameObject>();
         bars = new Dictionary<Robot, Dictionary<string, GameObject>>();
+        axes = new Dictionary<string, GameObject>();
+
+        // Y axis
+        GameObject yaxis = new GameObject("y-axis", typeof(Image));
+        yaxis.transform.SetParent(transform);
+        yaxis.GetComponent<Image>().color = Color.white;
+        RectTransform yt = yaxis.GetComponent<RectTransform>();
+        yt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+        yt.localScale = Vector3.one;
+        yt.sizeDelta = new Vector2(1f, 400f); // change this eventually
+        yt.anchorMin = Vector2.zero;
+        yt.anchorMax = Vector2.zero;
+        yt.pivot = Vector2.zero;
+        yt.anchoredPosition = Vector2.zero;
+        
+        axes["y"] = yaxis;
+
+        // X axis
+        GameObject xaxis = new GameObject("x-axis", typeof(Image));
+        xaxis.transform.SetParent(transform);
+        xaxis.GetComponent<Image>().color = Color.white;
+        RectTransform xt = xaxis.GetComponent<RectTransform>();
+        xt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+        xt.localScale = Vector3.one;
+        xt.sizeDelta = new Vector2(500f, 1f); // change this eventually
+        xt.anchorMin = Vector2.zero;
+        xt.anchorMax = Vector2.zero;
+        xt.pivot = Vector2.zero;
+        xt.anchoredPosition = Vector2.zero;
+
+        axes["x"] = xaxis;
     }
 
     private GameObject GetBarContainer(Robot robot) {
@@ -75,14 +106,14 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         float barCount = 0f;
         float containerCount = 0f;
 
+        GameObject yaxis = axes["y"];
+        GameObject xaxis = axes["x"];
+
         foreach (Robot r in robots) {
             barCount = 0f;
             GameObject container = GetBarContainer(r);
             // set parent for this
             container.transform.SetParent(transform);
-
-            //container.transform.localScale = Vector3.one;
-            //container.transform.localRotation = new Quaternion(0, 0, 0, 0);
 
             container.GetComponent<Image>().color = Color.white;
 
