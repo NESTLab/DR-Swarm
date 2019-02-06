@@ -69,12 +69,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         legendContainer.GetComponent<Image>().color = Color.clear;
 
         // Y axis
-        GameObject yaxis = new GameObject("y-axis", typeof(Image));
-        yaxis.transform.SetParent(gt, false);
-        yaxis.GetComponent<Image>().color = Color.white;
+        GameObject yaxis = CreateImage("y-axis", gt, Color.white);
         RectTransform yt = yaxis.GetComponent<RectTransform>();
-        yt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
-        yt.localScale = Vector3.one;
         yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y - axisOffset); // change this eventually
         yt.anchorMin = Vector2.zero;
         yt.anchorMax = Vector2.zero;
@@ -82,17 +78,25 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         yt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
 
         // X axis
-        GameObject xaxis = new GameObject("x-axis", typeof(Image));
-        xaxis.transform.SetParent(gt, false);
-        xaxis.GetComponent<Image>().color = Color.white;
+        GameObject xaxis = CreateImage("x-axis", gt, Color.white);
         RectTransform xt = xaxis.GetComponent<RectTransform>();
-        xt.localRotation = new Quaternion(0f, 0f, 0f, 0f);
-        xt.localScale = Vector3.one;
         xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 2f); // change this eventually
         xt.anchorMin = Vector2.zero;
         xt.anchorMax = Vector2.zero;
         xt.pivot = Vector2.zero;
         xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
+    }
+
+    private GameObject CreateImage(string name, RectTransform parent, Color color) {
+        GameObject image = new GameObject(name, typeof(Image));
+        image.transform.SetParent(parent, false);
+        image.GetComponent<Image>().color = color;
+
+        RectTransform t = image.GetComponent<RectTransform>();
+        t.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+        t.localScale = Vector3.one;
+
+        return image;
     }
 
     private GameObject GetLegendKey(string var) {
@@ -109,6 +113,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         if (!barContainers.ContainsKey(robot)) { 
             // TODO: delete bar prefab
             GameObject container = new GameObject("barContainer", typeof(Image));
+            container.transform.SetParent(graphContainer.transform, false);
+            container.GetComponent<Image>().color = Color.clear;
             barContainers[robot] = container;
         }
 
@@ -151,15 +157,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         float containerCount = 0f;
         float barSpacing = 0f;  // change this eventually
         float barCount = 0f;
-        float keySpacing = 2f;
+        float keyXSpacing = 2f;
+        float keyYSpacing = 10f;
         int keyCount = 0;
 
         foreach (Robot r in robots) {
             barCount = 0f;
-            GameObject barContainer = GetBarContainer(r);
-            // set parent for this
-            barContainer.transform.SetParent(graphContainer.transform, false);
-            barContainer.GetComponent<Image>().color = Color.clear;
+            GameObject barContainer = GetBarContainer(r);            
 
             RectTransform ct = barContainer.GetComponent<RectTransform>();
             ct.anchorMax = new Vector2(0f, 0f);
@@ -238,8 +242,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             kt.localRotation = new Quaternion(0, 0, 0, 0);
 
             // translate each key lower than the last
-            float x = (keySpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
-            float y = (-keySpacing - kt.rect.height) * ((keyCount + 1) % 2) * kt.localScale.y;
+            float x = (keyXSpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
+            float y = (-keyYSpacing - kt.rect.height) * ((keyCount + 1) % 2) * kt.localScale.y;
             kt.anchoredPosition = new Vector2(x, y);
 
             keyCount++;
