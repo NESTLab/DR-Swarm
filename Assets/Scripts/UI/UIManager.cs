@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
 
     public int Options = 1;//How many min variable options
     public int TotalOptions = 1;
+    public int RobotOptions = 0;
 
     //TODO: Change to ENUM 
     public enum graph
@@ -47,17 +48,20 @@ public class UIManager : MonoBehaviour
             if (_sentGraphType == "Line") {
                 GraphType = graph.Line;
                 Options = 2;
-                TotalOptions = 2;
+                TotalOptions = 100;
+                RobotOptions = 0;
             } 
             else if (_sentGraphType == "Pie") {
                 GraphType = graph.Pie;
                 Options = 1;
                 TotalOptions = 1;
+                RobotOptions = 0;
             } else if (_sentGraphType == "PieMulti")
             {
                 GraphType = graph.PieMulti;
                 Options = 2;
-                
+                RobotOptions = 1;
+                TotalOptions = 100;
             }
         }
     }
@@ -65,7 +69,7 @@ public class UIManager : MonoBehaviour
 
     //ADD VARS
     //TODO: Make this automatic? From robots, from datamangager? <<YES
-    public List<string> variables = new List<string> {"x", "y"};
+    public List<string> variables = new List<string> {"x", "y", "val", "var1", "var2"};
     public List<string> wantedVars = new List<string>();
 
 
