@@ -149,8 +149,13 @@ public class CreateVarPanel : MonoBehaviour
 
     void AddVar()
     {
+        if (offset == 0)
+        {
+            offset = -50f;
+        }
         int currOpps = allDropdownObjects.Count;
         int totalOptions = UIManager.Instance.TotalOptions;
+        int count = allDropdownObjects.Count;
         if (totalOptions > currOptions)
         {
             GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("VarDropDownPanel"), varPanel.transform);
@@ -168,7 +173,7 @@ public class CreateVarPanel : MonoBehaviour
             d2.ClearOptions();
             d2.AddOptions(m_DropOptions);
             Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
-            t2.text = "Variable " + (namei + 2);
+            t2.text = "Variable " + (namei +1);
             offset = offset + -50f;
             totalDropdowns++;
             allDropdownObjects.Add(d2);

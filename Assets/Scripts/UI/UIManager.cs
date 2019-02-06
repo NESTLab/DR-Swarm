@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
         Line,
         Pie,
         PieMulti,
+        Bar, 
         NoGraph
     }
 
@@ -61,6 +62,12 @@ public class UIManager : MonoBehaviour
                 GraphType = graph.PieMulti;
                 Options = 2;
                 RobotOptions = 1;
+                TotalOptions = 100;
+            } else if (_sentGraphType == "Bar")
+            {
+                GraphType = graph.Bar;
+                Options = 1;
+                RobotOptions = 0;
                 TotalOptions = 100;
             }
         }
@@ -117,10 +124,11 @@ public class UIManager : MonoBehaviour
     //Create a graph, Needed are robots, variables, type
     //Calls VizManager to add the graph, currently adds title as well
     private void createGraph(){
-        Robot r1 = robots[0];
-        robots.RemoveAt(0);
+        
         string title = "";
         if (GraphType == graph.Line){
+            Robot r1 = robots[0];
+            robots.RemoveAt(0);
             string xvar = wantedVars[0];
             string yvar = wantedVars[1];
             IVisualization graphToAdd = new LineGraph(xvar, yvar, r1, robots.ToArray());
@@ -132,6 +140,8 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
         } else if (GraphType == graph.Pie)
         {
+            Robot r1 = robots[0];
+            robots.RemoveAt(0);
             Robot r2 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
@@ -144,6 +154,8 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
         } else if (GraphType == graph.PieMulti)
         {
+            Robot r1 = robots[0];
+            robots.RemoveAt(0);
             string var = wantedVars[0];
             wantedVars.RemoveAt(0);
             IVisualization graphToAdd = new PieChartMultiVar(r1, var, wantedVars.ToArray());
@@ -153,6 +165,33 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
+        } else if (GraphType == graph.Bar)
+        {
+            /*
+            IVisualization graphToAdd = new PieChartMultiVar(robots.ToArray(), wantedVars.ToArray());
+            DateTime foo = DateTime.UtcNow;
+            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
+            title = robots[0] + "," +wantedVars[0]+ "," + "Bar " + unixTime;//TODO: Add another unique symbol to this?
+            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
+            */
+            Robot r1 = robots[0];
+            robots.RemoveAt(0);
+            string var = wantedVars[0];
+            wantedVars.RemoveAt(0);
+            HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
+            HashSet<string> hashVars = new HashSet<string>(wantedVars);
+
+
+            IVisualization graphToAdd = new BarGraph(r1, hashRobots, var, hashVars);
+            DateTime foo = DateTime.UtcNow;
+            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
+            title =  "Bar " + unixTime;//TODO: Add another unique symbol to this?
+            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
+
         }
         _addGraph = false;
     }
