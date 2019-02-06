@@ -15,25 +15,25 @@ public class BarChartTest : MonoBehaviour {
         r1.SetVariable("var1", 0.5f);
         r1.SetVariable("var2", 1f);
         r1.SetVariable("var3", 1.2f);
-        r1.SetVariable("var4", 2f);
+        r1.SetVariable("var4", 0.9f);
 
         r2 = DataManager.Instance.GetRobot("RobotTarget2");
         r2.SetVariable("var1", 0.8f);
         r2.SetVariable("var2", 0.2f);
         r2.SetVariable("var3", 1.2f);
-        r2.SetVariable("var4", 2f);
+        r2.SetVariable("var4", 0.05f);
 
         r3 = DataManager.Instance.GetRobot("RobotTarget3");
         r3.SetVariable("var1", 0.0f);
         r3.SetVariable("var2", 0.2f);
         r3.SetVariable("var3", 1.2f);
-        r3.SetVariable("var4", 2f);
+        r3.SetVariable("var4", 1.5f);
 
         r4 = DataManager.Instance.GetRobot("RobotTarget4");
         r4.SetVariable("var1", 1.1f);
         r4.SetVariable("var2", 0.6f);
         r4.SetVariable("var3", 1.2f);
-        r4.SetVariable("var4", 2f);
+        r4.SetVariable("var4", 1.4f);
 
         HashSet<Robot> robots = new HashSet<Robot>();
         robots.Add(r2);
@@ -56,6 +56,12 @@ public class BarChartTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        theta += 0.01f;
+
+        r1.SetVariable("var1", Mathf.Sin(theta) * Mathf.Sin(theta) * 2);
+
+        r1.SetVariable("var2", Mathf.Cos(theta) * Mathf.Cos(theta) * 2);
+
         if (Input.GetKeyDown("1")) {
             Debug.Log("add bc2");
             VisualizationManager.Instance.AddVisualization("testvis2", bc2);

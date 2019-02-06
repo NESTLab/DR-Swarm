@@ -278,6 +278,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); // this needs to change
                 mTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
 
+                // update barCount
                 barCount += 1;
             }
 
