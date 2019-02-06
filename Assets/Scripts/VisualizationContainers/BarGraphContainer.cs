@@ -260,7 +260,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 // set guide labels
                 GameObject top = yLabels[1];
                 top.transform.SetParent(graphContainer.transform, false);
-                top.GetComponent<Text>().text = topVal.ToString();
+                top.GetComponent<Text>().text = string.Format("{0:0.##}", topVal);
+                //top.GetComponent<Text>().text = topVal.ToString();
                 RectTransform tTransform = top.GetComponent<RectTransform>();
                 tTransform.anchorMin = new Vector2(0f, 1f);
                 tTransform.anchorMax = new Vector2(0f, 1f);
@@ -270,7 +271,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
                 GameObject mid = yLabels[0];
                 mid.transform.SetParent(graphContainer.transform, false);
-                mid.GetComponent<Text>().text = (topVal/2).ToString();
+                mid.GetComponent<Text>().text = string.Format("{0:0.##}", topVal / 2);
+                //mid.GetComponent<Text>().text = (topVal/2).ToString();
                 RectTransform mTransform = mid.GetComponent<RectTransform>();
                 mTransform.anchorMin = new Vector2(0f, 1f);
                 mTransform.anchorMax = new Vector2(0f, 1f);
