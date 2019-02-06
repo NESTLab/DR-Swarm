@@ -174,6 +174,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             RectTransform parent = graphContainer.GetComponent<RectTransform>();
             // width should be container width divided by number of robots
             float containerSize = (parent.sizeDelta.x - axisOffset) / robots.Count;
+            Debug.Log("Graph container size: " + containerSize);
             ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset); // change this eventually
             ct.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
 
@@ -189,10 +190,10 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.alignment = TextAnchor.MiddleCenter;
             RectTransform xTransform = xLabel.GetComponent<RectTransform>();
-            xTransform.anchorMin = new Vector2(0.5f, 0f);
-            xTransform.anchorMax = new Vector2(0.5f, 0f);
+            xTransform.anchorMin = new Vector2(0f, 0f);
+            xTransform.anchorMax = new Vector2(0f, 0f);
             xTransform.pivot = new Vector2(0.5f, 0f);
-            xTransform.anchoredPosition = Vector2.zero;
+            xTransform.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2 + (ct.rect.width/2), 0f); // this needs to change
             xTransform.sizeDelta = new Vector2(100f, axisOffset);
 
             // now that we have the container, we need to fill it with the bars
@@ -201,10 +202,10 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
                 // put the bar inside the container
                 bar.transform.SetParent(barContainer.transform, false);
-                RectTransform gparent = graphContainer.GetComponent<RectTransform>();
+                RectTransform bparent = barContainer.GetComponent<RectTransform>();
 
                 // width should be container width divided by number of robots
-                float barSize = (gparent.sizeDelta.x - axisOffset) / variables.Count;
+                float barSize = (bparent.sizeDelta.x - axisOffset) / variables.Count;
 
                 // set size
                 float value = dataDict[r][var];
@@ -254,16 +255,32 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
     {
-        Debug.Log("number of robots: " + data.Count.ToString());
+        //Debug.Log("number of robots: " + data.Count.ToString());  // this is currently useless because the dictionary only returns for one robot at a time
         // TODO: figure out how to handle maximum value - probably the same as linegraph
         foreach (Robot r in data.Keys) {
             if (!robots.Contains(r)) {
                 robots.Add(r);
+                dataDict[r] = new Dictionary<string, float>();
+            }
+
+            foreach (string var in data[r].Keys) {
+                Debug.Log("value: " + data[r][var]);
+                dataDict[r][var] = data[r][var];
+
+                // this is not the best way to do it, but not seeing another option at the moment
+                if (!variables.Contains(var)) {
+                    variables.Add(var);
+
+                    // set the color for the new variable
+                    varColors[var] = Color.HSVToRGB(curHVal, 1, 1);
+                    curHVal = (curHVal + invphi) % 1.0f;
+                }
             }
         }
 
-        Robot robot = robots[0];
-        Debug.Log("robot dictionary" + data[robot].Count.ToString());
+        //Robot robot = robots[0];
+        //Debug.Log("robot dictionary: " + data[robot].Count.ToString());
+        /*
         foreach (string var in data[robot].Keys) {  // this is broken
             if (!variables.Contains(var)) {
                 variables.Add(var); 
@@ -273,8 +290,6 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 curHVal = (curHVal + invphi) % 1.0f;
             }
         }
-
-        // is it really this simple?
-        dataDict = data;
+        */
     }
 }
