@@ -153,7 +153,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
-        float containerSpacing = 0f;
+        float containerSpacing = 10f;
         float containerCount = 0f;
         float barSpacing = 0f;  // change this eventually
         float barCount = 0f;
@@ -173,9 +173,8 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             ct.localRotation = new Quaternion(0, 0, 0, 0);
             RectTransform parent = graphContainer.GetComponent<RectTransform>();
             // width should be container width divided by number of robots
-            float containerSize = (parent.sizeDelta.x - axisOffset) / robots.Count;
-            Debug.Log("Graph container size: " + containerSize);
-            ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset); // change this eventually
+            float containerSize = ((parent.sizeDelta.x - axisOffset) / robots.Count) - containerSpacing;
+            ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset); 
             ct.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
 
             // x labels
@@ -205,11 +204,10 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 RectTransform bparent = barContainer.GetComponent<RectTransform>();
 
                 // width should be container width divided by number of robots
-                float barSize = (bparent.sizeDelta.x - axisOffset) / variables.Count;
+                float barSize = (bparent.sizeDelta.x) / variables.Count;
 
                 // set size
                 float value = dataDict[r][var];
-                Debug.Log("robot: " + r + ", variable: " + var + ", value: " + value.ToString());
                 RectTransform tb = bar.GetComponent<RectTransform>();
                 tb.sizeDelta = new Vector2(barSize, value * 100f); // TODO: make better
                 tb.anchorMax = new Vector2(0f, 0f);
@@ -244,7 +242,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
             // translate each key lower than the last
             float x = (keyXSpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
-            float y = (-keyYSpacing - kt.rect.height) * ((keyCount + 1) % 2) * kt.localScale.y;
+            float y = (-keyYSpacing - kt.rect.height) * ((keyCount) % 2) * kt.localScale.y;
             kt.anchoredPosition = new Vector2(x, y);
 
             keyCount++;
@@ -264,7 +262,6 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             }
 
             foreach (string var in data[r].Keys) {
-                Debug.Log("value: " + data[r][var]);
                 dataDict[r][var] = data[r][var];
 
                 // this is not the best way to do it, but not seeing another option at the moment
@@ -277,19 +274,5 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 }
             }
         }
-
-        //Robot robot = robots[0];
-        //Debug.Log("robot dictionary: " + data[robot].Count.ToString());
-        /*
-        foreach (string var in data[robot].Keys) {  // this is broken
-            if (!variables.Contains(var)) {
-                variables.Add(var); 
-
-                // set the color for the new variable
-                varColors[var] = Color.HSVToRGB(curHVal, 1, 1);
-                curHVal = (curHVal + invphi) % 1.0f;
-            }
-        }
-        */
     }
 }

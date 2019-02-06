@@ -21,17 +21,21 @@ public class BarGraph : IVisualization
     public BarGraph(Robot firstRobot, HashSet<Robot> robots, string firstVar, HashSet<string> variables) // don't think this can change to include more variables
     {
         // TODO: Jerry needs to rename to robotSet
-        robotList = new HashSet<Robot>(robots);
+        robotList = new HashSet<Robot>();
         robotList.Add(firstRobot);
-        //robotList.Add(firstRobot);
-
-        varSet = variables;
-        varSet.Add(firstVar);
-        //varSet.Add(variableName);
+        foreach (Robot r in robots) {
+            robotList.Add(r);
+        }
+        
+        varSet = new HashSet<string>();
+        varSet.Add(firstVar); 
+        foreach (string var in variables) {
+            varSet.Add(var);
+        }
 
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
-            foreach (string variable in variables) {
+            foreach (string variable in varSet) {
                 variableList.Add(robot.GetObservableVariable<float>(variable).Select(v =>
                 {
                     return new Dictionary<string, float>() { { variable, v } };
