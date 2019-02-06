@@ -19,9 +19,11 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     private Dictionary<string, GameObject> legend;
     private Dictionary<string, Color> varColors = new Dictionary<string, Color>();
     private Dictionary<Robot, GameObject> xLabels = new Dictionary<Robot, GameObject>();
+    private Dictionary<int, GameObject> yLabels = new Dictionary<int, GameObject>();
 
     private float curHVal = 0f;
     private float invphi = 1f / 1.618f; // golden ratio
+    private float topVal = 0f;  // this is for dynamically resizing the graphs
 
     private GameObject graphContainer;
     private GameObject legendContainer;
@@ -80,11 +82,34 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         // X axis
         GameObject xaxis = CreateImage("x-axis", gt, Color.white);
         RectTransform xt = xaxis.GetComponent<RectTransform>();
-        xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 2f); // change this eventually
+        xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f); // change this eventually
         xt.anchorMin = Vector2.zero;
         xt.anchorMax = Vector2.zero;
         xt.pivot = Vector2.zero;
         xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
+
+        // gotta be a better way to do these - with a dynamic number of lines
+        // top guideline
+        GameObject top = CreateImage("top-guide", gt, Color.white);
+        RectTransform tt = top.GetComponent<RectTransform>();
+        tt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f);
+        tt.anchorMin = new Vector2(0f, 1f);
+        tt.anchorMax = new Vector2(0f, 1f);
+        tt.pivot = new Vector2(0f, 1f);
+        tt.anchoredPosition = new Vector2(axisOffset, 0f);
+
+        yLabels[1] = CreateLabel("top-label");
+
+        // middle guideline
+        GameObject mid = CreateImage("mid-guide", gt, Color.white);
+        RectTransform mt = mid.GetComponent<RectTransform>();
+        mt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f);
+        mt.anchorMin = new Vector2(0f, 0.5f);
+        mt.anchorMax = new Vector2(0f, 0.5f);
+        mt.pivot = new Vector2(0f, 0.5f);
+        mt.anchoredPosition = new Vector2(axisOffset, 0f);
+
+        yLabels[0] = CreateLabel("mid-label");
     }
 
     private GameObject CreateImage(string name, RectTransform parent, Color color) {
@@ -144,11 +169,26 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     private GameObject GetXLabel(Robot r) {
         if (!xLabels.ContainsKey(r)) {
-            GameObject label = new GameObject("x-label", typeof(Text));
+            //GameObject label = new GameObject("x-label", typeof(Text));
+            GameObject label = CreateLabel("x-label");
             xLabels[r] = label;
         }
 
         return xLabels[r];
+    }
+
+    private GameObject CreateLabel(string name) {
+        GameObject label = new GameObject(name, typeof(Text));
+        Text text = label.GetComponent<Text>();
+
+        text.color = Color.white;
+        text.fontSize = 14;
+        text.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
+        text.alignment = TextAnchor.MiddleCenter;
+
+        return label;
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
@@ -174,26 +214,21 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             RectTransform parent = graphContainer.GetComponent<RectTransform>();
             // width should be container width divided by number of robots
             float containerSize = ((parent.sizeDelta.x - axisOffset) / robots.Count) - containerSpacing;
-            ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset); 
-            ct.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
+            ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset);
+            ct.anchoredPosition = new Vector2(((containerSize + containerSpacing) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
+
 
             // x labels
             GameObject xLabel = GetXLabel(r);
             xLabel.transform.SetParent(graphContainer.transform, false);
-            Text text = xLabel.GetComponent<Text>();
-            text.text = r.name;
-            text.color = Color.white;
-            text.fontSize = 14;
-            text.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
-            text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
-            text.alignment = TextAnchor.MiddleCenter;
+            xLabel.GetComponent<Text>().text = r.name;
+            
             RectTransform xTransform = xLabel.GetComponent<RectTransform>();
             xTransform.anchorMin = new Vector2(0f, 0f);
             xTransform.anchorMax = new Vector2(0f, 0f);
             xTransform.pivot = new Vector2(0.5f, 0f);
             xTransform.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2 + (ct.rect.width/2), 0f); // this needs to change
-            xTransform.sizeDelta = new Vector2(100f, axisOffset);
+            xTransform.sizeDelta = new Vector2(100f, axisOffset);  // change eventually
 
             // now that we have the container, we need to fill it with the bars
             foreach (string var in variables) {
@@ -208,12 +243,40 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
                 // set size
                 float value = dataDict[r][var];
+
+                if (value > topVal) {
+                    topVal = value;
+                }
+
+                float constant = bparent.sizeDelta.y / topVal;
+
                 RectTransform tb = bar.GetComponent<RectTransform>();
-                tb.sizeDelta = new Vector2(barSize, value * 100f); // TODO: make better
+                tb.sizeDelta = new Vector2(barSize, value * constant); 
                 tb.anchorMax = new Vector2(0f, 0f);
                 tb.anchorMin = new Vector2(0f, 0f);
                 tb.pivot = new Vector2(0f, 0f);
                 tb.anchoredPosition = new Vector2((barSpacing + tb.rect.width) * barCount, 0f);
+
+                // set guide labels
+                GameObject top = yLabels[1];
+                top.transform.SetParent(graphContainer.transform, false);
+                top.GetComponent<Text>().text = topVal.ToString();
+                RectTransform tTransform = top.GetComponent<RectTransform>();
+                tTransform.anchorMin = new Vector2(0f, 1f);
+                tTransform.anchorMax = new Vector2(0f, 1f);
+                tTransform.pivot = new Vector2(0.5f, 1f);
+                tTransform.anchoredPosition = new Vector2(axisOffset/2, 0f); // this needs to change
+                tTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
+
+                GameObject mid = yLabels[0];
+                mid.transform.SetParent(graphContainer.transform, false);
+                mid.GetComponent<Text>().text = (topVal/2).ToString();
+                RectTransform mTransform = mid.GetComponent<RectTransform>();
+                mTransform.anchorMin = new Vector2(0f, 1f);
+                mTransform.anchorMax = new Vector2(0f, 1f);
+                mTransform.pivot = new Vector2(0.5f, 1f);
+                mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); // this needs to change
+                mTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
 
                 barCount += 1;
             }
@@ -243,7 +306,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             // translate each key lower than the last
             float x = (keyXSpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
             float y = (-keyYSpacing - kt.rect.height) * ((keyCount) % 2) * kt.localScale.y;
-            kt.anchoredPosition = new Vector2(x, y);
+            kt.anchoredPosition = new Vector2(x, y);  // this is not the best solution
 
             keyCount++;
         }

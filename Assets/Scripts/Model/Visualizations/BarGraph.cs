@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-// TODO: Implement this class.
-
-// TODO: implement another class for multivariable?
-
 // Anything and everything can be changed. Comments can be removed,
 // they're just here to explain everything as best I can
 public class BarGraph : IVisualization
