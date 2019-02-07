@@ -136,7 +136,6 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     private GameObject GetBarContainer(Robot robot) {
         if (!barContainers.ContainsKey(robot)) { 
-            // TODO: delete bar prefab
             GameObject container = new GameObject("barContainer", typeof(Image));
             container.transform.SetParent(graphContainer.transform, false);
             container.GetComponent<Image>().color = Color.clear;
@@ -147,19 +146,16 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     }
 
     // this might make the bar containers function useless
-    private GameObject GetBar(Robot robot, string var) {
+    private GameObject GetBar(Robot robot, RectTransform parent, string var) {
         if (!bars.ContainsKey(robot)) {
             // initialize the dictionary
             Dictionary<string, GameObject> barDict = new Dictionary<string, GameObject>();
             bars[robot] = barDict;
-
-            GameObject blankBar = (GameObject)Instantiate(Resources.Load("Bar"), transform);
-            blankBar.GetComponent<Image>().color = varColors[var];
-            bars[robot][var] = blankBar;
         }
-        else if (!bars[robot].ContainsKey(var)) {
+
+        if (!bars[robot].ContainsKey(var)) {
             // initialize the single bar
-            GameObject blankBar = (GameObject)Instantiate(Resources.Load("Bar"), transform);
+            GameObject blankBar = CreateImage("bar", parent, Color.white);
             blankBar.GetComponent<Image>().color = varColors[var];
             bars[robot][var] = blankBar;
         }
@@ -169,7 +165,6 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     private GameObject GetXLabel(Robot r) {
         if (!xLabels.ContainsKey(r)) {
-            //GameObject label = new GameObject("x-label", typeof(Text));
             GameObject label = CreateLabel("x-label");
             xLabels[r] = label;
         }
@@ -216,8 +211,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             float containerSize = ((parent.sizeDelta.x - axisOffset) / robots.Count) - containerSpacing;
             ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset);
             ct.anchoredPosition = new Vector2(((containerSize + containerSpacing) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
-
-
+            
             // x labels
             GameObject xLabel = GetXLabel(r);
             xLabel.transform.SetParent(graphContainer.transform, false);
@@ -227,12 +221,12 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             xTransform.anchorMin = new Vector2(0f, 0f);
             xTransform.anchorMax = new Vector2(0f, 0f);
             xTransform.pivot = new Vector2(0.5f, 0f);
-            xTransform.anchoredPosition = new Vector2(((containerSpacing + ct.rect.width) * containerCount) + axisOffset + 2 + (ct.rect.width/2), 0f); // this needs to change
+            xTransform.anchoredPosition = new Vector2(((containerSpacing + containerSize) * containerCount) + axisOffset + 2 + (containerSize/2), 0f);
             xTransform.sizeDelta = new Vector2(100f, axisOffset);  // change eventually
 
             // now that we have the container, we need to fill it with the bars
             foreach (string var in variables) {
-                GameObject bar = GetBar(r, var);
+                GameObject bar = GetBar(r, ct, var);
 
                 // put the bar inside the container
                 bar.transform.SetParent(barContainer.transform, false);
@@ -261,23 +255,21 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 GameObject top = yLabels[1];
                 top.transform.SetParent(graphContainer.transform, false);
                 top.GetComponent<Text>().text = string.Format("{0:0.##}", topVal);
-                //top.GetComponent<Text>().text = topVal.ToString();
                 RectTransform tTransform = top.GetComponent<RectTransform>();
                 tTransform.anchorMin = new Vector2(0f, 1f);
                 tTransform.anchorMax = new Vector2(0f, 1f);
                 tTransform.pivot = new Vector2(0.5f, 1f);
-                tTransform.anchoredPosition = new Vector2(axisOffset/2, 0f); // this needs to change
+                tTransform.anchoredPosition = new Vector2(axisOffset/2, 0f); 
                 tTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
 
                 GameObject mid = yLabels[0];
                 mid.transform.SetParent(graphContainer.transform, false);
                 mid.GetComponent<Text>().text = string.Format("{0:0.##}", topVal / 2);
-                //mid.GetComponent<Text>().text = (topVal/2).ToString();
                 RectTransform mTransform = mid.GetComponent<RectTransform>();
                 mTransform.anchorMin = new Vector2(0f, 1f);
                 mTransform.anchorMax = new Vector2(0f, 1f);
                 mTransform.pivot = new Vector2(0.5f, 1f);
-                mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); // this needs to change
+                mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); 
                 mTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
 
                 // update barCount
@@ -319,8 +311,6 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
     {
-        //Debug.Log("number of robots: " + data.Count.ToString());  // this is currently useless because the dictionary only returns for one robot at a time
-        // TODO: figure out how to handle maximum value - probably the same as linegraph
         foreach (Robot r in data.Keys) {
             if (!robots.Contains(r)) {
                 robots.Add(r);
