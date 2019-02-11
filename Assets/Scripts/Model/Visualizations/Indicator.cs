@@ -2,15 +2,75 @@
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEngine;
 
-// TODO: Implement this class.
-// Anything and everything can be changed. Comments can be removed,
-// they're just here to explain everything as best I can
-public class Indicator : IVisualization
+abstract public class Policy {
+    public readonly string name;
+
+    public Policy(string name)
+    {
+        this.name = name;
+    }
+
+    public abstract void Accept<T>(Indicator<T> indicator) where T : Policy;
+}
+
+public class RangePolicy : Policy
 {
-    // Feel free to use any data type to store the intermittent data
+    public enum IndicatorShape
+    {
+        Square,
+        Circle,
+        Triangle,
+        Plus,
+        Check,
+        Exclaimation
+    }
+
+    public readonly Vector2 range;
+    public Color color;
+    public IndicatorShape shape;
+
+    public RangePolicy(string name, float minValue, float maxValue) : base(name)
+    {
+        this.range = new Vector2(minValue, maxValue);
+    }
+
+    public override void Accept<T>(Indicator<T> indicator)
+    {
+        indicator.VisitRangePolicy(this);
+    }
+}
+
+public class MapPolicy : Policy
+{
+    public enum MapPolicyType
+    {
+        color,
+        orientation
+    }
+
+    public readonly string variableName;
+    public readonly MapPolicyType type;
+
+    public MapPolicy(string name, string variableName, MapPolicyType type) : base(name)
+    {
+        this.variableName = variableName;
+        this.type = type;
+    }
+
+    public override void Accept<T>(Indicator<T> indicator)
+    {
+        indicator.VisitMapPolicy(this);
+    }
+}
+
+public class Indicator<T> : IVisualization where T : Policy
+{
     IObservable<Dictionary<Robot, float>> dataSource;
     HashSet<Robot> robotList;
+
+    List<T> policies;
 
     public Indicator(string variableName, Robot firstRobot, params Robot[] robots)
     {
@@ -27,6 +87,25 @@ public class Indicator : IVisualization
             // into a Dictionary<Robot, float>
             return r.GetObservableVariable<float>(variableName).Select(v => new Dictionary<Robot, float> { { r, v } });
         });
+    }
+
+    public void AddPolicy(T P)
+    {
+        P.Accept(this);
+    }
+
+    public void VisitRangePolicy(RangePolicy policy)
+    {
+
+    }
+
+    public void VisitMapPolicy(MapPolicy policy)
+    {
+
+    }
+
+    public List<T> GetPolicies() {
+        return this.policies;
     }
 
     public ISet<Robot> GetRobots()
