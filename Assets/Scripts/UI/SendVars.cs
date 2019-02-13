@@ -15,9 +15,13 @@ public class SendVars : MonoBehaviour
     public Toggle t5;
     public List<Toggle> allToggles = new List<Toggle>();
     public List<Toggle> allChecked = new List<Toggle>();
+    public HashSet<string> prevCheckedRobots = new HashSet<string> { };
+    public GameObject panel;
+    public bool updateToggles = false;
 
     void Start()
     {
+        prevCheckedRobots = UIManager.Instance.touchedRobots;
         if (t1 != null)
         {
             allToggles.Add(t1);
@@ -34,14 +38,88 @@ public class SendVars : MonoBehaviour
                 });
             }
         }
+        if (prevCheckedRobots.Count > 0)
+        {
+            
+            if (prevCheckedRobots.Contains("r1"))
+            {
+                t1.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r2"))
+            {
+                t2.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r3"))
+            {
+                t3.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r4"))
+            {
+                t4.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r5"))
+            {
+                t5.isOn = true;
+            }
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
+       
+        if(panel!= null)
+        {
+            if (panel.activeSelf)
+            {
+                if (updateToggles)
+                {
+                    prevCheckedRobots = UIManager.Instance.touchedRobots;
+                    if (prevCheckedRobots.Count > 0)
+                    {
+                        Debug.Log(prevCheckedRobots.Count);
+                        Debug.Log("cehckign r2" + prevCheckedRobots.Contains("r2"));
 
+                        if (prevCheckedRobots.Contains("r1"))
+                        {
+                            t1.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r2"))
+                        {
+                            Debug.Log("Checking t2");
+                            t2.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r3"))
+                        {
+                            t3.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r4"))
+                        {
+                            t4.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r5"))
+                        {
+                            t5.isOn = true;
+                        }
+                    }
+                    
+                    updateToggles = false;
+                }
+            }
+            else
+            {
+                updateToggles = true;
+            }
+        }
+        else
+        {
+            updateToggles = true;
+        }
         
     }
+
+    
 
     private void toggleDisable(Toggle check)
     {
@@ -89,12 +167,14 @@ public class SendVars : MonoBehaviour
             t.interactable = true;
             t.isOn = false;
         }
+        updateToggles = true;
+
     }
 
-   
+
 
     //Called when the next button is pressed
-    //Checks for each toggle to tell if it is on, if its onn, need to add the robot
+    //Checks for each toggle to tell if it is on, if its on, need to add the robot
     //Also calls addGraph
     public void toggleAdd() {
         if(t1.isOn) {
@@ -116,12 +196,24 @@ public class SendVars : MonoBehaviour
             UIManager.Instance.AddRobot("r5");
         }
         UIManager.Instance.addGraph = true;
-        
+        updateToggles = true;
+        UIManager.Instance.touchedRobots.Clear();
     }
 
     public void setToGraph(string i)
     {
         UIManager.Instance.sentGraphType = i;
+    }
+
+    public void addRobotMode(Slider s)
+    {
+        if (s.value == 1)
+        {
+            UIManager.Instance.AddRobotMode = true;
+        } else
+        {
+            UIManager.Instance.AddRobotMode = false;
+        }
     }
 
 

@@ -25,7 +25,9 @@ public class CreateVarPanel : MonoBehaviour
 
     void Start()
     {   // this.data.Keys.ToArray();  
-        m_DropOptions = UIManager.Instance.variables;
+        UIManager.Instance.updateTotalVars();
+
+        m_DropOptions = UIManager.Instance.wantedVars;
        
         int options = UIManager.Instance.Options;
 
@@ -50,7 +52,7 @@ public class CreateVarPanel : MonoBehaviour
             Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
             d2.ClearOptions();
             d2.AddOptions(m_DropOptions);
-            d2.value = selectedVars[i];
+            //d2.value = selectedVars[i];
             
             Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
             t2.text = "Variable " + (i + 1);
@@ -79,7 +81,10 @@ public class CreateVarPanel : MonoBehaviour
                 int options = UIManager.Instance.Options;
                 if (totalDropdowns > options || options > totalDropdowns)
                 {
-                    m_DropOptions = UIManager.Instance.variables;
+                    UIManager.Instance.updateTotalVars();
+
+                    m_DropOptions = UIManager.Instance.wantedVars;
+                    //m_DropOptions = UIManager.Instance.variables;
                     foreach (Transform child in varPanel.transform)
                     {
                         GameObject.Destroy(child.gameObject);

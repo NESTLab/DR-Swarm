@@ -26,7 +26,6 @@ public class UIManager : MonoBehaviour
     public int TotalOptions = 1;
     public int RobotOptions = 0;
 
-    //TODO: Change to ENUM 
     public enum graph
     {
         Line,
@@ -78,6 +77,21 @@ public class UIManager : MonoBehaviour
     //TODO: Make this automatic? From robots, from datamangager? <<YES
     public List<string> variables = new List<string> {"x", "y", "val", "var1", "var2"};
     public List<string> wantedVars = new List<string>();
+    public void updateTotalVars()
+    {
+        HashSet<string> varFromRobots = new HashSet<string>();
+        List<Robot> allRobots = new List<Robot>();
+        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
+        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
+        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
+        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
+        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
+        foreach (Robot r in allRobots)
+        {
+            varFromRobots.UnionWith(r.GetVariables());
+        }
+        wantedVars = new List<string>(varFromRobots);
+    }
 
 
     //ADD ROBOTS
@@ -104,6 +118,16 @@ public class UIManager : MonoBehaviour
         foreach(string r in robots){
             AddRobot(r);
         }
+    }
+
+    public bool AddRobotMode = false; 
+
+    //Add robot by clicking on them in AR
+    public HashSet<string> touchedRobots = new HashSet<string> { };
+    public void addRobotByTouch(string r)
+    {
+        touchedRobots.Add(r);
+        //Debug.Log(touchedRobots.ToString());
     }
 
     //ADD GRAPH
@@ -167,15 +191,18 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
         } else if (GraphType == graph.Bar)
         {
-            /*
-            IVisualization graphToAdd = new PieChartMultiVar(robots.ToArray(), wantedVars.ToArray());
+
+            HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
+            HashSet<string> hashVars = new HashSet<string>(wantedVars);
+            IVisualization graphToAdd = new BarGraph(hashRobots, hashVars);
             DateTime foo = DateTime.UtcNow;
             long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-            title = robots[0] + "," +wantedVars[0]+ "," + "Bar " + unixTime;//TODO: Add another unique symbol to this?
+            title = "Bar " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-            */
+            
+            /*
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
@@ -191,7 +218,7 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-
+            */
         }
         _addGraph = false;
     }
