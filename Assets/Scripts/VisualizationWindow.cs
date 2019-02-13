@@ -71,27 +71,45 @@ public class VisualizationWindow : MonoBehaviour {
     /// </summary>
     /// THIS IS WHERE WE WILL USE TIME
     void OnTrackablesUpdated() {
+        long currTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
         if (mFormatRegistered) {
             if (mAccessCameraImage) {
-                Vuforia.Image image = CameraDevice.Instance.GetCameraImage(mPixelFormat);
+                if (currTime - startTime == 1000) {  // check every second, for now
+                    Vuforia.Image image = CameraDevice.Instance.GetCameraImage(mPixelFormat);
 
-                if (image != null) {
-                    Debug.Log(
-                        "\nImage Format: " + image.PixelFormat +
-                        "\nImage Size:   " + image.Width + "x" + image.Height +
-                        "\nBuffer Size:  " + image.BufferWidth + "x" + image.BufferHeight +
-                        "\nImage Stride: " + image.Stride + "\n"
-                    );
-
-                    byte[] pixels = image.Pixels;
-
-                    if (pixels != null && pixels.Length > 0) {
+                    if (image != null) {
                         Debug.Log(
-                            "\nImage pixels: " +
-                            pixels[0] + ", " +
-                            pixels[1] + ", " +
-                            pixels[2] + ", ...\n"
+                            "\nImage Format: " + image.PixelFormat +
+                            "\nImage Size:   " + image.Width + "x" + image.Height +
+                            "\nBuffer Size:  " + image.BufferWidth + "x" + image.BufferHeight +
+                            "\nImage Stride: " + image.Stride + "\n"
                         );
+
+                        byte[] pixels = image.Pixels;
+
+                        if (pixels != null && pixels.Length > 0) {
+                            /*
+                            Debug.Log(
+                                "\nImage pixels: " +
+                                pixels[0] + ", " +
+                                pixels[1] + ", " +
+                                pixels[2] + ", ...\n"
+                            );
+                            */
+                            System.Random random = new System.Random();
+                            int counter = 0;
+                            int total = 0;
+
+                            while (counter < 100) {
+                                int index = random.Next(0, pixels.Length);
+                                byte data = pixels[index];
+                                total += data;
+                            }
+
+                            int avg = total / counter;
+                            Debug.Log("average brightness: " + avg);
+                        }
                     }
                 }
             }
