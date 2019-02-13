@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using UnityEngine.UI;
+using Vuforia;
+using Image = UnityEngine.UI.Image; // since we have 2 images, maybe this is the best way
+//using Image = Vuforia.Image;
 
 public class VisualizationWindow : MonoBehaviour {
     private Robot robot;
@@ -14,6 +17,11 @@ public class VisualizationWindow : MonoBehaviour {
 
     private long startTime;
     private int darkFlag = 0;
+
+    private Vuforia.Image.PIXEL_FORMAT mPixelFormat = Vuforia.Image.PIXEL_FORMAT.GRAYSCALE;
+
+    private bool mAccessCameraImage = true;
+    private bool mFormatRegistered = false;
 
     // Use this for initialization
     void Start() {
@@ -30,14 +38,101 @@ public class VisualizationWindow : MonoBehaviour {
 
         // For now, set canvas color based on startup - eventually update every now and then
         // TESTING
-        // TODO: figure out how Jerry made the window semi-transparent
-        /*
-        GameObject background = canvas.transform.Find("Background").gameObject;
-        background.GetComponent<Image>().color = Color.grey;
 
-        GameObject containerBackground = canvas.transform.Find("ContainerBackground").gameObject;
-        containerBackground.GetComponent<Image>().color = Color.white;
-        */
+        //CameraDevice.Instance.SetFrameFormat(Vuforia.Image.PIXEL_FORMAT.GRAYSCALE, true); // only need greyscale for contrast
+
+        // Register Vuforia life-cycle callbacks:
+        VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
+        VuforiaARController.Instance.RegisterTrackablesUpdatedCallback(OnTrackablesUpdated);
+        VuforiaARController.Instance.RegisterOnPauseCallback(OnPause);
+    }
+
+    void OnVuforiaStarted() {
+
+        // Try register camera image format
+        if (CameraDevice.Instance.SetFrameFormat(mPixelFormat, true)) {
+            Debug.Log("Successfully registered pixel format " + mPixelFormat.ToString());
+
+            mFormatRegistered = true;
+        }
+        else {
+            Debug.LogError(
+                "\nFailed to register pixel format: " + mPixelFormat.ToString() +
+                "\nThe format may be unsupported by your device." +
+                "\nConsider using a different pixel format.\n");
+
+            mFormatRegistered = false;
+        }
+
+    }
+
+    /// <summary>
+    /// Called each time the Vuforia state is updated
+    /// </summary>
+    /// THIS IS WHERE WE WILL USE TIME
+    void OnTrackablesUpdated() {
+        if (mFormatRegistered) {
+            if (mAccessCameraImage) {
+                Vuforia.Image image = CameraDevice.Instance.GetCameraImage(mPixelFormat);
+
+                if (image != null) {
+                    Debug.Log(
+                        "\nImage Format: " + image.PixelFormat +
+                        "\nImage Size:   " + image.Width + "x" + image.Height +
+                        "\nBuffer Size:  " + image.BufferWidth + "x" + image.BufferHeight +
+                        "\nImage Stride: " + image.Stride + "\n"
+                    );
+
+                    byte[] pixels = image.Pixels;
+
+                    if (pixels != null && pixels.Length > 0) {
+                        Debug.Log(
+                            "\nImage pixels: " +
+                            pixels[0] + ", " +
+                            pixels[1] + ", " +
+                            pixels[2] + ", ...\n"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Called when app is paused / resumed
+    /// </summary>
+    void OnPause(bool paused) {
+        if (paused) {
+            Debug.Log("App was paused");
+            UnregisterFormat();
+        }
+        else {
+            Debug.Log("App was resumed");
+            RegisterFormat();
+        }
+    }
+
+    /// <summary>
+    /// Register the camera pixel format
+    /// </summary>
+    void RegisterFormat() {
+        if (CameraDevice.Instance.SetFrameFormat(mPixelFormat, true)) {
+            Debug.Log("Successfully registered camera pixel format " + mPixelFormat.ToString());
+            mFormatRegistered = true;
+        }
+        else {
+            Debug.LogError("Failed to register camera pixel format " + mPixelFormat.ToString());
+            mFormatRegistered = false;
+        }
+    }
+
+    /// <summary>
+    /// Unregister the camera pixel format (e.g. call this when app is paused)
+    /// </summary>
+    void UnregisterFormat() {
+        Debug.Log("Unregistering camera pixel format " + mPixelFormat.ToString());
+        CameraDevice.Instance.SetFrameFormat(mPixelFormat, false);
+        mFormatRegistered = false;
     }
 
     private void SetWindowColor(int dark) {
@@ -135,6 +230,7 @@ public class VisualizationWindow : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        /*
         // TESTING FOR WINDOW COLOR
         long currTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -143,9 +239,9 @@ public class VisualizationWindow : MonoBehaviour {
             SetWindowColor(darkFlag);
 
             darkFlag = (darkFlag + 1)%2;
-            Debug.Log("flag: " + darkFlag);
             startTime = currTime;
         }
+        */
 
 
         canvas.transform.LookAt(GameObject.Find("Camera").transform);
