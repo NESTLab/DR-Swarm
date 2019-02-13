@@ -17,6 +17,7 @@ public class VisualizationWindow : MonoBehaviour {
 
     private long startTime;
     private int darkFlag = 0;
+    private int threshold = 130; // I dunno, about halfway
 
     private Vuforia.Image.PIXEL_FORMAT mPixelFormat = Vuforia.Image.PIXEL_FORMAT.GRAYSCALE;
 
@@ -69,14 +70,14 @@ public class VisualizationWindow : MonoBehaviour {
     /// <summary>
     /// Called each time the Vuforia state is updated
     /// </summary>
-    /// THIS IS WHERE WE WILL USE TIME
     void OnTrackablesUpdated() {
         long currTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
         if (mFormatRegistered) {
             if (mAccessCameraImage) {
-                if (currTime - startTime == 1000) {  // check every second, for now
+                if (currTime - startTime > 2000) {  // check every 2 seconds, for now
                     Vuforia.Image image = CameraDevice.Instance.GetCameraImage(mPixelFormat);
+                    startTime = currTime;
 
                     if (image != null) {
                         Debug.Log(
@@ -105,10 +106,19 @@ public class VisualizationWindow : MonoBehaviour {
                                 int index = random.Next(0, pixels.Length);
                                 byte data = pixels[index];
                                 total += data;
+                                counter++;
                             }
 
                             int avg = total / counter;
                             Debug.Log("average brightness: " + avg);
+                             
+                            if (avg < threshold) { // some threshold to trip the canvas color flag
+                                darkFlag = 0; // white canvas 
+                            }
+                            else {
+                                darkFlag = 1; // black canvas
+                            }
+                            SetWindowColor(darkFlag);
                         }
                     }
                 }
