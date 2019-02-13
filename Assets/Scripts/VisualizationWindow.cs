@@ -12,6 +12,9 @@ public class VisualizationWindow : MonoBehaviour {
 
     private HashSet<string> visualizationContainers;
 
+    private long startTime;
+    private int darkFlag = 0;
+
     // Use this for initialization
     void Start() {
         canvas = (GameObject)Instantiate(Resources.Load("VisualizationCanvas"), transform);
@@ -19,9 +22,37 @@ public class VisualizationWindow : MonoBehaviour {
         visualizationContainers = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
 
+        startTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
         // Subscribe to the set of visualizations for this robot
         // A callback gets called if a visualization was added or removed for the robot
         VisualizationManager.Instance.GetObservableVisualizationsForRobot(robot).Subscribe(VisualizationListUpdated);
+
+        // For now, set canvas color based on startup - eventually update every now and then
+        // TESTING
+        // TODO: figure out how Jerry made the window semi-transparent
+        /*
+        GameObject background = canvas.transform.Find("Background").gameObject;
+        background.GetComponent<Image>().color = Color.grey;
+
+        GameObject containerBackground = canvas.transform.Find("ContainerBackground").gameObject;
+        containerBackground.GetComponent<Image>().color = Color.white;
+        */
+    }
+
+    private void SetWindowColor(int dark) {
+        GameObject background = canvas.transform.Find("Background").gameObject;
+        GameObject containerBackground = canvas.transform.Find("ContainerBackground").gameObject;
+        if (dark == 1) {
+            Debug.Log("make dark");
+            background.GetComponent<Image>().color = new Color((30f/255f), (30f / 255f), (30f / 255f));            
+            containerBackground.GetComponent<Image>().color = new Color((64 / 255f), (64 / 255f), (64 / 255f));
+        }
+        if (dark == 0) {
+            Debug.Log("make light");
+            background.GetComponent<Image>().color = Color.grey;
+            containerBackground.GetComponent<Image>().color = Color.white;
+        }
     }
 
     private void VisualizationListUpdated(ISet<string> visualizationSet)
@@ -104,6 +135,19 @@ public class VisualizationWindow : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        // TESTING FOR WINDOW COLOR
+        long currTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+        // change every 5 seconds
+        if (currTime - startTime > 5000) {
+            SetWindowColor(darkFlag);
+
+            darkFlag = (darkFlag + 1)%2;
+            Debug.Log("flag: " + darkFlag);
+            startTime = currTime;
+        }
+
+
         canvas.transform.LookAt(GameObject.Find("Camera").transform);
 
         // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
