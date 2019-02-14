@@ -6,9 +6,9 @@ using UniRx;
 using UnityEngine.UI;
 using Vuforia;
 using Image = UnityEngine.UI.Image; // since we have 2 images, maybe this is the best way
-//using Image = Vuforia.Image;
 
 public class VisualizationWindow : MonoBehaviour {
+    // Vuforia code was grabbed from the Vuforia Developer Library
     private Robot robot;
     private GameObject canvas;
     private RectTransform container;
@@ -258,20 +258,6 @@ public class VisualizationWindow : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        /*
-        // TESTING FOR WINDOW COLOR
-        long currTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-        // change every 5 seconds
-        if (currTime - startTime > 5000) {
-            SetWindowColor(darkFlag);
-
-            darkFlag = (darkFlag + 1)%2;
-            startTime = currTime;
-        }
-        */
-
-
         canvas.transform.LookAt(GameObject.Find("Camera").transform);
 
         // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
