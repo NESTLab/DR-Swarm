@@ -21,16 +21,17 @@ public class TouchScript : MonoBehaviour
             {
                 if (UIManager.Instance.AddRobotMode)
                 {
-                    if (hit.collider.tag == "imageTarget1")
+                    Debug.Log("name" + hit.collider.gameObject.name); //RobotTarget1, RobotTarget2
+                    if (hit.collider.gameObject.name == "RobotTarget1")
                     {
-                        GameObject obj = GameObject.FindGameObjectWithTag("imageTarget1");
-                        Debug.Log("Console clicked target" + obj);
+                        //GameObject obj = GameObject.FindGameObjectWithTag("imageTarget1");
+                        //Debug.Log("Console clicked target" + obj);
                         UIManager.Instance.addRobotByTouch("r1");
                     }
-                    if (hit.collider.tag == "imageTarget2")
+                    if (hit.collider.gameObject.name == "RobotTarget2")
                     {
-                        GameObject obj = GameObject.FindGameObjectWithTag("imageTarget2");
-                        Debug.Log("Console clicked target" + obj);
+                        //GameObject obj = GameObject.FindGameObjectWithTag("imageTarget2");
+                        //Debug.Log("Console clicked target" + obj);
                         UIManager.Instance.addRobotByTouch("r2");
 
                     }
