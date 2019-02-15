@@ -2,39 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEngine;
 
-// Anything and everything can be changed. Comments can be removed,
-// they're just here to explain everything as best I can
-public class BarGraph : IVisualization
+public class IndicatorMap : IVisualization 
 {
-    // Feel free to use any data type to store the intermittent data
-    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
-    // subscribe like line chart 
-    // xaxis, yaxis?
-    public BarGraph(Robot firstRobot, HashSet<Robot> robots, string firstVar, HashSet<string> variables) // don't think this can change to include more variables
-    {
-        // TODO: Jerry needs to rename to robotSet
-        robotList = new HashSet<Robot>();
-        robotList.Add(firstRobot);
-        foreach (Robot r in robots) {
-            robotList.Add(r);
-        }
-        
-        varSet = new HashSet<string>();
-        varSet.Add(firstVar); 
-        foreach (string var in variables) {
-            varSet.Add(var);
-        }
+    List<MapPolicy> policies;
 
-        // TODO: make all other vis classes use this generic alg
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
+
+    public IndicatorMap(List<string> variables, Robot firstRobot, params Robot[] robots)
+    {
+        robotList = new HashSet<Robot>(robots);
+        robotList.Add(firstRobot);
+
+        varSet = new HashSet<string>(variables);
+
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
             foreach (string variable in varSet) {
-                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v =>
-                {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => {
                     return new Dictionary<string, float>() { { variable, v } };
                 }));
             }
@@ -54,6 +43,24 @@ public class BarGraph : IVisualization
                 return dict;
             });
         });
+    }
+
+    public void AddPolicy(MapPolicy P)
+    {
+        // verify that the policy works with the others
+        foreach (MapPolicy policy in this.policies) {
+            if (P.type == policy.type) {
+                // throw some kind of error
+                throw new Exception(String.Format("Policy of type ('{0}') already exists.", P.type));
+            }
+            else {
+                this.policies.Add(P);
+            }
+        }
+    }
+    
+    public List<MapPolicy> GetPolicies() {
+        return this.policies;
     }
 
     public ISet<Robot> GetRobots()
@@ -76,17 +83,13 @@ public class BarGraph : IVisualization
         return ParameterCount.N;
     }
 
+    // TODO: decide if datasource should be defined inside this function or outside, then stardardize across all vis classes
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
         // into a Dictionary<Robot, Dictionary<string, float>>
         // This is a dictionary that maps robots to a dict
         // which maps variable name (string) to value (float)
-
-        // TODO: 
-        // the datasource needs to be a dictionary<Robot, dictionary<string, float>>
-        // so we need to loop through each robot and create a dictionary of strings to observable floats
-        // then we need to make a dictionary of all of those observables
 
         return dataSource;
     }
