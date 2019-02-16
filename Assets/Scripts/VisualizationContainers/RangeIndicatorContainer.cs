@@ -9,23 +9,34 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
+
+
+    // ok, so I'm thinking of making 
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<Robot, Dictionary<string, float>> dataDict = new Dictionary<Robot, Dictionary<string, float>>();
 
     private List<RangePolicy> policies;
-    private GameObject indicator; // maybe make this a dictionary
+
+    // ok, so I'm thinking of making an indicator for each new shape that's been activated, and then just hiding all the others
+    //private Dictionary<string, GameObject> indicators; // maybe the key should be the shape, not a string
+    private Dictionary<Robot, GameObject> indicators;
 
     // Initialize things
     protected override void Start() {
-        RangeIndicator vis = (RangeIndicator)visualization; // is this actually how to do this?
-        policies = vis.GetPolicies(); 
+        // TODO: maybe remove
+        base.Start();
 
+        RangeIndicator vis = (RangeIndicator)visualization; // is this actually how to do this?
+        policies = vis.GetPolicies();
+
+        indicators = new Dictionary<Robot, GameObject>();
+
+        /*
         // now that I think about it, all of this probably needs to go in the draw method. 
         // probably need to wrap this in a try catch
-        // TODO: make prefabs for these
         // TODO: figure out how tp have them all named the same thing
-        switch (policies[0].shape) {
+        switch (policies[0].shape) { // this is assuming the shape never changes
             case RangePolicy.IndicatorShape.Square:
                 indicator = new GameObject("Indicator", typeof(Image));
                 break;
@@ -44,13 +55,85 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
             case RangePolicy.IndicatorShape.Exclamation:
                 indicator = (GameObject)Instantiate(Resources.Load("Exclamation"), transform);
                 break;
+        }
+        */
+    }
 
+    private GameObject CreateIndicator(float value) {
+        //RangePolicy.IndicatorShape shape = RangePolicy.IndicatorShape.Square; // may not be the way we should do it
+        GameObject indicator;
+
+        foreach (RangePolicy p in policies) {
+            if (p.range.x <= value && value < p.range.y) { // have the right policy
+                RangePolicy.IndicatorShape shape = p.shape;
+
+                switch (shape) {
+                    case RangePolicy.IndicatorShape.Square:
+                        indicator = new GameObject("Square", typeof(Image));
+                        return indicator;
+                        break;
+                    case RangePolicy.IndicatorShape.Circle:
+                        indicator = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
+                        return indicator;
+                        break;
+                    case RangePolicy.IndicatorShape.Triangle:
+                        indicator = (GameObject)Instantiate(Resources.Load("Triangle"), transform);
+                        return indicator;
+                        break;
+                    case RangePolicy.IndicatorShape.Plus:
+                        indicator = (GameObject)Instantiate(Resources.Load("Plus"), transform);
+                        return indicator;
+                        break;
+                    case RangePolicy.IndicatorShape.Check:
+                        indicator = (GameObject)Instantiate(Resources.Load("Check"), transform);
+                        return indicator;
+                        break;
+                    case RangePolicy.IndicatorShape.Exclamation:
+                        indicator = (GameObject)Instantiate(Resources.Load("Exclamation"), transform);
+                        return indicator;
+                        break;
+                }
+            }
+        }
+
+        return new GameObject("Square", typeof(Image)); // ok I know this is wrong, but I'm lazy atm
+    }
+
+    private GameObject GetIndicator(Robot robot, float value) {
+        if (!indicators.ContainsKey(robot)) {
+            //GameObject blankKey = (GameObject)Instantiate(Resources.Load("LegendKey"), transform);
+            GameObject indicator = CreateIndicator(value);
+            indicator.transform.SetParent(transform, false); // is this right?
+            indicators[robot] = indicator;
+        }
+
+        return indicators[robot];
+    }
+
+    private void UpdateIndicator(GameObject indicator, float value) {
+        // update the shape and color based on policy
+        foreach (RangePolicy p in policies) {
+            if (p.range.x <= value && value < p.range.y) { // have the right policy
+                //RangePolicy.IndicatorShape shape = p.shape;  // not sure how to deal with shape yet
+                Color color = p.color;
+                // crap. I think to make this work well, all the prefabs need to be of a single sprite, not multiple objects
+            }
         }
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
-        
+        foreach(Robot r in robots) {
+            GameObject indicator = GetIndicator(r, dataDict[r][variables[0]]); // this is probably wrong too
+            RectTransform t = indicator.GetComponent<RectTransform>();
+            t.anchorMin = new Vector2(0f, 0f);
+            t.anchorMax = new Vector2(0f, 0f);
+            t.pivot = new Vector2(0f, 0f);
+            t.localScale = Vector3.one;
+            t.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+
+            UpdateIndicator(indicator, dataDict[r][variables[0]]); // this is probably wrong too
+        }
     }
 
     // Update internal storage of data. Called automatically when data in
