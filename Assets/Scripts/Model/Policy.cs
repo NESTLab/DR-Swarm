@@ -18,7 +18,7 @@ public class RangePolicy : Policy {
         Triangle,
         Plus,
         Check,
-        Exclaimation
+        Exclamation
     }
 
     public readonly Vector2 range;
