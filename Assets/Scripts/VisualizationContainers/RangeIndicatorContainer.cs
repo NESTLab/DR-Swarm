@@ -10,8 +10,6 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
 
-
-    // ok, so I'm thinking of making 
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<Robot, Dictionary<string, float>> dataDict = new Dictionary<Robot, Dictionary<string, float>>();
@@ -19,8 +17,8 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private List<RangePolicy> policies;
 
     // ok, so I'm thinking of making an indicator for each new shape that's been activated, and then just hiding all the others
-    //private Dictionary<string, GameObject> indicators; // maybe the key should be the shape, not a string
     private Dictionary<Robot, GameObject> indicators;
+    private Dictionary<RangePolicy.IndicatorShape, GameObject> shapes;
 
     // Initialize things
     protected override void Start() {
@@ -31,32 +29,13 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         policies = vis.GetPolicies();
 
         indicators = new Dictionary<Robot, GameObject>();
-
-        /*
-        // now that I think about it, all of this probably needs to go in the draw method. 
-        // probably need to wrap this in a try catch
-        // TODO: figure out how tp have them all named the same thing
-        switch (policies[0].shape) { // this is assuming the shape never changes
-            case RangePolicy.IndicatorShape.Square:
-                indicator = new GameObject("Indicator", typeof(Image));
-                break;
-            case RangePolicy.IndicatorShape.Circle:
-                indicator = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
-                break;
-            case RangePolicy.IndicatorShape.Triangle:
-                indicator = (GameObject)Instantiate(Resources.Load("Triangle"), transform);
-                break;
-            case RangePolicy.IndicatorShape.Plus:
-                indicator = (GameObject)Instantiate(Resources.Load("Plus"), transform);
-                break;
-            case RangePolicy.IndicatorShape.Check:
-                indicator = (GameObject)Instantiate(Resources.Load("Check"), transform);
-                break;
-            case RangePolicy.IndicatorShape.Exclamation:
-                indicator = (GameObject)Instantiate(Resources.Load("Exclamation"), transform);
-                break;
-        }
-        */
+        shapes = new Dictionary<RangePolicy.IndicatorShape, GameObject>();
+        shapes[RangePolicy.IndicatorShape.Check] = (GameObject)Instantiate(Resources.Load("Check2"), transform);
+        shapes[RangePolicy.IndicatorShape.Circle] = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
+        shapes[RangePolicy.IndicatorShape.Exclamation] = (GameObject)Instantiate(Resources.Load("Exclamation2"), transform);
+        shapes[RangePolicy.IndicatorShape.Plus] = (GameObject)Instantiate(Resources.Load("Plus2"), transform);
+        shapes[RangePolicy.IndicatorShape.Square] = new GameObject("Square", typeof(Image)); // need to get the transform right on this
+        shapes[RangePolicy.IndicatorShape.Triangle] = (GameObject)Instantiate(Resources.Load("Triangle"), transform);
     }
 
     private GameObject CreateIndicator(float value) {
@@ -67,6 +46,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
                 RangePolicy.IndicatorShape shape = p.shape;
 
+                indicator = shapes[shape]; // dunno if this is legal
+
+                /*
                 switch (shape) {
                     case RangePolicy.IndicatorShape.Square:
                         indicator = new GameObject("Square", typeof(Image));
@@ -81,18 +63,19 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                         return indicator;
                         break;
                     case RangePolicy.IndicatorShape.Plus:
-                        indicator = (GameObject)Instantiate(Resources.Load("Plus"), transform);
+                        indicator = (GameObject)Instantiate(Resources.Load("Plus2"), transform);
                         return indicator;
                         break;
                     case RangePolicy.IndicatorShape.Check:
-                        indicator = (GameObject)Instantiate(Resources.Load("Check"), transform);
+                        indicator = (GameObject)Instantiate(Resources.Load("Check2"), transform);
                         return indicator;
                         break;
                     case RangePolicy.IndicatorShape.Exclamation:
-                        indicator = (GameObject)Instantiate(Resources.Load("Exclamation"), transform);
+                        indicator = (GameObject)Instantiate(Resources.Load("Exclamation2"), transform);
                         return indicator;
                         break;
                 }
+                */
             }
         }
 
@@ -114,9 +97,14 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         // update the shape and color based on policy
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
-                //RangePolicy.IndicatorShape shape = p.shape;  // not sure how to deal with shape yet
+                // for the shape: maybe have a dictionary of all previously used shapes that we can just pull from
+                    // would I need a different one for each robot? I really hope not
+                RangePolicy.IndicatorShape shape = p.shape;
+                indicator = shapes[shape]; // not sure this is right
+
                 Color color = p.color;
                 // crap. I think to make this work well, all the prefabs need to be of a single sprite, not multiple objects
+                indicator.GetComponent<Image>().color = p.color;
             }
         }
     }

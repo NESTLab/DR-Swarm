@@ -9,16 +9,18 @@ public class RangeIndicator : IVisualization
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
-    List<RangePolicy> policies;
+    List<RangePolicy> policyList;
 
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
-    public RangeIndicator(string variableName, Robot firstRobot, params Robot[] robots) {
+    public RangeIndicator(string variableName, List<RangePolicy> policies, Robot firstRobot, params Robot[] robots) {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
 
         varSet = new HashSet<string>();
         varSet.Add(variableName);
+
+        policyList = new List<RangePolicy>(policies);
 
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
@@ -47,19 +49,19 @@ public class RangeIndicator : IVisualization
 
     public void AddPolicy(RangePolicy P) {
         // verify that the policy works with the others
-        foreach (RangePolicy policy in this.policies) {
+        foreach (RangePolicy policy in policyList) {
             // if new policy's min is in between a current policy's min and max, new one is incompatible
             if ((policy.range[0] <= P.range[0] && P.range[0] < policy.range[1]) || (P.range[0] <= policy.range[0] && policy.range[0] < P.range[1])) { // are these the only cases?
                 throw new Exception(String.Format("Policy range is incompatible"));
             }
             else {
-                this.policies.Add(P);
+                policyList.Add(P);
             }
         }
     }
 
     public List<RangePolicy> GetPolicies() {
-        return this.policies;
+        return policyList;
     }
 
     public ISet<Robot> GetRobots() {
