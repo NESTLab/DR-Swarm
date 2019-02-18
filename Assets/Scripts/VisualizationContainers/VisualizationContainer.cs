@@ -9,6 +9,7 @@ using UniRx;
 public abstract class VisualizationContainer<T> : MonoBehaviour where T : IVisualization
 {
     public RectTransform container;
+    public Robot robot;
 
     private IDisposable _visualizationSubscription;
     private IDisposable _visualizationDataSubscription;
