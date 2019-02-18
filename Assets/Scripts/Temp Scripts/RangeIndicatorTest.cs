@@ -6,6 +6,7 @@ public class RangeIndicatorTest : MonoBehaviour
 {
     Robot r1, r2, r3, r4, r5;
     IVisualization ri1, ri2;
+    float theta = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +48,10 @@ public class RangeIndicatorTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        theta += 0.01f;
+
+        r1.SetVariable("val", Mathf.Sin(theta) * Mathf.Sin(theta));
+
         if (Input.GetKeyDown("1")) {
             Debug.Log("add ri2");
             VisualizationManager.Instance.AddVisualization("testvis2", ri2);
