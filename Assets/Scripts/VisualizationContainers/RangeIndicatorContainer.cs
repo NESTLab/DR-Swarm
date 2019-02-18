@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
+// TODO: figure out if you can change the sprite attached to a game object
 public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
@@ -111,6 +112,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                     // would I need a different one for each robot? I really hope not
                 RangePolicy.IndicatorShape shape = p.shape;
                 indicator = shapes[shape]; // not sure this is right
+                foreach (RangePolicy.IndicatorShape s in shapes.Keys) {
+                    shapes[s].SetActive(false);
+                }
                 indicator.SetActive(true);
 
                 Color color = p.color;
@@ -122,14 +126,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
+        // TODO: find the right robot instead of for loop
         foreach(Robot r in robots) {
             GameObject indicator = GetIndicator(r, dataDict[r][variables[0]]); // this is probably wrong too
-            //RectTransform t = indicator.GetComponent<RectTransform>();
-            //t.anchorMin = new Vector2(0f, 0f);
-            //t.anchorMax = new Vector2(0f, 0f);
-            //t.pivot = new Vector2(0f, 0f);
-            //t.localScale = Vector3.one;
-            //t.localRotation = new Quaternion(0f, 0f, 0f, 0f);
 
             UpdateIndicator(indicator, dataDict[r][variables[0]]); // this is probably wrong too
         }

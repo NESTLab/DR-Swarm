@@ -36,13 +36,29 @@ public class RangeIndicatorTest : MonoBehaviour
         policy3.color = Color.red;
         policy3.shape = RangePolicy.IndicatorShape.Check;
 
-        List<RangePolicy> policies = new List<RangePolicy>();
-        policies.Add(policy1);
-        policies.Add(policy2);
-        policies.Add(policy3);
+        List<RangePolicy> colorpolicies = new List<RangePolicy>();
+        colorpolicies.Add(policy1);
+        colorpolicies.Add(policy2);
+        colorpolicies.Add(policy3);
 
-        ri1 = new RangeIndicator("val", policies, r1);
-        ri2 = new RangeIndicator("val", policies, r4);
+        RangePolicy policy4 = new RangePolicy("lowRange", 0f, 03f);
+        policy4.color = Color.blue;
+        policy4.shape = RangePolicy.IndicatorShape.Circle;
+        RangePolicy policy5 = new RangePolicy("midRange", 0.3f, 0.7f);
+        policy5.color = Color.blue;
+        policy5.shape = RangePolicy.IndicatorShape.Square;
+        RangePolicy policy6 = new RangePolicy("highRange", 0.7f, 1f);
+        policy6.color = Color.blue;
+        policy6.shape = RangePolicy.IndicatorShape.Triangle;
+
+        List<RangePolicy> shapepolicies = new List<RangePolicy>();
+        shapepolicies.Add(policy4);
+        shapepolicies.Add(policy5);
+        shapepolicies.Add(policy6);
+
+        // maybe the indicator classes should only take in a single robot
+        ri1 = new RangeIndicator("val", colorpolicies, r1); // not sure how to add more robots without the window getting irrelevant indicators
+        ri2 = new RangeIndicator("val", shapepolicies, r1);
     }
 
     // Update is called once per frame
