@@ -82,9 +82,7 @@ public class CreateVarPanel : MonoBehaviour
                 if (totalDropdowns > options || options > totalDropdowns)
                 {
                     UIManager.Instance.updateTotalVars();
-
                     m_DropOptions = UIManager.Instance.wantedVars;
-                    //m_DropOptions = UIManager.Instance.variables;
                     foreach (Transform child in varPanel.transform)
                     {
                         GameObject.Destroy(child.gameObject);
@@ -205,6 +203,9 @@ public class CreateVarPanel : MonoBehaviour
         Debug.Log(var);
 
         UIManager.Instance.wantedVars = var;
+
+        UIManager.Instance.addGraph = true;
+
     }
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using graphNameSpace;
 public class SendVars : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -16,8 +17,14 @@ public class SendVars : MonoBehaviour
     public List<Toggle> allToggles = new List<Toggle>();
     public List<Toggle> allChecked = new List<Toggle>();
     public HashSet<string> prevCheckedRobots = new HashSet<string> { };
-    public GameObject panel;
+    public GameObject panel; //Robot panel 
     public bool updateToggles = false;
+
+    //Var panels
+    public GameObject basicVarPanel;
+    public GameObject mapPanel;
+    public GameObject rangePanel;
+
 
     void Start()
     {
@@ -195,7 +202,7 @@ public class SendVars : MonoBehaviour
         {
             UIManager.Instance.AddRobot("r5");
         }
-        UIManager.Instance.addGraph = true;
+        //UIManager.Instance.addGraph = true;
         updateToggles = true;
         UIManager.Instance.touchedRobots.Clear();
     }
@@ -214,6 +221,24 @@ public class SendVars : MonoBehaviour
         {
             UIManager.Instance.AddRobotMode = false;
         }
+    }
+
+
+    public void setPanel()
+    {
+        graph UIgraph = UIManager.Instance.GraphType;
+        if (UIgraph == graph.TwoDRange)
+        {
+            rangePanel.gameObject.SetActive(true);
+        } else if (UIgraph == graph.TwoDMap)
+        {
+            mapPanel.gameObject.SetActive(true);
+        }
+        else 
+        {
+            basicVarPanel.gameObject.SetActive(true);
+        }
+
     }
 
 

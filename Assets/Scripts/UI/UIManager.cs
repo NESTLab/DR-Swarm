@@ -4,16 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Globalization;
+using graphNameSpace;
 
+namespace graphNameSpace
+{
+    public enum graph
+    {
+        Line,
+        Pie,
+        PieMulti,
+        Bar,
+        TwoDRange,
+        TwoDMap,
+        NoGraph
+    }
+}
 
 public class UIManager : MonoBehaviour
-{ 
-    
+{
+
     // Start is called before the first frame update   
 
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -26,45 +40,57 @@ public class UIManager : MonoBehaviour
     public int TotalOptions = 1;
     public int RobotOptions = 0;
 
-    public enum graph
-    {
-        Line,
-        Pie,
-        PieMulti,
-        Bar, 
-        NoGraph
-    }
+
 
     public string _sentGraphType = "";
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
     public string sentGraphType
     {
-        get {return _sentGraphType; }
-        set {
+        get { return _sentGraphType; }
+        set
+        {
             _sentGraphType = value;
             //Set options based on type of graph
             Debug.Log("Changing Graph Type");
-            if (_sentGraphType == "Line") {
+            if (_sentGraphType == "Line")
+            {
                 GraphType = graph.Line;
                 Options = 2;
                 TotalOptions = 100;
                 RobotOptions = 0;
-            } 
-            else if (_sentGraphType == "Pie") {
+            }
+            else if (_sentGraphType == "Pie")
+            {
                 GraphType = graph.Pie;
                 Options = 1;
                 TotalOptions = 1;
                 RobotOptions = 0;
-            } else if (_sentGraphType == "PieMulti")
+            }
+            else if (_sentGraphType == "PieMulti")
             {
                 GraphType = graph.PieMulti;
                 Options = 2;
                 RobotOptions = 1;
                 TotalOptions = 100;
-            } else if (_sentGraphType == "Bar")
+            }
+            else if (_sentGraphType == "Bar")
             {
                 GraphType = graph.Bar;
+                Options = 1;
+                RobotOptions = 0;
+                TotalOptions = 100;
+            }
+            else if (_sentGraphType == "2DMap")
+            {
+                GraphType = graph.TwoDMap;
+                Options = 1;
+                RobotOptions = 0;
+                TotalOptions = 100;
+            }
+            else if (_sentGraphType == "2DRange")
+            {
+                GraphType = graph.TwoDRange;
                 Options = 1;
                 RobotOptions = 0;
                 TotalOptions = 100;
@@ -74,53 +100,88 @@ public class UIManager : MonoBehaviour
 
 
     //ADD VARS
-    //TODO: Make this automatic? From robots, from datamangager? <<YES
-    public List<string> variables = new List<string> {"x", "y", "val", "var1", "var2"};
     public List<string> wantedVars = new List<string>();
+    //Get vars from selected robots 
     public void updateTotalVars()
     {
         HashSet<string> varFromRobots = new HashSet<string>();
-        List<Robot> allRobots = new List<Robot>();
-        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
-        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
-        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
-        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
-        allRobots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
-        foreach (Robot r in allRobots)
+        //List<Robot> allRobots = new List<Robot>();
+        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
+        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
+        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
+        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
+        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
+        if (robots.Count > 0)
         {
-            varFromRobots.UnionWith(r.GetVariables());
+            varFromRobots.UnionWith(robots[0].GetVariables());
+        }
+        foreach (Robot r in robots)
+        {
+            varFromRobots.IntersectWith(r.GetVariables());
         }
         wantedVars = new List<string>(varFromRobots);
     }
 
 
     //ADD ROBOTS
-    private List<Robot> robots = new List<Robot>{};//Robots for the current graph
+    public List<Robot> robots = new List<Robot> { };//Robots for the current graph
 
     //Add a robot to the array to get the total robots for the graph
-    public void AddRobot(string r) {
-        if (r == "r1"){
+    public void AddRobot(string r)
+    {
+        if (r == "r1")
+        {
             robots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
         }
-        else if (r =="r2") {
+        else if (r == "r2")
+        {
             robots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
-        }else if (r =="r3") {
+        }
+        else if (r == "r3")
+        {
             robots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
-        }else if (r =="r4") {
+        }
+        else if (r == "r4")
+        {
             robots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
-        }else if (r =="r5") {
+        }
+        else if (r == "r5")
+        {
             robots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
         }
+        else if (r == "r6")
+        {
+            robots.Add(DataManager.Instance.GetRobot("RobotTarget6"));
+        }
+        else if (r == "r7")
+        {
+            robots.Add(DataManager.Instance.GetRobot("RobotTarget7"));
+        }
+        else if (r == "r8")
+        {
+            robots.Add(DataManager.Instance.GetRobot("RobotTarget8"));
+        }
+        else if (r == "r9")
+        {
+            robots.Add(DataManager.Instance.GetRobot("RobotTarget9"));
+        }
+        else if (r == "r10")
+        {
+            robots.Add(DataManager.Instance.GetRobot("RobotTarget10"));
+        }
+
     }
 
     //If there is a known list of robots to add, currently not using
-    public void AddAllRobots(List<string> robots) {
-        foreach(string r in robots){
+    public void AddAllRobots(List<string> robots)
+    {
+        foreach (string r in robots)
+        {
             AddRobot(r);
         }
     }
 
-    public bool AddRobotMode = false; 
+    public bool AddRobotMode = false;
 
     //Add robot by clicking on them in AR
     public HashSet<string> touchedRobots = new HashSet<string> { };
@@ -132,11 +193,13 @@ public class UIManager : MonoBehaviour
 
     //ADD GRAPH
     private bool _addGraph = false; //Var to tell when to add a graph
-    public bool addGraph {
-        get {return _addGraph;}
-        set {
+    public bool addGraph
+    {
+        get { return _addGraph; }
+        set
+        {
             _addGraph = value;
-            if(_addGraph == true) {createGraph(); }// Add graph here
+            if (_addGraph == true) { createGraph(); }// Add graph here
 
         }
     }
@@ -147,10 +210,12 @@ public class UIManager : MonoBehaviour
 
     //Create a graph, Needed are robots, variables, type
     //Calls VizManager to add the graph, currently adds title as well
-    private void createGraph(){
-        
+    private void createGraph()
+    {
+
         string title = "";
-        if (GraphType == graph.Line){
+        if (GraphType == graph.Line)
+        {
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string xvar = wantedVars[0];
@@ -158,11 +223,12 @@ public class UIManager : MonoBehaviour
             IVisualization graphToAdd = new LineGraph(xvar, yvar, r1, robots.ToArray());
             DateTime foo = DateTime.UtcNow;
             long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-            title = xvar+","+yvar+" Line " + unixTime;//TODO: Add another unique symbol to this?
+            title = xvar + "," + yvar + " Line " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-        } else if (GraphType == graph.Pie)
+        }
+        else if (GraphType == graph.Pie)
         {
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -176,7 +242,8 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-        } else if (GraphType == graph.PieMulti)
+        }
+        else if (GraphType == graph.PieMulti)
         {
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -189,7 +256,8 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-        } else if (GraphType == graph.Bar)
+        }
+        else if (GraphType == graph.Bar)
         {
 
             HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
@@ -201,7 +269,7 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-            
+
             /*
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -229,18 +297,19 @@ public class UIManager : MonoBehaviour
     public static UIManager _instance;
     public static UIManager Instance
     {
-         get {
-             if (_instance == null)
+        get
+        {
+            if (_instance == null)
             {
                 _instance = GameObject.FindObjectOfType<UIManager>();
-             
+
                 if (_instance == null)
                 {
                     GameObject container = new GameObject("UIManager");
                     _instance = container.AddComponent<UIManager>();
                 }
             }
-     
+
             return _instance;
         }
     }

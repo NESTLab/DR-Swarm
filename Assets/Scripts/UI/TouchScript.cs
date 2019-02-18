@@ -25,15 +25,23 @@ public class TouchScript : MonoBehaviour
                     if (hit.collider.gameObject.name == "RobotTarget1")
                     {
                         //GameObject obj = GameObject.FindGameObjectWithTag("imageTarget1");
-                        //Debug.Log("Console clicked target" + obj);
                         UIManager.Instance.addRobotByTouch("r1");
                     }
-                    if (hit.collider.gameObject.name == "RobotTarget2")
+                    else if (hit.collider.gameObject.name == "RobotTarget2")
                     {
-                        //GameObject obj = GameObject.FindGameObjectWithTag("imageTarget2");
-                        //Debug.Log("Console clicked target" + obj);
                         UIManager.Instance.addRobotByTouch("r2");
-
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget3")
+                    {
+                        UIManager.Instance.addRobotByTouch("r3");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget4")
+                    {
+                        UIManager.Instance.addRobotByTouch("r4");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget5")
+                    {
+                        UIManager.Instance.addRobotByTouch("r5");
                     }
                 }
             }
