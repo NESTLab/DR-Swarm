@@ -56,8 +56,7 @@ public class RangeIndicatorTest : MonoBehaviour
         shapepolicies.Add(policy5);
         shapepolicies.Add(policy6);
 
-        // maybe the indicator classes should only take in a single robot
-        ri1 = new RangeIndicator("val", colorpolicies, r1); // not sure how to add more robots without the window getting irrelevant indicators
+        ri1 = new RangeIndicator("val", colorpolicies, r1, r2); 
         ri2 = new RangeIndicator("val", shapepolicies, r1);
     }
 
@@ -67,6 +66,7 @@ public class RangeIndicatorTest : MonoBehaviour
         theta += 0.01f;
 
         r1.SetVariable("val", Mathf.Sin(theta) * Mathf.Sin(theta));
+        r2.SetVariable("val", Mathf.Cos(theta) * Mathf.Cos(theta));
 
         if (Input.GetKeyDown("1")) {
             Debug.Log("add ri2");

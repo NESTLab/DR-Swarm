@@ -76,37 +76,37 @@ public class VisualizationWindow : MonoBehaviour {
         if (visualizationType == typeof(LineGraph))
         {
             LineGraphContainer container = gameObject.AddComponent<LineGraphContainer>();
+            container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-            container.robot = this.robot;
         }
         else if (visualizationType == typeof(PieChart))
         {
             PieChartContainer container = gameObject.AddComponent<PieChartContainer>();
+            container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-            container.robot = this.robot;
         }
         else if (visualizationType == typeof(PieChartMultiVar)) 
         {
             PieChartMultiVarContainer container = gameObject.AddComponent<PieChartMultiVarContainer>();
+            container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-            container.robot = this.robot;
         }
         else if (visualizationType == typeof(RangeIndicator))
         {
             RangeIndicatorContainer container = gameObject.AddComponent<RangeIndicatorContainer>();
+            container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-            container.robot = this.robot;
         }
         else if (visualizationType == typeof(BarGraph))
         {
             BarGraphContainer container = gameObject.AddComponent<BarGraphContainer>();
+            container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-            container.robot = this.robot;
         } else
         {
             throw new Exception("Invalid visualization type.");
