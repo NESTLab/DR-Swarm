@@ -12,22 +12,11 @@ public class BarGraph : IVisualization
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
-    // subscribe like line chart 
-    // xaxis, yaxis?
-    public BarGraph(Robot firstRobot, HashSet<Robot> robots, string firstVar, HashSet<string> variables) // don't think this can change to include more variables
+    public BarGraph(HashSet<Robot> robots, HashSet<string> variables) // don't think this can change to include more variables
     {
         // TODO: Jerry needs to rename to robotSet
-        robotList = new HashSet<Robot>();
-        robotList.Add(firstRobot);
-        foreach (Robot r in robots) {
-            robotList.Add(r);
-        }
-        
-        varSet = new HashSet<string>();
-        varSet.Add(firstVar); 
-        foreach (string var in variables) {
-            varSet.Add(var);
-        }
+        robotList = new HashSet<Robot>(robots);
+        varSet = new HashSet<string>(variables);
 
         // TODO: make all other vis classes use this generic alg
         dataSource = robotList.ToObservable().SelectMany(robot => {
@@ -82,11 +71,6 @@ public class BarGraph : IVisualization
         // into a Dictionary<Robot, Dictionary<string, float>>
         // This is a dictionary that maps robots to a dict
         // which maps variable name (string) to value (float)
-
-        // TODO: 
-        // the datasource needs to be a dictionary<Robot, dictionary<string, float>>
-        // so we need to loop through each robot and create a dictionary of strings to observable floats
-        // then we need to make a dictionary of all of those observables
 
         return dataSource;
     }

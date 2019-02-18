@@ -36,22 +36,26 @@ public class BarChartTest : MonoBehaviour {
         r4.SetVariable("var4", 1.4f);
 
         HashSet<Robot> robots = new HashSet<Robot>();
+        robots.Add(r1);
         robots.Add(r2);
         robots.Add(r3);
         robots.Add(r4);
 
         HashSet<string> vars = new HashSet<string>();
+        vars.Add("var1");
         vars.Add("var2");
         vars.Add("var3");
         vars.Add("var4");
 
         HashSet<Robot> lessRobots = new HashSet<Robot>();
+        lessRobots.Add(r1);
         //lessRobots.Add(r2);
 
         HashSet<string> lessVars = new HashSet<string>();
+        lessVars.Add("var1");
 
-        bc1 = new BarGraph(r1, robots, "var1", vars);
-        bc2 = new BarGraph(r1, lessRobots, "var1", vars);
+        bc1 = new BarGraph(robots, vars);
+        bc2 = new BarGraph(lessRobots, vars);
     }
 	
 	// Update is called once per frame
