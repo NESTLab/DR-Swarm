@@ -8,15 +8,25 @@ using UniRx;
 
 public abstract class VisualizationContainer<T> : MonoBehaviour where T : IVisualization
 {
+    // The transform of the container object. All objects for this visualization should
+    // be parented to this RectTransform
     public RectTransform container;
+
+    // The robot that this visualization container is displayed above
     public Robot robot;
 
+    // References to subscriptions for the visualization name and the visualization data
     private IDisposable _visualizationSubscription;
     private IDisposable _visualizationDataSubscription;
+
+    // The current observable visualization associated with this visualization container
     private IObservable<IVisualization> _visualizationObs;
 
+    // The current IVisualization object, accessible by subclasses
     protected IVisualization visualization;
 
+    // The name of the visualization assocciated with this container
+    // This should only be set by the outside, NOT by subclasses
     string _visualizationName;
     public string visualizationName
     {
