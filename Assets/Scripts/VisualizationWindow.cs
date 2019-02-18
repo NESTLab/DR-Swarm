@@ -85,9 +85,9 @@ public class VisualizationWindow : MonoBehaviour {
             container.visualizationName = visualizationName;
             container.container = transform;
         }
-        else if (visualizationType == typeof(Indicator))
+        else if (visualizationType == typeof(RangeIndicator))
         {
-            IndicatorContainer container = gameObject.AddComponent<IndicatorContainer>();
+            RangeIndicatorContainer container = gameObject.AddComponent<RangeIndicatorContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
         }

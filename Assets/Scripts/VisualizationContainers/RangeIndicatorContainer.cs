@@ -30,12 +30,19 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
         indicators = new Dictionary<Robot, GameObject>();
         shapes = new Dictionary<RangePolicy.IndicatorShape, GameObject>();
+        // I think this is causing big problems -- all of the shapes are showing up
         shapes[RangePolicy.IndicatorShape.Check] = (GameObject)Instantiate(Resources.Load("Check2"), transform);
+        shapes[RangePolicy.IndicatorShape.Check].SetActive(false);
         shapes[RangePolicy.IndicatorShape.Circle] = (GameObject)Instantiate(Resources.Load("Wedge"), transform);
+        shapes[RangePolicy.IndicatorShape.Circle].SetActive(false);
         shapes[RangePolicy.IndicatorShape.Exclamation] = (GameObject)Instantiate(Resources.Load("Exclamation2"), transform);
+        shapes[RangePolicy.IndicatorShape.Exclamation].SetActive(false);
         shapes[RangePolicy.IndicatorShape.Plus] = (GameObject)Instantiate(Resources.Load("Plus2"), transform);
-        shapes[RangePolicy.IndicatorShape.Square] = new GameObject("Square", typeof(Image)); // need to get the transform right on this
+        shapes[RangePolicy.IndicatorShape.Plus].SetActive(false);
+        shapes[RangePolicy.IndicatorShape.Square] = (GameObject)Instantiate(Resources.Load("Square"), transform); // need to get the transform right on this
+        shapes[RangePolicy.IndicatorShape.Square].SetActive(false);
         shapes[RangePolicy.IndicatorShape.Triangle] = (GameObject)Instantiate(Resources.Load("Triangle"), transform);
+        shapes[RangePolicy.IndicatorShape.Triangle].SetActive(false);
     }
 
     private GameObject CreateIndicator(float value) {
@@ -47,6 +54,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                 RangePolicy.IndicatorShape shape = p.shape;
 
                 indicator = shapes[shape]; // dunno if this is legal
+                //indicator.SetActive(true);
+
+                return indicator;
 
                 /*
                 switch (shape) {
@@ -101,6 +111,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                     // would I need a different one for each robot? I really hope not
                 RangePolicy.IndicatorShape shape = p.shape;
                 indicator = shapes[shape]; // not sure this is right
+                indicator.SetActive(true);
 
                 Color color = p.color;
                 // crap. I think to make this work well, all the prefabs need to be of a single sprite, not multiple objects
@@ -113,12 +124,12 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     public override void Draw() {
         foreach(Robot r in robots) {
             GameObject indicator = GetIndicator(r, dataDict[r][variables[0]]); // this is probably wrong too
-            RectTransform t = indicator.GetComponent<RectTransform>();
-            t.anchorMin = new Vector2(0f, 0f);
-            t.anchorMax = new Vector2(0f, 0f);
-            t.pivot = new Vector2(0f, 0f);
-            t.localScale = Vector3.one;
-            t.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+            //RectTransform t = indicator.GetComponent<RectTransform>();
+            //t.anchorMin = new Vector2(0f, 0f);
+            //t.anchorMax = new Vector2(0f, 0f);
+            //t.pivot = new Vector2(0f, 0f);
+            //t.localScale = Vector3.one;
+            //t.localRotation = new Quaternion(0f, 0f, 0f, 0f);
 
             UpdateIndicator(indicator, dataDict[r][variables[0]]); // this is probably wrong too
         }

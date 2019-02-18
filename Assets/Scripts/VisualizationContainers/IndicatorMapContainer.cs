@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-public class IndicatorMapContainer : VisualizationContainer<Indicator<MapPolicy>>
+public class IndicatorMapContainer : VisualizationContainer<IndicatorMap>
 {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the

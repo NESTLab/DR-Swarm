@@ -26,15 +26,22 @@ public class RangeIndicatorTest : MonoBehaviour
         r5.SetVariable("val", 0.2f);
 
         RangePolicy policy1 = new RangePolicy("lowRange", 0f, 0.3f);
+        policy1.color = Color.black;
+        policy1.shape = RangePolicy.IndicatorShape.Check;
         RangePolicy policy2 = new RangePolicy("midRange", 0.3f, 0.7f);
+        policy2.color = Color.green;
+        policy2.shape = RangePolicy.IndicatorShape.Check;
         RangePolicy policy3 = new RangePolicy("highRange", 0.7f, 1f);
+        policy3.color = Color.red;
+        policy3.shape = RangePolicy.IndicatorShape.Check;
 
         List<RangePolicy> policies = new List<RangePolicy>();
         policies.Add(policy1);
         policies.Add(policy2);
         policies.Add(policy3);
 
-        ri1 = new RangeIndicator("val", policies, r1, r2, r3, r4, r5);
+        ri1 = new RangeIndicator("val", policies, r1);
+        ri2 = new RangeIndicator("val", policies, r4);
     }
 
     // Update is called once per frame
