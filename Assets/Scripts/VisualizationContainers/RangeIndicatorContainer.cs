@@ -118,20 +118,18 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                 indicator.SetActive(true);
 
                 Color color = p.color;
-                // crap. I think to make this work well, all the prefabs need to be of a single sprite, not multiple objects
                 indicator.GetComponent<Image>().color = p.color;
             }
         }
     }
 
+    // TODO: simplify this now that we have robot field
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw() {
-        // TODO: find the right robot instead of for loop
-        foreach(Robot r in robots) {
-            GameObject indicator = GetIndicator(r, dataDict[r][variables[0]]); // this is probably wrong too
+        Robot r = this.robot;
+        GameObject indicator = GetIndicator(r, dataDict[r][variables[0]]); 
 
-            UpdateIndicator(indicator, dataDict[r][variables[0]]); // this is probably wrong too
-        }
+        UpdateIndicator(indicator, dataDict[r][variables[0]]); 
     }
 
     // Update internal storage of data. Called automatically when data in
