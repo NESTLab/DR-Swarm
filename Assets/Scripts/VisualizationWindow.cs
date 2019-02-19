@@ -6,17 +6,23 @@ using UniRx;
 using UnityEngine.UI;
 
 public class VisualizationWindow : MonoBehaviour {
+    // The robot associated with this visualization window
     private Robot robot;
+
+    // The canvas object of the visualization window, created from a prefab
     private GameObject canvas;
+
+    // The transform of the container, which is a subobject ofthe canvas
     private RectTransform container;
 
-    private HashSet<string> visualizationContainers;
+    // A set of names for the visualization containers associated with this window
+    private HashSet<string> visualizationNames;
 
     // Use this for initialization
     void Start() {
         canvas = (GameObject)Instantiate(Resources.Load("VisualizationCanvas"), transform);
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
-        visualizationContainers = new HashSet<string>();
+        visualizationNames = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
 
         // Subscribe to the set of visualizations for this robot
@@ -28,22 +34,22 @@ public class VisualizationWindow : MonoBehaviour {
     { 
         // Compute the set of visualizations added and removed
         HashSet<string> addedVisualizations = new HashSet<string>(visualizationSet);
-        addedVisualizations.ExceptWith(visualizationContainers);
+        addedVisualizations.ExceptWith(visualizationNames);
 
-        HashSet<string> removedVisualizations = new HashSet<string>(visualizationContainers);
+        HashSet<string> removedVisualizations = new HashSet<string>(visualizationNames);
         removedVisualizations.ExceptWith(visualizationSet);
 
         // Create and destory containers for added and removed visualizations
         foreach (string visualizationName in removedVisualizations)
         {
             Destroy(container.transform.Find(visualizationName).gameObject);
-            visualizationContainers.Remove(visualizationName);
+            visualizationNames.Remove(visualizationName);
         }
 
         foreach (string visualizationName in addedVisualizations)
         {
             CreateVisualizationContainer(visualizationName);
-            visualizationContainers.Add(visualizationName);
+            visualizationNames.Add(visualizationName);
         }
     }
 
@@ -72,30 +78,35 @@ public class VisualizationWindow : MonoBehaviour {
             LineGraphContainer container = gameObject.AddComponent<LineGraphContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
+            container.robot = this.robot;
         }
         else if (visualizationType == typeof(PieChart))
         {
             PieChartContainer container = gameObject.AddComponent<PieChartContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
+            container.robot = this.robot;
         }
         else if (visualizationType == typeof(PieChartMultiVar)) 
         {
             PieChartMultiVarContainer container = gameObject.AddComponent<PieChartMultiVarContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
+            container.robot = this.robot;
         }
         else if (visualizationType == typeof(Indicator))
         {
             IndicatorContainer container = gameObject.AddComponent<IndicatorContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
+            container.robot = this.robot;
         }
         else if (visualizationType == typeof(BarGraph))
         {
             BarGraphContainer container = gameObject.AddComponent<BarGraphContainer>();
             container.visualizationName = visualizationName;
             container.container = transform;
+            container.robot = this.robot;
         } else
         {
             throw new Exception("Invalid visualization type.");
