@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
-public class IndicatorMap : IVisualization 
+public class MapIndicator : IVisualization 
 {
     HashSet<Robot> robotList;
     HashSet<string> varSet;
@@ -13,7 +13,7 @@ public class IndicatorMap : IVisualization
 
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
-    public IndicatorMap(List<string> variables, Robot firstRobot, params Robot[] robots)
+    public MapIndicator(List<string> variables, Robot firstRobot, params Robot[] robots)
     {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
