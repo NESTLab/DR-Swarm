@@ -30,6 +30,7 @@ public class ArgosClient : MonoBehaviour
     {
         client = new TcpClient();
 
+        StringBuilder builder = new StringBuilder();
         NetworkStream stream = null;
         Byte[] data = new Byte[256];
         while (collectData)
@@ -47,13 +48,20 @@ public class ArgosClient : MonoBehaviour
                     if (bytes > 0)
                     {
                         responseData = Encoding.ASCII.GetString(data, 0, bytes);
-                        Debug.Log(responseData);
 
-                        fsData jsonData = fsJsonParser.Parse(responseData);
+                        builder.Append(responseData);
+                        if (responseData.Contains("\n"))
+                        {
+                            String jsonString = builder.ToString();
+                            Debug.Log(jsonString);
+                            builder.Clear();
 
-                        object dataPack = null;
-                        _serializer.TryDeserialize(jsonData, typeof(SerializedDataPack), ref dataPack).AssertSuccessWithoutWarnings();
-                        ((SerializedDataPack)dataPack).AssignVariables();
+                            fsData jsonData = fsJsonParser.Parse(jsonString);
+
+                            object dataPack = null;
+                            _serializer.TryDeserialize(jsonData, typeof(SerializedDataPack), ref dataPack).AssertSuccessWithoutWarnings();
+                            ((SerializedDataPack)dataPack).AssignVariables();
+                        }
                     }
                     else
                     {
@@ -62,10 +70,14 @@ public class ArgosClient : MonoBehaviour
                     }
                 }
             }
-            catch (Exception e)
+            catch (SocketException e)
             {
                 Thread.Sleep(1000);
-                Debug.Log(String.Format("Failed to connect to ARGoS server ({0}), re-attempting connection...", e.ToString()));
+                Debug.LogWarning(String.Format("Failed to connect to ARGoS server ({0}), re-attempting connection...", e.ToString()));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
             }
         }
 
