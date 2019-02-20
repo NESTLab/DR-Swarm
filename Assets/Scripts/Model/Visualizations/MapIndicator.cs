@@ -13,7 +13,7 @@ public class MapIndicator : IVisualization
 
     List<MapPolicy> policyList;
 
-    Dictionary<MapPolicy, string> policyDict;
+    //Dictionary<MapPolicy, string> policyDict;
 
     Color defaultColor;
     IndicatorShape defaultShape;
@@ -21,7 +21,7 @@ public class MapIndicator : IVisualization
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
     // variables[0] needs to correspond to policies[0]
-    public MapIndicator(Dictionary<MapPolicy, string> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
+    public MapIndicator(List<MapPolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
     {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
@@ -29,14 +29,14 @@ public class MapIndicator : IVisualization
         //varList = new List<string>(variables);
         //varSet = new HashSet<string>(variables);
         varSet = new HashSet<string>();
-        foreach (MapPolicy p in policies.Keys) {
-            varSet.Add(policies[p]);
+        foreach (MapPolicy p in policies) {
+            varSet.Add(p.variableName);
         }
 
         //policyList = new List<MapPolicy>(policies);
-        policyList = new List<MapPolicy>(policies.Keys);
+        policyList = new List<MapPolicy>(policies);
 
-        policyDict = new Dictionary<MapPolicy, string>(policies);
+        //policyDict = new Dictionary<MapPolicy, string>(policies);
 
         defaultColor = color;
         defaultShape = shape;
@@ -77,7 +77,7 @@ public class MapIndicator : IVisualization
             else {
                 policyList.Add(P);
                 varSet.Add(var);
-                policyDict[P] = var;
+                //policyDict[P] = var;
             }
         }
     }
@@ -114,9 +114,11 @@ public class MapIndicator : IVisualization
     */
 
         // NEW
+    /*
     public Dictionary<MapPolicy, string> GetPolicyDict() {
         return policyDict;
     }
+    */
 
     public ParameterCount GetNumDataSources()
     {

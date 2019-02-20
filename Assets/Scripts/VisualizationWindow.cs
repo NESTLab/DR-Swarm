@@ -101,6 +101,12 @@ public class VisualizationWindow : MonoBehaviour {
             container.visualizationName = visualizationName;
             container.container = transform;
         }
+        else if (visualizationType == typeof(MapIndicator)) {
+            MapIndicatorContainer container = gameObject.AddComponent<MapIndicatorContainer>();
+            container.robot = this.robot;
+            container.visualizationName = visualizationName;
+            container.container = transform;
+        }
         else if (visualizationType == typeof(BarGraph))
         {
             BarGraphContainer container = gameObject.AddComponent<BarGraphContainer>();

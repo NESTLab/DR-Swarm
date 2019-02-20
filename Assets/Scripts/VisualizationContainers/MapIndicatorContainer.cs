@@ -29,7 +29,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
     private Dictionary<IndicatorShape, Sprite> sprites; // shouldn't the map indicator have a shape?
     private MapIndicator vis;
-    private Dictionary<MapPolicy, string> policyDict;
+    //private Dictionary<MapPolicy, string> policyDict;
 
     // Initialize things
     protected override void Start()
@@ -39,7 +39,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
         vis = (MapIndicator)visualization;
         policies = vis.GetPolicies();
-        policyDict = vis.GetPolicyDict();
+        //policyDict = vis.GetPolicyDict();
 
         indicators = new Dictionary<Robot, GameObject>();
 
@@ -78,7 +78,8 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         foreach (MapPolicy p in policies) {
             if (p.type == MapPolicy.MapPolicyType.color) {
                 // TODO: set the color to the associated value
-                var = policyDict[p];
+                //var = policyDict[p];
+                var = p.variableName;
                 val = dataDict[var];
                 indicator.GetComponent<Image>().color = SetColor(val);
             }
@@ -117,7 +118,8 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         foreach (MapPolicy p in policies) {
             if (p.type == MapPolicy.MapPolicyType.color) {
                 // TODO: set the color to the associated value
-                var = policyDict[p];
+                //var = policyDict[p];
+                var = p.variableName;
                 val = dataDict[var];
                 indicator.GetComponent<Image>().color = SetColor(val);
             }
