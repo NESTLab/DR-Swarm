@@ -16,7 +16,7 @@ public class ArgosClient : MonoBehaviour
     TcpClient client;
     bool collectData = true;
 
-    private static int port = 8051;
+    private static int port = 8052;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +39,7 @@ public class ArgosClient : MonoBehaviour
             {
                 if (!client.Connected)
                 {
-                    client.Connect("127.0.0.1", port);
+                    client.Connect("jbbrown-plex-server.dyn.wpi.edu", port);
                     stream = client.GetStream();
                 } else {
                     String responseData = String.Empty;
@@ -53,6 +53,7 @@ public class ArgosClient : MonoBehaviour
                         if (responseData.Contains("\n"))
                         {
                             String jsonString = builder.ToString();
+                            jsonString = jsonString.Substring(4);
                             Debug.Log(jsonString);
                             builder.Clear();
 
