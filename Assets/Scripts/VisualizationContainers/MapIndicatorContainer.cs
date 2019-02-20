@@ -77,16 +77,24 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
         foreach (MapPolicy p in policies) {
             if (p.type == MapPolicy.MapPolicyType.color) {
-                // TODO: set the color to the associated value
-                //var = policyDict[p];
                 var = p.variableName;
                 val = dataDict[var];
                 indicator.GetComponent<Image>().color = SetColor(val);
             }
             else if (p.type == MapPolicy.MapPolicyType.fillAmount) {
-                // TODO: set the fill amount to the associated value
+                // TODO: maybe give people more of a choice?
+                if (vis.GetDefaultShape() == IndicatorShape.Circle) {
+                    indicator.GetComponent<Image>().fillMethod = Image.FillMethod.Radial360;
+                }
+                else {
+                    indicator.GetComponent<Image>().fillMethod = Image.FillMethod.Vertical;
+                }
+
+                var = p.variableName;
+                val = dataDict[var];
+                indicator.GetComponent<Image>().fillAmount = (float)(val % 1.0);
             }
-            else if (p.type == MapPolicy.MapPolicyType.orientation) {
+            else if (p.type == MapPolicy.MapPolicyType.orientation) {  // TODO: add arrow sprite
                 // TODO: set the orientation to the associated value
             }
         }
@@ -117,14 +125,15 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
         foreach (MapPolicy p in policies) {
             if (p.type == MapPolicy.MapPolicyType.color) {
-                // TODO: set the color to the associated value
-                //var = policyDict[p];
                 var = p.variableName;
                 val = dataDict[var];
                 indicator.GetComponent<Image>().color = SetColor(val);
             }
             else if (p.type == MapPolicy.MapPolicyType.fillAmount) {
                 // TODO: set the fill amount to the associated value
+                var = p.variableName;
+                val = dataDict[var];
+                indicator.GetComponent<Image>().fillAmount = (float)(val % 1.0);
             }
             else if (p.type == MapPolicy.MapPolicyType.orientation) {
                 // TODO: set the orientation to the associated value

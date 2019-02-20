@@ -13,18 +13,23 @@ public class MapIndicatorTest : MonoBehaviour
     void Start()
     {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
-        r1.SetVariable("val1", 0.0f);
+        r1.SetVariable("val1", 0.5f);
         r1.SetVariable("val2", 0.5f);
 
         r2 = DataManager.Instance.GetRobot("RobotTarget2");
-        r2.SetVariable("val1", 0.0f);
+        r2.SetVariable("val1", 0.8f);
         r2.SetVariable("val2", 0.3f);
 
         MapPolicy mp1 = new MapPolicy("color", "val2", MapPolicy.MapPolicyType.color);
+        MapPolicy mp2 = new MapPolicy("fill", "val1", MapPolicy.MapPolicyType.fillAmount);
+
         List<MapPolicy> policies = new List<MapPolicy>();
         policies.Add(mp1);
+        policies.Add(mp2);
 
         mi1 = new MapIndicator(policies, Color.blue, IndicatorShape.Circle, r1, r2);
+
+        mi2 = new MapIndicator(policies, Color.blue, IndicatorShape.Square, r1, r2);
     }
 
     // Update is called once per frame
@@ -33,7 +38,7 @@ public class MapIndicatorTest : MonoBehaviour
         theta += 0.01f;
 
         r1.SetVariable("val2", Mathf.Sin(theta) * Mathf.Sin(theta));
-        r2.SetVariable("val2", Mathf.Cos(theta) * Mathf.Cos(theta));
+        r2.SetVariable("val1", Mathf.Cos(theta) * Mathf.Cos(theta));
 
         if (Input.GetKeyDown("1")) {
             Debug.Log("add mi2");
