@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using shapeNamespace;
 
 
 public class CreateRangeVarPanel : MonoBehaviour
@@ -191,6 +192,7 @@ public class CreateRangeVarPanel : MonoBehaviour
         string defaultColorString = defaultColor.options[defaultColor.value].text; //Color.Red 
         string variableString = variableDrop.options[variableDrop.value].text;
         int i = 0;
+        Color defaultColored = Color.white;
         foreach (GameObject g in allPolicies)
         {
             Dropdown color = g.transform.Find("DropdownColor").GetComponent<Dropdown>();
@@ -208,10 +210,10 @@ public class CreateRangeVarPanel : MonoBehaviour
             float minnum = (float.Parse(min.text));
             float maxnum = float.Parse(max.text);
             RangePolicy policy = new RangePolicy(name, minnum, maxnum);
-            if (ColorUtility.TryParseHtmlString(defaultColorString, out Color defaultColor)) { }
-            else { defaultColor = Color.red; }
-            policy.color = GetColor(listC[color.value].text, defaultColor);
-            RangePolicy.IndicatorShape sh = GetShape(listS[shape.value].text, defaultShapeString);
+            if (ColorUtility.TryParseHtmlString(defaultColorString, out defaultColored)) { }
+            else { defaultColored = Color.red; }
+            policy.color = GetColor(listC[color.value].text, defaultColored);
+            IndicatorShape sh = GetShape(listS[shape.value].text, defaultShapeString);
             policy.shape = sh;
             policies.Add(policy);
             i++;
@@ -221,9 +223,16 @@ public class CreateRangeVarPanel : MonoBehaviour
             
 
         }
+        if (ColorUtility.TryParseHtmlString(defaultColorString, out defaultColored)) { }
+        else { defaultColored = Color.red; }
+        Debug.Log("COLOR " + defaultColored);
         UIManager.Instance.wantedVars = new List<string> { variableString };
         UIManager.Instance.allRPolicies = policies;
+        UIManager.Instance.sentColor = defaultColored;
+        UIManager.Instance.sentShape = GetShape("default", defaultShapeString) ;
+        Debug.Log("Shape d" + GetShape("default", defaultShapeString));
         UIManager.Instance.addGraph = true;
+
     }
 
     public Color GetColor(string c, Color d)
@@ -238,24 +247,24 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     
-    public RangePolicy.IndicatorShape GetShape(string s, string d)
+    public IndicatorShape GetShape(string s, string d)
     {
-        if (s == "Check") { return RangePolicy.IndicatorShape.Check; }
-        else if (s == "Circle") { return RangePolicy.IndicatorShape.Circle; }
-        else if (s == "!") { return RangePolicy.IndicatorShape.Exclamation; }
-        else if (s == "Plus") { return RangePolicy.IndicatorShape.Plus; }
-        else if (s == "Triangle") { return RangePolicy.IndicatorShape.Triangle; }
-        else if (s == "Square") { return RangePolicy.IndicatorShape.Square; }
+        if (s == "Check") { return IndicatorShape.Check; }
+        else if (s == "Circle") { return IndicatorShape.Circle; }
+        else if (s == "!") { return IndicatorShape.Exclamation; }
+        else if (s == "Plus") { return IndicatorShape.Plus; }
+        else if (s == "Triangle") { return IndicatorShape.Triangle; }
+        else if (s == "Square") { return IndicatorShape.Square; }
         else
         {
-            if (d == "Check") { return RangePolicy.IndicatorShape.Check; }
-            else if (d == "Circle") { return RangePolicy.IndicatorShape.Circle; }
-            else if (d == "!") { return RangePolicy.IndicatorShape.Exclamation; }
-            else if (d == "Plus") { return RangePolicy.IndicatorShape.Plus; }
-            else if (d == "Triangle") { return RangePolicy.IndicatorShape.Triangle; }
-            else if (d == "Square") { return RangePolicy.IndicatorShape.Square; }
+            if (d == "Check") { return IndicatorShape.Check; }
+            else if (d == "Circle") { return IndicatorShape.Circle; }
+            else if (d == "!") { return IndicatorShape.Exclamation; }
+            else if (d == "Plus") { return IndicatorShape.Plus; }
+            else if (d == "Triangle") { return IndicatorShape.Triangle; }
+            else if (d == "Square") { return IndicatorShape.Square; }
         }
-        return RangePolicy.IndicatorShape.Check;
+        return IndicatorShape.Check;
     }
     
 

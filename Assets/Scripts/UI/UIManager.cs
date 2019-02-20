@@ -1,4 +1,5 @@
 ﻿using graphNameSpace;
+using shapeNamespace;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,8 +42,7 @@ public class UIManager : MonoBehaviour
     public int RobotOptions = 0;
 
     public string _sentGraphType = "";
-    public List<RangePolicy> allRPolicies = new List<RangePolicy>();
-    
+
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
     public string sentGraphType
@@ -185,7 +185,9 @@ public class UIManager : MonoBehaviour
     public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
     public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
     public List<MapPolicy> allMPolicies = new List<MapPolicy>();
-
+    public List<RangePolicy> allRPolicies = new List<RangePolicy>();
+    public Color sentColor= new Color();
+    public IndicatorShape sentShape = new IndicatorShape();
 
     //Create a graph, Needed are robots, variables, type
     //Calls VizManager to add the graph, currently adds title as well
@@ -262,12 +264,15 @@ public class UIManager : MonoBehaviour
         }
         else if (GraphType == graph.TwoDRange)
         {
-            Debug.Log("Policies " + allRPolicies + allRPolicies[0] +" " +  allRPolicies.Count +"init2 color" + allRPolicies[1].color );
+            //Debug.Log("Policies " + allRPolicies + allRPolicies[0] + " " + allRPolicies.Count + "init2 color" + allRPolicies[1].color);
             title = "TwoDRange " + unixTime;
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
-            IVisualization graphToAdd = new RangeIndicator(var, allRPolicies, r1, robots.ToArray());
+
+
+            Debug.Log("The color is " + sentColor + sentShape);
+            IVisualization graphToAdd = new RangeIndicator(var, allRPolicies, sentColor, sentShape, r1, robots.ToArray());
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
