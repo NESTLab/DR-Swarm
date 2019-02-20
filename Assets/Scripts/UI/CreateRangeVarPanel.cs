@@ -15,10 +15,9 @@ public class CreateRangeVarPanel : MonoBehaviour
     float offsetAddition = -50f;//Value to add to the offset after each policy is added
     private List<string> colors = new List<string> { "Default", "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "Purple", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
     public List<string> shapes = new List<string> { "Default", "Check", "Circle", "!", "Plus", "Square", "Triangle" };//List of shape options
-    public List<string> shapesD = new List<string> {  "Check", "Circle", "!", "Plus", "Square", "Triangle" };//List of shape options
+    public List<string> shapesD = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle" };//List of shape options
     public List<string> colorsD = new List<string> { "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "Purple", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
-   
-    
+
     public List<int> selectedColors = new List<int>();
     public List<int> selectedShapes = new List<int>();
     public List<string> selectedMin = new List<string>();
@@ -30,7 +29,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     public Dropdown variableDrop;
     public Dropdown defaultColor;
     public Dropdown defaultShape;
-  
+
 
     // Start is called before the first frame update
     void Start()
@@ -49,13 +48,13 @@ public class CreateRangeVarPanel : MonoBehaviour
             defaultShape.ClearOptions();
             defaultShape.AddOptions(shapesD);
 
-            for (int i = 0; i < options; i++) 
+            for (int i = 0; i < options; i++)
             {
                 addOnePrefab(i);
             }
         }
 
-        
+
     }
 
     // Update is called once per frame
@@ -96,7 +95,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     //Add a single prefab at spot i 
-    private void addOnePrefab(int i )
+    private void addOnePrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("RangePolicyPrefab"), optionPanel.transform);
         policyPrefab.transform.SetParent(optionPanel.transform, false);
@@ -152,14 +151,15 @@ public class CreateRangeVarPanel : MonoBehaviour
             selectedMax.Add(max.text);
 
         }
-        Debug.Log("Removing " + i + " which is " + selectedMin[i]);
+        //Debug.Log("Removing " + i + " which is " + selectedMin[i]);
         selectedColors.RemoveAt(i);
         selectedShapes.RemoveAt(i);
         selectedMax.RemoveAt(i);
         selectedMin.RemoveAt(i);
-        
+
     }
 
+    //Added to Add Policy button, will add a policy at the bottom of the list
     private void AddPolicy()
     {
         if (offset == 0)
@@ -179,14 +179,18 @@ public class CreateRangeVarPanel : MonoBehaviour
         }
     }
 
-
+    //Send policies to UIManager
     public void sendPolicies()
     {
         List<string> colorsSelected = new List<string>();
         List<string> shapesSelected = new List<string>();
         List<string> maxSelected = new List<string>();
         List<string> minSelected = new List<string>();
-
+        //List<RangePolicy> policies = new List<RangePolicy>();
+        string defaultShapeString = defaultShape.options[defaultShape.value].text;
+        string defaultColorString = defaultColor.options[defaultColor.value].text; //Color.Red 
+        string variableString = variableDrop.options[variableDrop.value].text;
+        int i = 0;
         foreach (GameObject g in allPolicies)
         {
             Dropdown color = g.transform.Find("DropdownColor").GetComponent<Dropdown>();
@@ -199,18 +203,53 @@ public class CreateRangeVarPanel : MonoBehaviour
             InputField max = g.transform.Find("InputMax").GetComponent<InputField>();
             minSelected.Add(min.text);
             maxSelected.Add(max.text);
+            /*
+            RangePolicy policy = new RangePolicy(i, min.text, max.text);
+            Color defaultColor = Color.FromName(defaultColorString);
+            policy.color = getcolor(listC[color.value].text, defaultColor);
+            policy.shape = RangePolicy.IndicatorShape.Circle;
+            policies.Add(policy);
+            i++;
+            */
 
         }
-        string defaultShapeString = defaultShape.options[defaultShape.value].text;
-        string defaultColorString = defaultColor.options[defaultColor.value].text; //Color.Red 
-        string variableString = variableDrop.options[variableDrop.value].text;
-
-        // TODO get colors to hex values 
-        // TODO Update UI Manager with values
-
-
+        UIManager.Instance.wantedVars = new List<string> { variableString };
+        //Send policies here
         UIManager.Instance.addGraph = true;
     }
+
+    public Color GetColor(string c, Color d)
+    {
+        if (c == "Default") { return d; }
+        else {
+            Color newCol;
+            if (ColorUtility.TryParseHtmlString(c, out newCol))
+                return newCol;
+            else { return Color.red; }
+        }
+    }
+
+    /*
+    public RangePolicy.IndicatorShape getShape(string s, string d)
+    {
+        if (s == "Check") { return RangePolicy.IndicatorShape.Check; }
+        else if (s == "Circle") { return RangePolicy.IndicatorShape.Circle; }
+        else if (s == "!") { return RangePolicy.IndicatorShape.Exclamation; }
+        else if (s == "Plus") { return RangePolicy.IndicatorShape.Plus; }
+        else if (s == "Triangle") { return RangePolicy.IndicatorShape.Triangle; }
+        else if (s == "Square") { return RangePolicy.IndicatorShape.Square; }
+        else
+        {
+            if (d == "Check") { return RangePolicy.IndicatorShape.Check; }
+            else if (d == "Circle") { return RangePolicy.IndicatorShape.Circle; }
+            else if (d == "!") { return RangePolicy.IndicatorShape.Exclamation; }
+            else if (d == "Plus") { return RangePolicy.IndicatorShape.Plus; }
+            else if (d == "Triangle") { return RangePolicy.IndicatorShape.Triangle; }
+            else if (d == "Square") { return RangePolicy.IndicatorShape.Square; }
+        }
+    }
+    */
+
 }
 
 

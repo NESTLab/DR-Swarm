@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1665755400561887975}
   - component: {fileID: 224598838369095432}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: OrientToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

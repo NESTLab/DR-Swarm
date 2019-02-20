@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using graphNameSpace;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.Globalization;
-using graphNameSpace;
 
 namespace graphNameSpace
 {
@@ -39,8 +39,6 @@ public class UIManager : MonoBehaviour
     public int Options = 1;//How many min variable options
     public int TotalOptions = 1;
     public int RobotOptions = 0;
-
-
 
     public string _sentGraphType = "";
 
@@ -84,7 +82,7 @@ public class UIManager : MonoBehaviour
             else if (_sentGraphType == "2DMap")
             {
                 GraphType = graph.TwoDMap;
-                Options = 1;
+                Options = 0;
                 RobotOptions = 0;
                 TotalOptions = 100;
             }

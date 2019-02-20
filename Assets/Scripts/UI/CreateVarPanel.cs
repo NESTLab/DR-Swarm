@@ -203,7 +203,6 @@ public class CreateVarPanel : MonoBehaviour
         Debug.Log(var);
 
         UIManager.Instance.wantedVars = var;
-
         UIManager.Instance.addGraph = true;
 
     }

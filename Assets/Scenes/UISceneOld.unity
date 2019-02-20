@@ -226,11 +226,11 @@ RectTransform:
   m_Father: {fileID: 832821698}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 31, y: -487}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 23, y: 14}
   m_SizeDelta: {x: 50, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &13136962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8039,7 +8039,7 @@ GameObject:
   - component: {fileID: 1001023609}
   - component: {fileID: 1001023608}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: defaultShapeDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10016,6 +10016,7 @@ GameObject:
   - component: {fileID: 1173147970}
   - component: {fileID: 1173147973}
   - component: {fileID: 1173147972}
+  - component: {fileID: 1173147974}
   - component: {fileID: 1173147971}
   m_Layer: 5
   m_Name: AddMapPolicyPanel
@@ -10108,6 +10109,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1173147969}
   m_CullTransparentMesh: 0
+--- !u!114 &1173147974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173147969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e108e0ef3fd6bf469902e5dbf91fba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  optionPanel: {fileID: 1214666410}
+  overallPanel: {fileID: 1173147969}
+  allPolicies: []
+  totalPolicies: 0
+  addColorButton: {fileID: 1668240560}
+  addOrientationButton: {fileID: 626424182}
+  sendVarsButton: {fileID: 1100897458}
+  defaultShape: {fileID: 1001023608}
+  shapes:
+  - Check
+  - Circle
+  - '!'
+  - Plus
+  - Square
+  - Triangle
+  selectedColors: 
+  selectedVars: 
 --- !u!1 &1174244979
 GameObject:
   m_ObjectHideFlags: 0
@@ -16863,11 +16893,11 @@ RectTransform:
   m_Father: {fileID: 832821698}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 136, y: -494}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 76, y: 2}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1945306592
 MonoBehaviour:
   m_ObjectHideFlags: 0
