@@ -28,12 +28,14 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
     private Dictionary<IndicatorShape, Sprite> sprites;
 
+    private RangeIndicator vis;
+
     // Initialize things
     protected override void Start() {
         // TODO: maybe remove
         base.Start();
 
-        RangeIndicator vis = (RangeIndicator)visualization; 
+        vis = (RangeIndicator)visualization; 
         policies = vis.GetPolicies();
 
         indicators = new Dictionary<Robot, GameObject>();
@@ -56,6 +58,8 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
     private GameObject CreateIndicator(float value) {
         GameObject indicator = new GameObject("indicator", typeof(Image));
+        indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
+        indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
@@ -84,6 +88,8 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     public override void Draw() {
         GameObject indicator = GetIndicator(this.robot, dataDict[variables[0]]);
         float value = dataDict[variables[0]];  // TODO: might be able to simplify this even more
+        indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
+        indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy

@@ -97,6 +97,11 @@ public class MapIndicator : IVisualization
     }
     */
 
+        // NEW
+    public Dictionary<MapPolicy, string> GetPolicyDict() {
+        return policyDict;
+    }
+
     public ParameterCount GetNumDataSources()
     {
         return ParameterCount.N; // this maybe should be N
