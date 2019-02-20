@@ -58,7 +58,7 @@ public class RangeIndicatorTest : MonoBehaviour
         shapepolicies.Add(policy6);
 
         //ri1 = new RangeIndicator("val", colorpolicies, r1, r2); 
-        //ri2 = new RangeIndicator("val", shapepolicies, r1);
+        ri2 = new RangeIndicator("val", shapepolicies, Color.red, IndicatorShape.Plus, r1);
         ri1 = new RangeIndicator("val", colorpolicies, Color.blue, IndicatorShape.Circle, r1, r2);
     }
 
