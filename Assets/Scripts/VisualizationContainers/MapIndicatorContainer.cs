@@ -25,7 +25,8 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
     private Sprite triangle;
     private Sprite check;
     private Sprite exclamation;
-    private Sprite plus; 
+    private Sprite plus;
+    private Sprite arrow;
 
     private Dictionary<IndicatorShape, Sprite> sprites; // shouldn't the map indicator have a shape?
     private MapIndicator vis;
@@ -49,6 +50,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         check = Resources.Load<Sprite>("Sprites/check");
         exclamation = Resources.Load<Sprite>("Sprites/exclamation");
         plus = Resources.Load<Sprite>("Sprites/plus");
+        arrow = Resources.Load<Sprite>("Sprites/arrow");
 
         sprites = new Dictionary<IndicatorShape, Sprite>();
         sprites[IndicatorShape.Check] = check;
@@ -57,6 +59,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         sprites[IndicatorShape.Plus] = plus;
         sprites[IndicatorShape.Square] = square;
         sprites[IndicatorShape.Triangle] = triangle;
+        sprites[IndicatorShape.Arrow] = arrow;
     }
 
     private Color SetColor(float v) {
@@ -94,8 +97,10 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
                 val = dataDict[var];
                 indicator.GetComponent<Image>().fillAmount = (float)(val % 1.0);
             }
-            else if (p.type == MapPolicy.MapPolicyType.orientation) {  // TODO: add arrow sprite
-                // TODO: set the orientation to the associated value
+            else if (p.type == MapPolicy.MapPolicyType.orientation) {  
+                var = p.variableName;
+                val = dataDict[var];
+                indicator.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, (float)(val % 1.0)));
             }
         }
 
@@ -111,7 +116,6 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
         return indicators[robot];
     }
-    
 
     // Update stuff in Unity scene. Called automatically each frame update
     public override void Draw()
@@ -136,7 +140,9 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
                 indicator.GetComponent<Image>().fillAmount = (float)(val % 1.0);
             }
             else if (p.type == MapPolicy.MapPolicyType.orientation) {
-                // TODO: set the orientation to the associated value
+                var = p.variableName;
+                val = dataDict[var];
+                indicator.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, (float)(val % 360.0)));
             }
         }
     }
