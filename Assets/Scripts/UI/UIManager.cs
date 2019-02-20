@@ -41,6 +41,8 @@ public class UIManager : MonoBehaviour
     public int RobotOptions = 0;
 
     public string _sentGraphType = "";
+    public List<RangePolicy> allRPolicies = new List<RangePolicy>();
+    
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
     public string sentGraphType
@@ -96,6 +98,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //TAGS
+    public List<Tag> allTags = new List<Tag>();
+    //Create a new tag
+    public void CreateTag(string name, List<Robot> robots)
+    {
+        Tag newtag = new Tag(name, robots);
+        allTags.Add(newtag);
+    }
 
     //ADD VARS
     public List<string> wantedVars = new List<string>();
@@ -127,46 +137,16 @@ public class UIManager : MonoBehaviour
     //Add a robot to the array to get the total robots for the graph
     public void AddRobot(string r)
     {
-        if (r == "r1")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
-        }
-        else if (r == "r2")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
-        }
-        else if (r == "r3")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
-        }
-        else if (r == "r4")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
-        }
-        else if (r == "r5")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
-        }
-        else if (r == "r6")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget6"));
-        }
-        else if (r == "r7")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget7"));
-        }
-        else if (r == "r8")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget8"));
-        }
-        else if (r == "r9")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget9"));
-        }
-        else if (r == "r10")
-        {
-            robots.Add(DataManager.Instance.GetRobot("RobotTarget10"));
-        }
+        if (r == "r1") { robots.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
+        else if (r == "r2") { robots.Add(DataManager.Instance.GetRobot("RobotTarget2")); }
+        else if (r == "r3") { robots.Add(DataManager.Instance.GetRobot("RobotTarget3")); }
+        else if (r == "r4") { robots.Add(DataManager.Instance.GetRobot("RobotTarget4")); }
+        else if (r == "r5") { robots.Add(DataManager.Instance.GetRobot("RobotTarget5")); }
+        else if (r == "r6") { robots.Add(DataManager.Instance.GetRobot("RobotTarget6")); }
+        else if (r == "r7") { robots.Add(DataManager.Instance.GetRobot("RobotTarget7")); }
+        else if (r == "r8") { robots.Add(DataManager.Instance.GetRobot("RobotTarget8")); }
+        else if (r == "r9") { robots.Add(DataManager.Instance.GetRobot("RobotTarget9")); }
+        else if (r == "r10") { robots.Add(DataManager.Instance.GetRobot("RobotTarget10")); }
 
     }
 
@@ -204,14 +184,16 @@ public class UIManager : MonoBehaviour
 
     public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
     public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
+    public List<MapPolicy> allMPolicies = new List<MapPolicy>();
 
 
     //Create a graph, Needed are robots, variables, type
     //Calls VizManager to add the graph, currently adds title as well
     private void createGraph()
     {
-
         string title = "";
+        DateTime foo = DateTime.UtcNow;
+        long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
         if (GraphType == graph.Line)
         {
             Robot r1 = robots[0];
@@ -219,8 +201,6 @@ public class UIManager : MonoBehaviour
             string xvar = wantedVars[0];
             string yvar = wantedVars[1];
             IVisualization graphToAdd = new LineGraph(xvar, yvar, r1, robots.ToArray());
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = xvar + "," + yvar + " Line " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
@@ -234,8 +214,6 @@ public class UIManager : MonoBehaviour
             robots.RemoveAt(0);
             string var = wantedVars[0];
             IVisualization graphToAdd = new PieChart(var, r1, r2, robots.ToArray());
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = var + "," + " Pie " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
@@ -248,8 +226,6 @@ public class UIManager : MonoBehaviour
             string var = wantedVars[0];
             wantedVars.RemoveAt(0);
             IVisualization graphToAdd = new PieChartMultiVar(r1, var, wantedVars.ToArray());
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = var + "," + "Multi Pie " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
@@ -261,8 +237,6 @@ public class UIManager : MonoBehaviour
             HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
             HashSet<string> hashVars = new HashSet<string>(wantedVars);
             IVisualization graphToAdd = new BarGraph(hashRobots, hashVars);
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
             title = "Bar " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
@@ -286,6 +260,24 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
             */
         }
+        else if (GraphType == graph.TwoDRange)
+        {
+            Debug.Log("Policies " + allRPolicies + allRPolicies[0] +" " +  allRPolicies.Count +"init2 color" + allRPolicies[1].color );
+            title = "TwoDRange " + unixTime;
+            Robot r1 = robots[0];
+            robots.RemoveAt(0);
+            string var = wantedVars[0];
+            IVisualization graphToAdd = new RangeIndicator(var, allRPolicies, r1, robots.ToArray());
+            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
+            allVizs.Add(graphToAdd);
+            allVizsNames.Add(title);
+        }
+        else if (GraphType == graph.TwoDMap)
+        {
+            title = "TwoDMAp " + unixTime;
+
+        }
+
         _addGraph = false;
     }
 
@@ -318,4 +310,17 @@ public class UIManager : MonoBehaviour
 
     }
 
+
+}
+
+//Class for tags, allows us to associate a list of robots to a tag name.
+public class Tag
+{
+    public string name;
+    public List<Robot> robots;
+    public Tag(string name, List<Robot> robots)
+    {
+        this.name = name;
+        this.robots = robots;
+    }
 }

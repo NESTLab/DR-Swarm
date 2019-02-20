@@ -8,7 +8,7 @@ public class CreateRangeVarPanel : MonoBehaviour
 {
     public GameObject optionPanel; //Parent Panel, set when adding script
     public GameObject overallPanel; //Panel for the entire screen
-    float initpos = -37f; //Position offset for the prefabs
+    float initpos = -42f; //Position offset for the prefabs
     public List<GameObject> allPolicies = new List<GameObject>();//All Visualizations, IViz
     public int totalPolicies = 0; // Total prefabs the script needs to add
     float offset = 0f; // Offset for when a prefab gets added
@@ -186,7 +186,7 @@ public class CreateRangeVarPanel : MonoBehaviour
         List<string> shapesSelected = new List<string>();
         List<string> maxSelected = new List<string>();
         List<string> minSelected = new List<string>();
-        //List<RangePolicy> policies = new List<RangePolicy>();
+        List<RangePolicy> policies = new List<RangePolicy>();
         string defaultShapeString = defaultShape.options[defaultShape.value].text;
         string defaultColorString = defaultColor.options[defaultColor.value].text; //Color.Red 
         string variableString = variableDrop.options[variableDrop.value].text;
@@ -203,18 +203,26 @@ public class CreateRangeVarPanel : MonoBehaviour
             InputField max = g.transform.Find("InputMax").GetComponent<InputField>();
             minSelected.Add(min.text);
             maxSelected.Add(max.text);
-            /*
-            RangePolicy policy = new RangePolicy(i, min.text, max.text);
-            Color defaultColor = Color.FromName(defaultColorString);
-            policy.color = getcolor(listC[color.value].text, defaultColor);
-            policy.shape = RangePolicy.IndicatorShape.Circle;
+
+            string name = "Range" + i;
+            float minnum = (float.Parse(min.text));
+            float maxnum = float.Parse(max.text);
+            RangePolicy policy = new RangePolicy(name, minnum, maxnum);
+            if (ColorUtility.TryParseHtmlString(defaultColorString, out Color defaultColor)) { }
+            else { defaultColor = Color.red; }
+            policy.color = GetColor(listC[color.value].text, defaultColor);
+            RangePolicy.IndicatorShape sh = GetShape(listS[shape.value].text, defaultShapeString);
+            policy.shape = sh;
             policies.Add(policy);
             i++;
-            */
+
+            float x = float.Parse(max.text); 
+            Debug.Log(i+ "   " + policy.color +  policy.shape + "nums" + (float.Parse(min.text)) + " "+ x );
+            
 
         }
         UIManager.Instance.wantedVars = new List<string> { variableString };
-        //Send policies here
+        UIManager.Instance.allRPolicies = policies;
         UIManager.Instance.addGraph = true;
     }
 
@@ -229,8 +237,8 @@ public class CreateRangeVarPanel : MonoBehaviour
         }
     }
 
-    /*
-    public RangePolicy.IndicatorShape getShape(string s, string d)
+    
+    public RangePolicy.IndicatorShape GetShape(string s, string d)
     {
         if (s == "Check") { return RangePolicy.IndicatorShape.Check; }
         else if (s == "Circle") { return RangePolicy.IndicatorShape.Circle; }
@@ -247,8 +255,9 @@ public class CreateRangeVarPanel : MonoBehaviour
             else if (d == "Triangle") { return RangePolicy.IndicatorShape.Triangle; }
             else if (d == "Square") { return RangePolicy.IndicatorShape.Square; }
         }
+        return RangePolicy.IndicatorShape.Check;
     }
-    */
+    
 
 }
 
