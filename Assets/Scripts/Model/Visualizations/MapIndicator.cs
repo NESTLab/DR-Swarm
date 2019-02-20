@@ -15,10 +15,13 @@ public class MapIndicator : IVisualization
 
     Dictionary<MapPolicy, string> policyDict;
 
+    Color defaultColor;
+    IndicatorShape defaultShape;
+
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
     // variables[0] needs to correspond to policies[0]
-    public MapIndicator(Dictionary<MapPolicy, string> policies, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
+    public MapIndicator(Dictionary<MapPolicy, string> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
     {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
@@ -34,6 +37,9 @@ public class MapIndicator : IVisualization
         policyList = new List<MapPolicy>(policies.Keys);
 
         policyDict = new Dictionary<MapPolicy, string>(policies);
+
+        defaultColor = color;
+        defaultShape = shape;
 
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
@@ -75,7 +81,17 @@ public class MapIndicator : IVisualization
             }
         }
     }
-    
+
+    /****NEW****/
+    public IndicatorShape GetDefaultShape() {
+        return defaultShape;
+    }
+
+    public Color GetDefaultColor() {
+        return defaultColor;
+    }
+    /****END NEW****/
+
     public List<MapPolicy> GetPolicies() {
         return policyList;
     }
