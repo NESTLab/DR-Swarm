@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System.Linq;
+using shapeNamespace;
 
 public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     // Instances of VisualizationContainer have access to the container
@@ -25,7 +26,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private Sprite exclamation;
     private Sprite plus;
 
-    private Dictionary<RangePolicy.IndicatorShape, Sprite> sprites;
+    private Dictionary<IndicatorShape, Sprite> sprites;
 
     // Initialize things
     protected override void Start() {
@@ -44,13 +45,13 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         exclamation = Resources.Load<Sprite>("Sprites/exclamation");
         plus = Resources.Load<Sprite>("Sprites/plus");
 
-        sprites = new Dictionary<RangePolicy.IndicatorShape, Sprite>();
-        sprites[RangePolicy.IndicatorShape.Check] = check;
-        sprites[RangePolicy.IndicatorShape.Circle] = circle;
-        sprites[RangePolicy.IndicatorShape.Exclamation] = exclamation;
-        sprites[RangePolicy.IndicatorShape.Plus] = plus;
-        sprites[RangePolicy.IndicatorShape.Square] = square;
-        sprites[RangePolicy.IndicatorShape.Triangle] = triangle;
+        sprites = new Dictionary<IndicatorShape, Sprite>();
+        sprites[IndicatorShape.Check] = check;
+        sprites[IndicatorShape.Circle] = circle;
+        sprites[IndicatorShape.Exclamation] = exclamation;
+        sprites[IndicatorShape.Plus] = plus;
+        sprites[IndicatorShape.Square] = square;
+        sprites[IndicatorShape.Triangle] = triangle;
     }
 
     private GameObject CreateIndicator(float value) {
@@ -58,7 +59,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
-                RangePolicy.IndicatorShape shape = p.shape;
+                IndicatorShape shape = p.shape;
 
                 indicator.GetComponent<Image>().sprite = sprites[shape];
 
@@ -86,7 +87,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
-                RangePolicy.IndicatorShape shape = p.shape;
+                IndicatorShape shape = p.shape;
                 indicator.GetComponent<Image>().sprite = sprites[shape];
 
                 Color color = p.color;

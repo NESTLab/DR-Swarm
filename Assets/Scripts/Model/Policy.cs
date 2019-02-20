@@ -1,6 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using shapeNamespace;
+
+namespace shapeNamespace {
+    public enum IndicatorShape {
+        Square,
+        Circle,
+        Triangle,
+        Plus,
+        Check,
+        Exclamation
+    }
+}
 
 abstract public class Policy {
     public readonly string name;
@@ -12,15 +24,6 @@ abstract public class Policy {
 
 // the range can have a min and max value where the min is included and max is excluded
 public class RangePolicy : Policy {
-    public enum IndicatorShape {
-        Square,
-        Circle,
-        Triangle,
-        Plus,
-        Check,
-        Exclamation
-    }
-
     public readonly Vector2 range;
     public Color color;
     public IndicatorShape shape;
@@ -33,7 +36,8 @@ public class RangePolicy : Policy {
 public class MapPolicy : Policy {
     public enum MapPolicyType {
         color,
-        orientation
+        orientation,
+        fillAmount  // this way we can do progress bars and stuff
     }
 
     public readonly string variableName;
