@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System.Linq;
+using shapeNamespace;
 
 public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     // Instances of VisualizationContainer have access to the container
@@ -25,14 +26,16 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private Sprite exclamation;
     private Sprite plus;
 
-    private Dictionary<RangePolicy.IndicatorShape, Sprite> sprites;
+    private Dictionary<IndicatorShape, Sprite> sprites;
+
+    private RangeIndicator vis;
 
     // Initialize things
     protected override void Start() {
         // TODO: maybe remove
         base.Start();
 
-        RangeIndicator vis = (RangeIndicator)visualization; 
+        vis = (RangeIndicator)visualization; 
         policies = vis.GetPolicies();
 
         indicators = new Dictionary<Robot, GameObject>();
@@ -44,21 +47,23 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         exclamation = Resources.Load<Sprite>("Sprites/exclamation");
         plus = Resources.Load<Sprite>("Sprites/plus");
 
-        sprites = new Dictionary<RangePolicy.IndicatorShape, Sprite>();
-        sprites[RangePolicy.IndicatorShape.Check] = check;
-        sprites[RangePolicy.IndicatorShape.Circle] = circle;
-        sprites[RangePolicy.IndicatorShape.Exclamation] = exclamation;
-        sprites[RangePolicy.IndicatorShape.Plus] = plus;
-        sprites[RangePolicy.IndicatorShape.Square] = square;
-        sprites[RangePolicy.IndicatorShape.Triangle] = triangle;
+        sprites = new Dictionary<IndicatorShape, Sprite>();
+        sprites[IndicatorShape.Check] = check;
+        sprites[IndicatorShape.Circle] = circle;
+        sprites[IndicatorShape.Exclamation] = exclamation;
+        sprites[IndicatorShape.Plus] = plus;
+        sprites[IndicatorShape.Square] = square;
+        sprites[IndicatorShape.Triangle] = triangle;
     }
 
     private GameObject CreateIndicator(float value) {
         GameObject indicator = new GameObject("indicator", typeof(Image));
+        indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
+        indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
-                RangePolicy.IndicatorShape shape = p.shape;
+                IndicatorShape shape = p.shape;
 
                 indicator.GetComponent<Image>().sprite = sprites[shape];
 
@@ -83,10 +88,12 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     public override void Draw() {
         GameObject indicator = GetIndicator(this.robot, dataDict[variables[0]]);
         float value = dataDict[variables[0]];  // TODO: might be able to simplify this even more
+        indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
+        indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
             if (p.range.x <= value && value < p.range.y) { // have the right policy
-                RangePolicy.IndicatorShape shape = p.shape;
+                IndicatorShape shape = p.shape;
                 indicator.GetComponent<Image>().sprite = sprites[shape];
 
                 Color color = p.color;

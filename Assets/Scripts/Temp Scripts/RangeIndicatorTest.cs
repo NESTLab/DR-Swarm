@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using shapeNamespace;
 
 public class RangeIndicatorTest : MonoBehaviour
 {
@@ -28,13 +29,13 @@ public class RangeIndicatorTest : MonoBehaviour
 
         RangePolicy policy1 = new RangePolicy("lowRange", 0f, 0.3f);
         policy1.color = Color.black;
-        policy1.shape = RangePolicy.IndicatorShape.Check;
+        policy1.shape = IndicatorShape.Check;
         RangePolicy policy2 = new RangePolicy("midRange", 0.3f, 0.7f);
         policy2.color = Color.green;
-        policy2.shape = RangePolicy.IndicatorShape.Check;
-        RangePolicy policy3 = new RangePolicy("highRange", 0.7f, 1f);
+        policy2.shape = IndicatorShape.Check;
+        RangePolicy policy3 = new RangePolicy("highRange", 0.7f, .9f);
         policy3.color = Color.red;
-        policy3.shape = RangePolicy.IndicatorShape.Check;
+        policy3.shape = IndicatorShape.Check;
 
         List<RangePolicy> colorpolicies = new List<RangePolicy>();
         colorpolicies.Add(policy1);
@@ -43,21 +44,22 @@ public class RangeIndicatorTest : MonoBehaviour
 
         RangePolicy policy4 = new RangePolicy("lowRange", 0f, 03f);
         policy4.color = Color.blue;
-        policy4.shape = RangePolicy.IndicatorShape.Circle;
+        policy4.shape = IndicatorShape.Circle;
         RangePolicy policy5 = new RangePolicy("midRange", 0.3f, 0.7f);
         policy5.color = Color.blue;
-        policy5.shape = RangePolicy.IndicatorShape.Square;
-        RangePolicy policy6 = new RangePolicy("highRange", 0.7f, 1f);
+        policy5.shape = IndicatorShape.Square;
+        RangePolicy policy6 = new RangePolicy("highRange", 0.7f, .9f);
         policy6.color = Color.blue;
-        policy6.shape = RangePolicy.IndicatorShape.Triangle;
+        policy6.shape = IndicatorShape.Triangle;
 
         List<RangePolicy> shapepolicies = new List<RangePolicy>();
         shapepolicies.Add(policy4);
         shapepolicies.Add(policy5);
         shapepolicies.Add(policy6);
 
-        ri1 = new RangeIndicator("val", colorpolicies, r1, r2); 
-        ri2 = new RangeIndicator("val", shapepolicies, r1);
+        //ri1 = new RangeIndicator("val", colorpolicies, r1, r2); 
+        //ri2 = new RangeIndicator("val", shapepolicies, r1);
+        ri1 = new RangeIndicator("val", colorpolicies, Color.blue, IndicatorShape.Circle, r1, r2);
     }
 
     // Update is called once per frame

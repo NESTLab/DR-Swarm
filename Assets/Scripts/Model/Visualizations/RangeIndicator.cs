@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using shapeNamespace;
 
 public class RangeIndicator : IVisualization
 {
@@ -11,9 +12,12 @@ public class RangeIndicator : IVisualization
 
     List<RangePolicy> policyList;
 
+    Color defaultColor;
+    IndicatorShape defaultShape;
+
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
-    public RangeIndicator(string variableName, List<RangePolicy> policies, Robot firstRobot, params Robot[] robots) {
+    public RangeIndicator(string variableName, List<RangePolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots) {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
 
@@ -21,6 +25,9 @@ public class RangeIndicator : IVisualization
         varSet.Add(variableName);
 
         policyList = new List<RangePolicy>(policies);
+
+        defaultColor = color;
+        defaultShape = shape;
 
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
@@ -58,6 +65,15 @@ public class RangeIndicator : IVisualization
                 policyList.Add(P);
             }
         }
+    }
+
+    /****NEW****/
+    public IndicatorShape GetDefaultShape() {
+        return defaultShape;
+    }
+
+    public Color GetDefaultColor() {
+        return defaultColor;
     }
 
     public List<RangePolicy> GetPolicies() {
