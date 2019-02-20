@@ -3,22 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using shapeNamespace;
 
 public class MapIndicator : IVisualization 
 {
     HashSet<Robot> robotList;
-    HashSet<string> varSet;
+    //List<string> varList; // this needs to be a list this time for the case where one variable corresponds with multiple policies
+    HashSet<string> varSet; // I think we need this too for making the observable dictionary
 
-    List<MapPolicy> policies;
+    List<MapPolicy> policyList;
+
+    Dictionary<MapPolicy, string> policyDict;
 
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
 
-    public MapIndicator(List<string> variables, Robot firstRobot, params Robot[] robots)
+    // variables[0] needs to correspond to policies[0]
+    public MapIndicator(Dictionary<MapPolicy, string> policies, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
     {
         robotList = new HashSet<Robot>(robots);
         robotList.Add(firstRobot);
 
-        varSet = new HashSet<string>(variables);
+        //varList = new List<string>(variables);
+        //varSet = new HashSet<string>(variables);
+        varSet = new HashSet<string>();
+        foreach (MapPolicy p in policies.Keys) {
+            varSet.Add(policies[p]);
+        }
+
+        //policyList = new List<MapPolicy>(policies);
+        policyList = new List<MapPolicy>(policies.Keys);
+
+        policyDict = new Dictionary<MapPolicy, string>(policies);
 
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
@@ -45,22 +60,24 @@ public class MapIndicator : IVisualization
         });
     }
 
-    public void AddPolicy(MapPolicy P)
+    public void AddPolicy(MapPolicy P, string var) // need to also add the corresponding variable
     {
         // verify that the policy works with the others
-        foreach (MapPolicy policy in this.policies) {
+        foreach (MapPolicy policy in policyList) {
             if (P.type == policy.type) {
                 // throw some kind of error
                 throw new Exception(String.Format("Policy of type ('{0}') already exists.", P.type));
             }
             else {
-                this.policies.Add(P);
+                policyList.Add(P);
+                varSet.Add(var);
+                policyDict[P] = var;
             }
         }
     }
     
     public List<MapPolicy> GetPolicies() {
-        return this.policies;
+        return policyList;
     }
 
     public ISet<Robot> GetRobots()
@@ -73,9 +90,21 @@ public class MapIndicator : IVisualization
         return varSet;
     }
 
+    /*
+    // NEW -- for pairing variables with policies
+    public List<string> GetVarList() {
+        return varList;
+    }
+    */
+
+        // NEW
+    public Dictionary<MapPolicy, string> GetPolicyDict() {
+        return policyDict;
+    }
+
     public ParameterCount GetNumDataSources()
     {
-        return ParameterCount.One;
+        return ParameterCount.N; // this maybe should be N
     }
 
     public ParameterCount GetNumRobots()
