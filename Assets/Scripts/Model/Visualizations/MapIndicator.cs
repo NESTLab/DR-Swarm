@@ -2,28 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEngine;
 
-// Anything and everything can be changed. Comments can be removed,
-// they're just here to explain everything as best I can
-public class BarGraph : IVisualization
+public class MapIndicator : IVisualization 
 {
-    // Feel free to use any data type to store the intermittent data
-    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
-    public BarGraph(HashSet<Robot> robots, HashSet<string> variables) // don't think this can change to include more variables
+    List<MapPolicy> policies;
+
+    IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
+
+    public MapIndicator(List<string> variables, Robot firstRobot, params Robot[] robots)
     {
-        // TODO: Jerry needs to rename to robotSet
         robotList = new HashSet<Robot>(robots);
+        robotList.Add(firstRobot);
+
         varSet = new HashSet<string>(variables);
 
-        // TODO: make all other vis classes use this generic alg
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
             foreach (string variable in varSet) {
-                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v =>
-                {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => {
                     return new Dictionary<string, float>() { { variable, v } };
                 }));
             }
@@ -43,6 +43,24 @@ public class BarGraph : IVisualization
                 return dict;
             });
         });
+    }
+
+    public void AddPolicy(MapPolicy P)
+    {
+        // verify that the policy works with the others
+        foreach (MapPolicy policy in this.policies) {
+            if (P.type == policy.type) {
+                // throw some kind of error
+                throw new Exception(String.Format("Policy of type ('{0}') already exists.", P.type));
+            }
+            else {
+                this.policies.Add(P);
+            }
+        }
+    }
+    
+    public List<MapPolicy> GetPolicies() {
+        return this.policies;
     }
 
     public ISet<Robot> GetRobots()
@@ -65,6 +83,7 @@ public class BarGraph : IVisualization
         return ParameterCount.N;
     }
 
+    // TODO: decide if datasource should be defined inside this function or outside, then stardardize across all vis classes
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
         // Take the Dictionary<Robot, float> and transform it
