@@ -125,8 +125,8 @@ public class UIManager : MonoBehaviour
                 thebots.UnionWith(c.robots);
             }
         }
-        Debug.Log("Amount of checed" + checkedTagNames.Count);
-        Debug.Log("THERE ARE + " + thebots.Count);
+        //Debug.Log("Amount of checed" + checkedTagNames.Count);
+        //Debug.Log("THERE ARE + " + thebots.Count);
         robots = new List<Robot>(thebots);
     }
 
