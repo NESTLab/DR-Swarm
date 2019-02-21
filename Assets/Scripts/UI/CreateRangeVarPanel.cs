@@ -219,18 +219,18 @@ public class CreateRangeVarPanel : MonoBehaviour
             i++;
 
             float x = float.Parse(max.text); 
-            Debug.Log(i+ "   " + policy.color +  policy.shape + "nums" + (float.Parse(min.text)) + " "+ x );
+            //Debug.Log(i+ "   " + policy.color +  policy.shape + "nums" + (float.Parse(min.text)) + " "+ x );
             
 
         }
         if (ColorUtility.TryParseHtmlString(defaultColorString, out defaultColored)) { }
         else { defaultColored = Color.red; }
-        Debug.Log("COLOR " + defaultColored);
+        //Debug.Log("COLOR " + defaultColored);
         UIManager.Instance.wantedVars = new List<string> { variableString };
         UIManager.Instance.allRPolicies = policies;
         UIManager.Instance.sentColor = defaultColored;
         UIManager.Instance.sentShape = GetShape("default", defaultShapeString) ;
-        Debug.Log("Shape d" + GetShape("default", defaultShapeString));
+        //Debug.Log("Shape d" + GetShape("default", defaultShapeString));
         UIManager.Instance.addGraph = true;
 
     }

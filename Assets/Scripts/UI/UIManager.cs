@@ -105,6 +105,29 @@ public class UIManager : MonoBehaviour
     {
         Tag newtag = new Tag(name, robots);
         allTags.Add(newtag);
+        Debug.Log("TAGS" + allTags.Count);
+    }
+    public List<string> checkedTagNames = new List<string>();
+    public void addCheckedTags()
+    {
+        //Match string to tag name
+        //add union of robots
+        HashSet<Robot> thebots = new HashSet<Robot>(robots);
+        foreach(string s in checkedTagNames)
+        {
+            Tag c= new Tag("",new List<Robot>());
+            for(int i = 0; i < allTags.Count; i++)
+            {
+                if(allTags[i].name == s) { c = allTags[i]; break; }
+            }
+            if (c.robots.Count > 0)
+            {
+                thebots.UnionWith(c.robots);
+            }
+        }
+        Debug.Log("Amount of checed" + checkedTagNames.Count);
+        Debug.Log("THERE ARE + " + thebots.Count);
+        robots = new List<Robot>(thebots);
     }
 
     //ADD VARS
@@ -269,9 +292,6 @@ public class UIManager : MonoBehaviour
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
-
-
-            Debug.Log("The color is " + sentColor + sentShape);
             IVisualization graphToAdd = new RangeIndicator(var, allRPolicies, sentColor, sentShape, r1, robots.ToArray());
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
@@ -280,10 +300,10 @@ public class UIManager : MonoBehaviour
         else if (GraphType == graph.TwoDMap)
         {
             title = "TwoDMAp " + unixTime;
-
         }
 
         _addGraph = false;
+        robots = new List<Robot>();
     }
 
 

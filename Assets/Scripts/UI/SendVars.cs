@@ -1,15 +1,15 @@
-﻿using System.Collections;
+﻿using graphNameSpace;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using graphNameSpace;
 public class SendVars : MonoBehaviour
 {
     // Start is called before the first frame update
 
     //Toggles on the UI, represent one for each robot
     //Is there a way to do this dynamically/better?
-    public Toggle t1; 
+    public Toggle t1;
     public Toggle t2;
     public Toggle t3;
     public Toggle t4;
@@ -19,6 +19,7 @@ public class SendVars : MonoBehaviour
     public HashSet<string> prevCheckedRobots = new HashSet<string> { };
     public GameObject panel; //Robot panel 
     public bool updateToggles = false;
+    public GameObject tagPanel;
 
     //Var panels
     public GameObject basicVarPanel;
@@ -47,7 +48,7 @@ public class SendVars : MonoBehaviour
         }
         if (prevCheckedRobots.Count > 0)
         {
-            
+
             if (prevCheckedRobots.Contains("r1"))
             {
                 t1.isOn = true;
@@ -75,8 +76,8 @@ public class SendVars : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
-        if(panel!= null)
+
+        if (panel != null)
         {
             if (panel.activeSelf)
             {
@@ -110,7 +111,7 @@ public class SendVars : MonoBehaviour
                             t5.isOn = true;
                         }
                     }
-                    
+
                     updateToggles = false;
                 }
             }
@@ -123,10 +124,10 @@ public class SendVars : MonoBehaviour
         {
             updateToggles = true;
         }
-        
+
     }
 
-    
+
 
     private void toggleDisable(Toggle check)
     {
@@ -183,11 +184,14 @@ public class SendVars : MonoBehaviour
     //Called when the next button is pressed
     //Checks for each toggle to tell if it is on, if its on, need to add the robot
     //Also calls addGraph
-    public void toggleAdd() {
-        if(t1.isOn) {
+    public void toggleAdd()
+    {
+        if (t1.isOn)
+        {
             UIManager.Instance.AddRobot("r1");
         }
-        if(t2.isOn) {
+        if (t2.isOn)
+        {
             UIManager.Instance.AddRobot("r2");
         }
         if (t3.isOn)
@@ -204,8 +208,46 @@ public class SendVars : MonoBehaviour
         }
         //UIManager.Instance.addGraph = true;
         updateToggles = true;
+        List<string> checkedTags = new List<string>();
+        int children = tagPanel.transform.childCount;
+
+
+
+        //foreach (HingeJoint joint in hingeJoints)
+        //   joint.useSpring = false;
+
+
+        Component[] prefabs;
+
+        foreach (Transform child in tagPanel.transform)
+        {
+            //GameObject g = child.gameObject.GetComponent<GameObject>();
+            //Toggle t = g.gameObject.GetComponent<Toggle>();
+            for (int i = 0; i < child.childCount; ++i)
+            {
+                Transform currentItem = child.GetChild(i);
+                if (currentItem.GetComponent<Toggle>() != null)
+                {
+                    Toggle t = currentItem.GetComponent<Toggle>();
+                    if (t.isOn)
+                    {
+                        Debug.Log("IT WAS ON");
+                        checkedTags.Add(t.GetComponentInChildren<Text>().text);
+                    }
+                }
+            }
+        }
+
+        if (checkedTags.Count > 0)
+        {
+            UIManager.Instance.checkedTagNames = checkedTags;
+            UIManager.Instance.addCheckedTags();
+        }
+
+
         UIManager.Instance.touchedRobots.Clear();
     }
+    public Component[] ts;
 
     public void setToGraph(string i)
     {
@@ -217,7 +259,8 @@ public class SendVars : MonoBehaviour
         if (s.value == 1)
         {
             UIManager.Instance.AddRobotMode = true;
-        } else
+        }
+        else
         {
             UIManager.Instance.AddRobotMode = false;
         }
@@ -230,11 +273,12 @@ public class SendVars : MonoBehaviour
         if (UIgraph == graph.TwoDRange)
         {
             rangePanel.gameObject.SetActive(true);
-        } else if (UIgraph == graph.TwoDMap)
+        }
+        else if (UIgraph == graph.TwoDMap)
         {
             mapPanel.gameObject.SetActive(true);
         }
-        else 
+        else
         {
             basicVarPanel.gameObject.SetActive(true);
         }

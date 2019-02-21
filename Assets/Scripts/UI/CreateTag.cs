@@ -14,6 +14,7 @@ public class CreateTag : MonoBehaviour
     public List<Toggle> allChecked = new List<Toggle>();
     public GameObject panel; //Robot panel
     public bool updateToggles;
+    public Button sendTags;
 
     public InputField tagName;
     // Start is called before the first frame update
@@ -24,6 +25,7 @@ public class CreateTag : MonoBehaviour
         allToggles.Add(t3);
         allToggles.Add(t4);
         allToggles.Add(t5);
+        sendTags.onClick.AddListener(sendTag);
 
     }
 
@@ -35,14 +37,17 @@ public class CreateTag : MonoBehaviour
 
     public void sendTag()
     {
+
+        string name = tagName.text;
         List<Robot> robotsTag = new List<Robot> { };//Robots for the current graph
 
-        if (t1.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
+        if (t1.isOn) { Debug.Log("ON"); robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
         if (t2.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget2")); }
         if (t3.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget3")); }
         if (t4.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget4")); }
         if (t5.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget5")); }
-
+        UIManager.Instance.CreateTag(name, robotsTag);
+        ClearToggles();
     }
 
 
