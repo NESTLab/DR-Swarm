@@ -11,7 +11,8 @@ namespace shapeNamespace {
         Triangle,
         Plus,
         Check,
-        Exclamation
+        Exclamation,
+        Arrow
     }
 }
 

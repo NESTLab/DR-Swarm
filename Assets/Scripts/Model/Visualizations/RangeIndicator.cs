@@ -75,6 +75,7 @@ public class RangeIndicator : IVisualization
     public Color GetDefaultColor() {
         return defaultColor;
     }
+    /****END NEW****/
 
     public List<RangePolicy> GetPolicies() {
         return policyList;
