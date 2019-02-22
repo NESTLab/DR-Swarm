@@ -178,8 +178,8 @@ public class VisualizationWindow : MonoBehaviour {
         }
         if (dark == 0) {
             Debug.Log("make light");
-            background.GetComponent<Image>().color = Color.grey;
-            containerBackground.GetComponent<Image>().color = Color.white;
+            background.GetComponent<Image>().color = new Color(130f / 255f, 130f / 255f, 130f / 255f);//Color.grey;
+            containerBackground.GetComponent<Image>().color = new Color(200f / 255f, 200f / 255f, 200f / 255f);//Color.white;
         }
     }
 
