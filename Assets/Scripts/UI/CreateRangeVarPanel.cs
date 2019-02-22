@@ -14,10 +14,10 @@ public class CreateRangeVarPanel : MonoBehaviour
     public int totalPolicies = 0; // Total prefabs the script needs to add
     float offset = 0f; // Offset for when a prefab gets added
     float offsetAddition = -50f;//Value to add to the offset after each policy is added
-    private List<string> colors = new List<string> { "Default", "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "Purple", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
-    public List<string> shapes = new List<string> { "Default", "Check", "Circle", "!", "Plus", "Square", "Triangle" };//List of shape options
-    public List<string> shapesD = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle" };//List of shape options
-    public List<string> colorsD = new List<string> { "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "Purple", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
+    private List<string> colors = new List<string> { "Default", "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
+    public List<string> shapes = new List<string> { "Default", "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
+    public List<string> shapesD = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
+    public List<string> colorsD = new List<string> { "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
 
     public List<int> selectedColors = new List<int>();
     public List<int> selectedShapes = new List<int>();
@@ -255,6 +255,7 @@ public class CreateRangeVarPanel : MonoBehaviour
         else if (s == "Plus") { return IndicatorShape.Plus; }
         else if (s == "Triangle") { return IndicatorShape.Triangle; }
         else if (s == "Square") { return IndicatorShape.Square; }
+        else if (s == "Arrow") { return IndicatorShape.Arrow; }
         else
         {
             if (d == "Check") { return IndicatorShape.Check; }
@@ -263,10 +264,12 @@ public class CreateRangeVarPanel : MonoBehaviour
             else if (d == "Plus") { return IndicatorShape.Plus; }
             else if (d == "Triangle") { return IndicatorShape.Triangle; }
             else if (d == "Square") { return IndicatorShape.Square; }
+            else if (d == "Arrow") { return IndicatorShape.Arrow; }
+
         }
         return IndicatorShape.Check;
     }
-    
+
 
 }
 
