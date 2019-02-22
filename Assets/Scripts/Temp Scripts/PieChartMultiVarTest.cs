@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PieChartMultiVarTest : MonoBehaviour {
 
-    Robot r1;
+    Robot r1, r2;
     float theta = 0;
 
     IVisualization pc1, pc2;
@@ -17,8 +17,29 @@ public class PieChartMultiVarTest : MonoBehaviour {
         r1.SetVariable("var3", 0.3f);
         r1.SetVariable("var4", 1.0f);
 
-        pc1 = new PieChartMultiVar(r1, "var1", "var2");
-        pc2 = new PieChartMultiVar(r1, "var1", "var2", "var3", "var4");
+        r2 = DataManager.Instance.GetRobot("RobotTarget2");
+        r2.SetVariable("var1", 0.7f);
+        r2.SetVariable("var2", 0.05f);
+        r2.SetVariable("var3", 0.3f);
+        r2.SetVariable("var4", 1.2f);
+
+        List<Robot> robots = new List<Robot>();
+        robots.Add(r1);
+        robots.Add(r2);
+
+        List<string> vars = new List<string>();
+        vars.Add("var1");
+        vars.Add("var2");
+        vars.Add("var3");
+        vars.Add("var4");
+
+        List<Robot> one = new List<Robot>();
+        one.Add(r1);
+
+        // pc1 = new PieChartMultiVar(r1, "var1", "var2");
+        //pc2 = new PieChartMultiVar(r1, "var1", "var2", "var3", "var4");
+        pc1 = new PieChartMultiVar(robots, vars);
+        pc2 = new PieChartMultiVar(one, vars);
     }
 	
 	// Update is called once per frame
