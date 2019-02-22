@@ -25,6 +25,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private Sprite check;
     private Sprite exclamation;
     private Sprite plus;
+    private Sprite arrow;
 
     private Dictionary<IndicatorShape, Sprite> sprites;
 
@@ -46,6 +47,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         check = Resources.Load<Sprite>("Sprites/check");
         exclamation = Resources.Load<Sprite>("Sprites/exclamation");
         plus = Resources.Load<Sprite>("Sprites/plus");
+        arrow = Resources.Load<Sprite>("Sprites/arrow");
 
         sprites = new Dictionary<IndicatorShape, Sprite>();
         sprites[IndicatorShape.Check] = check;
@@ -54,6 +56,7 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         sprites[IndicatorShape.Plus] = plus;
         sprites[IndicatorShape.Square] = square;
         sprites[IndicatorShape.Triangle] = triangle;
+        sprites[IndicatorShape.Arrow] = arrow;
     }
 
     private GameObject CreateIndicator(float value) {
