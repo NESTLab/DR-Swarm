@@ -28,9 +28,8 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
     private Sprite plus;
     private Sprite arrow;
 
-    private Dictionary<IndicatorShape, Sprite> sprites; // shouldn't the map indicator have a shape?
+    private Dictionary<IndicatorShape, Sprite> sprites; 
     private MapIndicator vis;
-    //private Dictionary<MapPolicy, string> policyDict;
 
     // Initialize things
     protected override void Start()
@@ -40,7 +39,6 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
         vis = (MapIndicator)visualization;
         policies = vis.GetPolicies();
-        //policyDict = vis.GetPolicyDict();
 
         indicators = new Dictionary<Robot, GameObject>();
 
@@ -73,7 +71,6 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
         indicator.GetComponent<Image>().type = Image.Type.Filled;  // this is so we can change the amount it's filled
-                                                                   // We're gonna have to change how it's filled, but that's a later problem
 
         string var;
         float val;
