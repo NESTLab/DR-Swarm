@@ -43,6 +43,26 @@ public class TouchScript : MonoBehaviour
                     {
                         UIManager.Instance.addRobotByTouch("r5");
                     }
+                    else if (hit.collider.gameObject.name == "RobotTarget6")
+                    {
+                        UIManager.Instance.addRobotByTouch("r6");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget7")
+                    {
+                        UIManager.Instance.addRobotByTouch("r7");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget8")
+                    {
+                        UIManager.Instance.addRobotByTouch("r8");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget9")
+                    {
+                        UIManager.Instance.addRobotByTouch("r9");
+                    }
+                    else if (hit.collider.gameObject.name == "RobotTarget10")
+                    {
+                        UIManager.Instance.addRobotByTouch("r10");
+                    }
                 }
             }
         }

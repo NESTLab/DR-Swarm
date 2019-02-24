@@ -303,7 +303,7 @@ public class UIManager : MonoBehaviour
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
-            IVisualization graphToAdd = new MapIndicator(allMPolicies, sentColor, sentShape, r1, robots.ToArray());
+            IVisualization graphToAdd = new MapIndicator( allMPolicies, sentColor, sentShape, r1, robots.ToArray());
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);

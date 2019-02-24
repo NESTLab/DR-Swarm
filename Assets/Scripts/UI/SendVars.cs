@@ -14,6 +14,14 @@ public class SendVars : MonoBehaviour
     public Toggle t3;
     public Toggle t4;
     public Toggle t5;
+    public Toggle t6;
+    public Toggle t7;
+    public Toggle t8;
+    public Toggle t9;
+    public Toggle t10;
+
+
+    public Toggle selectAll;
     public List<Toggle> allToggles = new List<Toggle>();
     public List<Toggle> allChecked = new List<Toggle>();
     public HashSet<string> prevCheckedRobots = new HashSet<string> { };
@@ -29,6 +37,7 @@ public class SendVars : MonoBehaviour
 
     void Start()
     {
+        selectAll.onValueChanged.AddListener(delegate { selectAllToggles(); });
         prevCheckedRobots = UIManager.Instance.touchedRobots;
         if (t1 != null)
         {
@@ -37,14 +46,22 @@ public class SendVars : MonoBehaviour
             allToggles.Add(t3);
             allToggles.Add(t4);
             allToggles.Add(t5);
+            allToggles.Add(t6);
+            allToggles.Add(t7);
+            allToggles.Add(t8);
+            allToggles.Add(t9);
+            allToggles.Add(t10);
+
 
             foreach (Toggle t in allToggles)
             {
                 t.onValueChanged.AddListener(delegate
                 {
-                    toggleDisable(t);
+                    //toggleDisable(t);
+                    TurnOffSelectAll(t);
                 });
             }
+            
         }
         if (prevCheckedRobots.Count > 0)
         {
@@ -68,6 +85,26 @@ public class SendVars : MonoBehaviour
             if (prevCheckedRobots.Contains("r5"))
             {
                 t5.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r6"))
+            {
+                t6.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r7"))
+            {
+                t7.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r8"))
+            {
+                t8.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r9"))
+            {
+                t9.isOn = true;
+            }
+            if (prevCheckedRobots.Contains("r10"))
+            {
+                t10.isOn = true;
             }
         }
 
@@ -110,6 +147,26 @@ public class SendVars : MonoBehaviour
                         {
                             t5.isOn = true;
                         }
+                        if (prevCheckedRobots.Contains("r6"))
+                        {
+                            t6.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r7"))
+                        {
+                            t7.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r8"))
+                        {
+                            t8.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r9"))
+                        {
+                            t9.isOn = true;
+                        }
+                        if (prevCheckedRobots.Contains("r10"))
+                        {
+                            t10.isOn = true;
+                        }
                     }
 
                     updateToggles = false;
@@ -128,7 +185,32 @@ public class SendVars : MonoBehaviour
     }
 
 
+    public void selectAllToggles()
+    {
+        if (selectAll.isOn)
+        {
+            foreach (Toggle t in allToggles)
+            {
+                t.isOn = true;
+            }
+        }
+        else {
+            foreach (Toggle t in allToggles)
+            {
+                t.isOn = false;
+            }
+        }
 
+    }
+
+    public void TurnOffSelectAll(Toggle t)
+    {
+        if (!t.isOn)
+        {
+            selectAll.isOn = false;
+        }
+
+    }
     private void toggleDisable(Toggle check)
     {
         if (UIManager.Instance.RobotOptions > 0)
@@ -206,18 +288,31 @@ public class SendVars : MonoBehaviour
         {
             UIManager.Instance.AddRobot("r5");
         }
+        if (t6.isOn)
+        {
+            UIManager.Instance.AddRobot("r6");
+        }
+        if (t7.isOn)
+        {
+            UIManager.Instance.AddRobot("r7");
+        }
+        if (t8.isOn)
+        {
+            UIManager.Instance.AddRobot("r8");
+        }
+        if (t9.isOn)
+        {
+            UIManager.Instance.AddRobot("r9");
+        }
+        if (t10.isOn)
+        {
+            UIManager.Instance.AddRobot("r10");
+        }
         //UIManager.Instance.addGraph = true;
         updateToggles = true;
         List<string> checkedTags = new List<string>();
         int children = tagPanel.transform.childCount;
 
-
-
-        //foreach (HingeJoint joint in hingeJoints)
-        //   joint.useSpring = false;
-
-
-        Component[] prefabs;
 
         foreach (Transform child in tagPanel.transform)
         {
