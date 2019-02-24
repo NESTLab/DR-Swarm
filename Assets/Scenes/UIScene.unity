@@ -3400,11 +3400,11 @@ MonoBehaviour:
   t3: {fileID: 925994002}
   t4: {fileID: 1666256975}
   t5: {fileID: 1670487045}
-  t6: {fileID: 0}
-  t7: {fileID: 0}
-  t8: {fileID: 0}
-  t9: {fileID: 0}
-  t10: {fileID: 0}
+  t6: {fileID: 1061922098}
+  t7: {fileID: 901572650}
+  t8: {fileID: 1694510545}
+  t9: {fileID: 1890632803}
+  t10: {fileID: 639581883}
   selectAll: {fileID: 1182740670}
   allToggles: []
   allChecked: []
@@ -11292,7 +11292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -114.89998}
+  m_AnchoredPosition: {x: 80, y: -119.1}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1061922098
