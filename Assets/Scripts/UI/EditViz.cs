@@ -10,9 +10,13 @@ public class EditViz : MonoBehaviour
     // Start is called before the first frame update
     public Text currVizTitle;
     string title;
+    public Button back;
+    public Button close;
     void Start()
     {
         edit = null;
+        back.onClick.AddListener(Reset);
+        close.onClick.AddListener(Reset);
     }
 
     // Update is called once per frame
@@ -73,10 +77,17 @@ public class EditViz : MonoBehaviour
         {
             botNames.Add(r.name);
         }
+        Debug.Log("Vars" + edit.GetVariables().Count);
         UIManager.Instance.editVizRobots = botNames;
         UIManager.Instance.editVars = new List<string>(edit.GetVariables());
         UIManager.Instance.EOptions = edit.GetVariables().Count;
     }
+
+    private void Reset()
+    {
+        edit = null;
+    }
+
 
 
 

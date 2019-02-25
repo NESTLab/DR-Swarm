@@ -344,6 +344,7 @@ public class UIManager : MonoBehaviour
             editDShape = new IndicatorShape();
             editDColor = new Color();
             editVizRobots = new List<string>();
+            updateVizPanel = true;
         }
     }
 
