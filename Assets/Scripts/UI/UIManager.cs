@@ -259,12 +259,12 @@ public class UIManager : MonoBehaviour
         }
         else if (GraphType == graph.PieMulti)
         {
-            Robot r1 = robots[0];
-            robots.RemoveAt(0);
-            string var = wantedVars[0];
-            wantedVars.RemoveAt(0);
-            IVisualization graphToAdd = new PieChartMultiVar(r1, var, wantedVars.ToArray());
-            title = var + "," + "Multi Pie " + unixTime;//TODO: Add another unique symbol to this?
+            //Robot r1 = robots[0];
+            //robots.RemoveAt(0);
+            //string var = wantedVars[0];
+            //wantedVars.RemoveAt(0);
+            IVisualization graphToAdd = new PieChartMultiVar(robots, wantedVars);
+            title = "Multi Pie " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
