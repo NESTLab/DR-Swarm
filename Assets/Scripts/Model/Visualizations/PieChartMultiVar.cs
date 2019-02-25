@@ -14,15 +14,17 @@ public class PieChartMultiVar : IVisualization
     HashSet<Robot> robotList;
     HashSet<string> varSet;
 
-    public PieChartMultiVar(Robot robot, string variableOne, params string[] variables)
+    //public PieChartMultiVar(Robot robot, string variableOne, params string[] variables)
+    public PieChartMultiVar(List<Robot> robots, List<string> variables)
     {
         // TODO: Jerry needs to rename this to robotSet
-        robotList = new HashSet<Robot>();
-        robotList.Add(robot);
+        robotList = new HashSet<Robot>(robots);
+        //robotList.Add(robot);
 
         varSet = new HashSet<string>(variables);
-        varSet.Add(variableOne);
+        //varSet.Add(variableOne);
 
+        /*
         List<IObservable<Dictionary<string, float>>> observableVarList = new List<IObservable<Dictionary<string, float>>>();
         foreach (string var in varSet) {
             observableVarList.Add(robot.GetObservableVariable<float>(var).Select(v => new Dictionary<string, float>() { { var, v } }));
@@ -45,6 +47,31 @@ public class PieChartMultiVar : IVisualization
                 }
             }
             return dict;
+        });
+        */
+
+        dataSource = robotList.ToObservable().SelectMany(r => {
+            List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
+            foreach (string variable in varSet) {
+                variableList.Add(r.GetObservableVariable<float>(variable).Select(v => {
+                    return new Dictionary<string, float>() { { variable, v } };
+                }));
+            }
+
+            return Observable.CombineLatest(variableList).Select(varList => {
+                Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
+                foreach (Dictionary<string, float> varDict in varList) {
+                    if (!dict.ContainsKey(r)) {
+                        dict[r] = new Dictionary<string, float>();
+                    }
+
+                    foreach (string key in varDict.Keys) {
+                        dict[r][key] = varDict[key];
+                    }
+                }
+
+                return dict;
+            });
         });
     }
 
