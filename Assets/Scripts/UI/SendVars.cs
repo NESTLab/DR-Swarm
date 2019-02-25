@@ -41,6 +41,7 @@ public class SendVars : MonoBehaviour
 
         if (t1 != null)
         {
+            ClearToggles();
             editRobots = UIManager.Instance.editVizRobots;
             selectAll.onValueChanged.AddListener(delegate { selectAllToggles(); });
             prevCheckedRobots = UIManager.Instance.touchedRobots;
