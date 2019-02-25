@@ -22,7 +22,7 @@ public class CreateMapVarPanel : MonoBehaviour
     public Dropdown defaultShape; //dropdown for shape
     public Dropdown defaultColor;
 
-    private List<string> colors = new List<string> { "Red", "Blue", "Green", "Yellow", "Orange", "Pink",  "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
+    private List<string> colors = new List<string> { "Red", "Blue", "Green", "Yellow", "Magenta", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
     public List<string> shapes = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
     public int mapCPols = 0;
     public int mapOPols = 0;
@@ -40,8 +40,10 @@ public class CreateMapVarPanel : MonoBehaviour
     public List<int> selectedVarsC = new List<int>();
     public List<int> selectedVarsO = new List<int>();
     public List<int> selectedVarsF = new List<int>();
+    List<MapPolicy> editPolicies = new List<MapPolicy>();
 
     private bool toggleClicked = false;
+    public bool editAdded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -55,11 +57,20 @@ public class CreateMapVarPanel : MonoBehaviour
         defaultShape.AddOptions(shapes);
         defaultColor.ClearOptions();
         defaultColor.AddOptions(colors);
+        editPolicies = UIManager.Instance.editMapPolicys;
 
         addColorButton.onClick.AddListener(AddPolicyColor);
         addOrientationButton.onClick.AddListener(AddPolicyOrientation);
         addFillButton.onClick.AddListener(AddPolicyFill);
         sendVarsButton.onClick.AddListener(sendPolicies);
+        if (editPolicies.Count > 0)
+        {
+            int sd = getiValueFromList(UIManager.Instance.editDShape.ToString(), shapes);
+            defaultShape.value = sd;
+            string col = getColorString(UIManager.Instance.editDColor);
+            int cd = getiValueFromList(col, colors);
+            defaultColor.value = cd;
+        }
 
     }
 
@@ -73,6 +84,7 @@ public class CreateMapVarPanel : MonoBehaviour
         {
             if (optionPanel.activeSelf)
             {
+                editPolicies = UIManager.Instance.editMapPolicys;
                 if (mapC || mapO || mapF)
                 {
                     foreach (Transform child in optionPanel.transform)
@@ -82,6 +94,7 @@ public class CreateMapVarPanel : MonoBehaviour
                     Debug.Log("Updating");
                     offset = 0;
                     allPolicies.Clear();
+                    
                     if (mapColorPolicy.transform.childCount > 0)
                     {
                         mapCPols = 0;
@@ -101,6 +114,25 @@ public class CreateMapVarPanel : MonoBehaviour
                     mapO = false;
                     mapF = false;
 
+                }
+                if (!editAdded && editPolicies.Count > 0)
+                {
+                    for (int i = 0; i < editPolicies.Count; i++)
+                    {
+                        if (editPolicies[i].name == "color")
+                        {
+                            AddPolicyColor();
+                        }
+                        if (editPolicies[i].name == "orientation")
+                        {
+                            AddPolicyOrientation();
+                        }
+                        if (editPolicies[i].name == "fill")
+                        {
+                            AddPolicyFill();
+                        }
+                    }
+                    editAdded = true;
                 }
             }
         }
@@ -124,14 +156,25 @@ public class CreateMapVarPanel : MonoBehaviour
 
         Dropdown color = policyPrefab.transform.Find("DropdownColor").GetComponent<Dropdown>();
         Dropdown varD = policyPrefab.transform.Find("DropdownVar").GetComponent<Dropdown>();
-        color.ClearOptions();
-        color.AddOptions(colors);
+        //color.ClearOptions();
+        //color.AddOptions(colors);
         varD.ClearOptions();
         varD.AddOptions(var_DropOptions);
         if (selectedColors.Count > 0)
         {
-            color.value = selectedColors[0];
+            //color.value = selectedColors[0];
             varD.value = selectedVarsC[0];
+        }
+        if (editPolicies.Count > 0)
+        {
+            for (int j = 0; j < editPolicies.Count; j++)
+            {
+                if (editPolicies[j].name == "color")
+                {
+                    string v = editPolicies[j].variableName;
+                    varD.value = getiValueFromList(v, var_DropOptions);
+                }
+            }
         }
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
@@ -142,7 +185,7 @@ public class CreateMapVarPanel : MonoBehaviour
     }
     private void addOneOrientationPrefab(int i)
     {
-        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("MapOrientationPolicyPrefab"), optionPanel.transform);
+        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapOrientationPolicyPrefab"), optionPanel.transform);
         policyPrefab.transform.SetParent(optionPanel.transform, false);
         RectTransform t = policyPrefab.GetComponent<RectTransform>();
         t.sizeDelta = new Vector2(0, 75f);
@@ -161,7 +204,18 @@ public class CreateMapVarPanel : MonoBehaviour
         if (selectedVarsO.Count > 0)
         {
             varD.value = selectedVarsO[0];
-            orient.isOn = toggleClicked;
+            //orient.isOn = toggleClicked;
+        }
+        if (editPolicies.Count > 0)
+        {
+            for (int j = 0; j < editPolicies.Count; j++)
+            {
+                if (editPolicies[j].name == "orientation")
+                {
+                    string v = editPolicies[j].variableName;
+                    varD.value = getiValueFromList(v, var_DropOptions);
+                }
+            }
         }
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
@@ -171,7 +225,7 @@ public class CreateMapVarPanel : MonoBehaviour
     }
     private void addOneFillPrefab(int i)
     {
-        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("MapFillPolicyPrefab"), optionPanel.transform);
+        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapFillPolicyPrefab"), optionPanel.transform);
         policyPrefab.transform.SetParent(optionPanel.transform, false);
         RectTransform t = policyPrefab.GetComponent<RectTransform>();
         t.sizeDelta = new Vector2(0, 75f);
@@ -189,6 +243,17 @@ public class CreateMapVarPanel : MonoBehaviour
         if (selectedVarsF.Count > 0)
         {
             varD.value = selectedVarsF[0];
+        }
+        if (editPolicies.Count > 0)
+        {
+            for (int j = 0; j < editPolicies.Count; j++)
+            {
+                if (editPolicies[j].name == "fill")
+                {
+                    string v = editPolicies[j].variableName;
+                    varD.value = getiValueFromList(v, var_DropOptions);
+                }
+            }
         }
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
@@ -379,7 +444,51 @@ public class CreateMapVarPanel : MonoBehaviour
         }
         return IndicatorShape.Check;
     }
+    int getiValueFromList(string var, List<string> s)
+    {
+        int val = 0;
+        for (int i = 0; i < s.Count; i++)
+        {
+            if (s[i] == var)
+            {
+                val = i;
+            }
+        }
+        return val;
+    }
+    string getColorString(Color c)
+    {
+        string color = "";
 
-
+        if (c == Color.red)
+        {
+            return "Red";
+        }
+        else if (c == Color.blue)
+        {
+            return "Blue";
+        }
+        else if (c == Color.green)
+        {
+            return "Green";
+        }
+        else if (c == Color.yellow)
+        {
+            return "Yellow";
+        }
+        else if (c == Color.magenta)
+        {
+            return "Magenta";
+        }
+        else if (c == Color.black)
+        {
+            return "Black";
+        }
+        else if (c == Color.white)
+        {
+            return "White";
+        }
+        return color;
+    }
 
 }
