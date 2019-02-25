@@ -12,6 +12,8 @@ public class CreateVizPanel : MonoBehaviour
     public List<string> allVizsNames = new List<string>(); //Visualization names
     public int totalViz = 0; // Total prefabs the script needs to add
     float offset = 0f; // Offset for when a prefab gets added
+    public GameObject editVizPanel;
+    public GameObject menuPanel;
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +52,7 @@ public class CreateVizPanel : MonoBehaviour
         allVizsNames = UIManager.Instance.allVizsNames;//Get all the names
         if (vizPanel != null) //Checking if the panel is active (not null)
         {
-            if (allVizs.Count != totalViz) // Only Update if we need to add/remove prefabs from the panel
+            if (allVizs.Count != totalViz || UIManager.Instance.updateVizPanel) // Only Update if we need to add/remove prefabs from the panel
             {
                 i = 0;
                 foreach (Transform child in vizPanel.transform) //Get everything out of the panel
@@ -62,7 +64,7 @@ public class CreateVizPanel : MonoBehaviour
                 {
                     foreach (IVisualization viz in allVizs)
                     {
-                        GameObject vizPrefab = (GameObject)Instantiate(Resources.Load("SingleVizUIPrefab"), transform); //Initialize the prefab
+                        GameObject vizPrefab = (GameObject)Instantiate(Resources.Load("UI/SingleVizUIPrefab"), transform); //Initialize the prefab
                         vizPrefab.transform.SetParent(vizPanel.transform); //All the prefabs must have the same parent
                         RectTransform t = vizPrefab.GetComponent<RectTransform>(); //Set the position
                         t.sizeDelta = new Vector2(0, 75f);
@@ -76,6 +78,8 @@ public class CreateVizPanel : MonoBehaviour
                         Button remv = vizPrefab.transform.Find("rmvViz").GetComponent<Button>();
                         string name = allVizsNames[i];
                         remv.onClick.AddListener(delegate { removeViz(name, viz); });
+                        Button edit = vizPrefab.transform.Find("editViz").GetComponent<Button>();
+                        edit.onClick.AddListener(delegate { editViz(name, viz); });
                         //Maitance variables
                         totalViz++;
                         i++;
@@ -83,6 +87,7 @@ public class CreateVizPanel : MonoBehaviour
                     }
                     totalViz = allVizs.Count;
                 }
+                UIManager.Instance.updateVizPanel = false;
             }
         }
     }
@@ -98,6 +103,15 @@ public class CreateVizPanel : MonoBehaviour
         UIManager.Instance.allVizs = allVizs;
         UIManager.Instance.allVizsNames = allVizsNames;
         Debug.Log("Viz count to " + UIManager.Instance.allVizs.Count);
+    }
+
+    void editViz(string title, IVisualization viz)
+    {
+        UIManager.Instance.editVizName = title;
+        UIManager.Instance.editviz = viz;
+        UIManager.Instance.EditVizBool = true;
+        editVizPanel.SetActive(true);
+        menuPanel.SetActive(false);
     }
 
 }

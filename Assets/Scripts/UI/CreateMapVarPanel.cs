@@ -110,7 +110,7 @@ public class CreateMapVarPanel : MonoBehaviour
     //Add a single prefab at spot i 
     private void addOneColorPrefab(int i)
     {
-        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("MapColorPolicyPrefab"), optionPanel.transform);
+        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapColorPolicyPrefab"), optionPanel.transform);
         policyPrefab.transform.SetParent(optionPanel.transform, false);
         RectTransform t = policyPrefab.GetComponent<RectTransform>();
         t.sizeDelta = new Vector2(0, 75f);

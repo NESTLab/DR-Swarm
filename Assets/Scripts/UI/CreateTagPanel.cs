@@ -61,7 +61,7 @@ public class CreateTagPanel : MonoBehaviour
                 {
                     foreach (Tag tag in allTags)
                     {
-                        GameObject tagPrefab = (GameObject)Instantiate(Resources.Load("TagPrefab"), transform); //Initialize the prefab
+                        GameObject tagPrefab = (GameObject)Instantiate(Resources.Load("UI/TagPrefab"), transform); //Initialize the prefab
                         tagPrefab.transform.SetParent(tagPanel.transform); //All the prefabs must have the same parent
                         RectTransform t = tagPrefab.GetComponent<RectTransform>(); //Set the position
                         t.sizeDelta = new Vector2(0, 75f);

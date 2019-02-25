@@ -14,10 +14,10 @@ public class CreateRangeVarPanel : MonoBehaviour
     public int totalPolicies = 0; // Total prefabs the script needs to add
     float offset = 0f; // Offset for when a prefab gets added
     float offsetAddition = -50f;//Value to add to the offset after each policy is added
-    private List<string> colors = new List<string> { "Default", "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
-    public List<string> shapes = new List<string> { "Default", "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
-    public List<string> shapesD = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
-    public List<string> colorsD = new List<string> { "Red", "Blue", "Green", "Yellow", "Orange", "Pink", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
+    private List<string> colors = new List<string> { "Default", "Red", "Blue", "Green", "Yellow", "Magenta", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
+    public List<string> shapes = new List<string> { "Default", "Check", "Circle", "Exclamation", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
+    public List<string> shapesD = new List<string> { "Check", "Circle", "Exclamation", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
+    public List<string> colorsD = new List<string> { "Red", "Blue", "Green", "Yellow", "Magenta", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
 
     public List<int> selectedColors = new List<int>();
     public List<int> selectedShapes = new List<int>();
@@ -30,6 +30,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     public Dropdown variableDrop;
     public Dropdown defaultColor;
     public Dropdown defaultShape;
+    List<RangePolicy> editPolicies = new List<RangePolicy>();
 
 
     // Start is called before the first frame update
@@ -40,6 +41,7 @@ public class CreateRangeVarPanel : MonoBehaviour
         int options = UIManager.Instance.Options;
         if (optionPanel != null)
         {
+            editPolicies = UIManager.Instance.editRangePolicys;
             UIManager.Instance.updateTotalVars();
             var_DropOptions = UIManager.Instance.wantedVars;
             variableDrop.ClearOptions();
@@ -48,6 +50,22 @@ public class CreateRangeVarPanel : MonoBehaviour
             defaultColor.AddOptions(colorsD);
             defaultShape.ClearOptions();
             defaultShape.AddOptions(shapesD);
+            if (editPolicies.Count > 0)
+            {
+                int vd = getiValueFromList(UIManager.Instance.editVars[0], var_DropOptions);
+                print("VAR ADDING " + vd + UIManager.Instance.editVars[0]);
+                variableDrop.value = vd;
+                int sd = getiValueFromList(UIManager.Instance.editDShape.ToString(), shapes);
+                defaultShape.value = sd;
+                string col = getColorString(UIManager.Instance.editDColor);
+                int cd = getiValueFromList(col, colors);
+                defaultColor.value = cd;
+
+            }
+            if (editPolicies.Count > 0)
+            {
+                options = editPolicies.Count;
+            }
 
             for (int i = 0; i < options; i++)
             {
@@ -64,7 +82,13 @@ public class CreateRangeVarPanel : MonoBehaviour
         if (overallPanel != null && overallPanel.activeSelf)
         {
             int options = UIManager.Instance.Options;
-            if (allPolicies.Count > options || options > allPolicies.Count)
+            editPolicies = UIManager.Instance.editRangePolicys;
+
+            if (editPolicies.Count > 0)
+            {
+                options = editPolicies.Count;
+            }
+            if (allPolicies.Count > options || options > allPolicies.Count )
             {
                 if (optionPanel != null)
                 {
@@ -72,6 +96,18 @@ public class CreateRangeVarPanel : MonoBehaviour
                     var_DropOptions = UIManager.Instance.wantedVars;
                     variableDrop.ClearOptions();
                     variableDrop.AddOptions(var_DropOptions);
+                    if (editPolicies.Count > 0)
+                    {
+                        int vd = getiValueFromList(UIManager.Instance.editVars[0], var_DropOptions);
+                        print("VAR ADDING " + vd + UIManager.Instance.editVars[0]);
+                        variableDrop.value = vd;
+                        int sd = getiValueFromList(UIManager.Instance.editDShape.ToString(), shapes);
+                        defaultShape.value = sd;
+                        string col = getColorString(UIManager.Instance.editDColor);
+                        int cd = getiValueFromList(col, colors);
+                        defaultColor.value = cd;
+                    }
+
                     defaultColor.ClearOptions();
                     defaultColor.AddOptions(colorsD);
                     defaultShape.ClearOptions();
@@ -90,6 +126,10 @@ public class CreateRangeVarPanel : MonoBehaviour
                     {
                         addOnePrefab(i);
                     }
+                    if (editPolicies.Count > 0)
+                    {
+                        UIManager.Instance.editRangePolicys = new List<RangePolicy>();
+                    }
                 }
             }
         }
@@ -98,7 +138,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     //Add a single prefab at spot i 
     private void addOnePrefab(int i)
     {
-        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("RangePolicyPrefab"), optionPanel.transform);
+        GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/RangePolicyPrefab"), optionPanel.transform);
         policyPrefab.transform.SetParent(optionPanel.transform, false);
         RectTransform t = policyPrefab.GetComponent<RectTransform>();
         t.sizeDelta = new Vector2(0, 75f);
@@ -124,6 +164,18 @@ public class CreateRangeVarPanel : MonoBehaviour
             shape.value = selectedShapes[i];
             min.text = selectedMin[i]; //What if no text was added?
             max.text = selectedMax[i];
+        }
+        if (editPolicies.Count > 0)
+        {
+            Debug.Log("COLORS AND SHAPE" + editPolicies[i].color.ToString() + editPolicies[i].shape.ToString());
+            string col = getColorString(editPolicies[i].color);
+            int c = getiValueFromList(col, colors);
+            int s = getiValueFromList(editPolicies[i].shape.ToString(), shapes);
+            color.value = c;
+            shape.value = s;
+            min.text = editPolicies[i].range[0].ToString();
+            max.text = editPolicies[i].range[1].ToString();
+
         }
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
@@ -268,6 +320,52 @@ public class CreateRangeVarPanel : MonoBehaviour
 
         }
         return IndicatorShape.Check;
+    }
+
+    int getiValueFromList(string var, List<string> s)
+    {
+        int val = 0;
+        for (int i = 0; i < s.Count; i++)
+        {
+            if (s[i] == var)
+            {
+                val = i;
+            }
+        }
+        return val;
+    }
+
+    string getColorString(Color c)
+    {
+        string color = "";
+
+        if(c == Color.red)
+        {
+            return "Red";
+        } else if (c== Color.blue)
+        {
+            return "Blue";
+        } else if (c == Color.green)
+        {
+            return "Green";
+        }
+        else if (c == Color.yellow)
+        {
+            return "Yellow";
+        }
+        else if (c == Color.magenta)
+        {
+            return "Magenta";
+        }
+        else if (c == Color.black)
+        {
+            return "Black";
+        }
+        else if (c == Color.white)
+        {
+            return "White";
+        }
+        return color;
     }
 
 

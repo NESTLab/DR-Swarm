@@ -38,10 +38,21 @@ public class UIManager : MonoBehaviour
     }
 
     public int Options = 1;//How many min variable options
+    public int EOptions = 0;
     public int TotalOptions = 1;
     public int RobotOptions = 0;
 
     public string _sentGraphType = "";
+    public bool EditVizBool = false;
+    public IVisualization editviz;
+    public string editVizName;
+    public graph editVizGraphType;
+    public List<string> editVars = new List<string>();
+    public List<RangePolicy> editRangePolicys = new List<RangePolicy>();
+    public List<MapPolicy> editMapPolicys = new List<MapPolicy>();
+    public bool updateVizPanel = false;
+    public IndicatorShape editDShape;
+    public Color editDColor;
 
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
@@ -113,12 +124,12 @@ public class UIManager : MonoBehaviour
         //Match string to tag name
         //add union of robots
         HashSet<Robot> thebots = new HashSet<Robot>(robots);
-        foreach(string s in checkedTagNames)
+        foreach (string s in checkedTagNames)
         {
-            Tag c= new Tag("",new List<Robot>());
-            for(int i = 0; i < allTags.Count; i++)
+            Tag c = new Tag("", new List<Robot>());
+            for (int i = 0; i < allTags.Count; i++)
             {
-                if(allTags[i].name == s) { c = allTags[i]; break; }
+                if (allTags[i].name == s) { c = allTags[i]; break; }
             }
             if (c.robots.Count > 0)
             {
@@ -151,12 +162,12 @@ public class UIManager : MonoBehaviour
             varFromRobots.IntersectWith(r.GetVariables());
         }
         wantedVars = new List<string>(varFromRobots);
+
     }
 
 
     //ADD ROBOTS
     public List<Robot> robots = new List<Robot> { };//Robots for the current graph
-
     //Add a robot to the array to get the total robots for the graph
     public void AddRobot(string r)
     {
@@ -186,6 +197,7 @@ public class UIManager : MonoBehaviour
 
     //Add robot by clicking on them in AR
     public HashSet<string> touchedRobots = new HashSet<string> { };
+    public List<string> editVizRobots = new List<string>();
     public void addRobotByTouch(string r)
     {
         touchedRobots.Add(r);
@@ -209,7 +221,7 @@ public class UIManager : MonoBehaviour
     public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
     public List<MapPolicy> allMPolicies = new List<MapPolicy>();
     public List<RangePolicy> allRPolicies = new List<RangePolicy>();
-    public Color sentColor= new Color();
+    public Color sentColor = new Color();
     public IndicatorShape sentShape = new IndicatorShape();
 
     //Create a graph, Needed are robots, variables, type
@@ -230,6 +242,7 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
+            Debug.Log("Type trufalse " + ("LineGraph" == graphToAdd.GetType().ToString()));
         }
         else if (GraphType == graph.Pie)
         {
@@ -303,7 +316,7 @@ public class UIManager : MonoBehaviour
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
-            IVisualization graphToAdd = new MapIndicator( allMPolicies, sentColor, sentShape, r1, robots.ToArray());
+            IVisualization graphToAdd = new MapIndicator(allMPolicies, sentColor, sentShape, r1, robots.ToArray());
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
@@ -312,6 +325,26 @@ public class UIManager : MonoBehaviour
 
         _addGraph = false;
         robots = new List<Robot>();
+
+        //reset edit
+        if (EditVizBool)
+        {
+            VisualizationManager.Instance.RemoveVisualization(editVizName);
+            allVizs.Remove(editviz);
+            allVizsNames.Remove(editVizName);
+            Debug.Log("Viz count to " + allVizs.Count);
+            EditVizBool = false;
+            editVizName = "";
+            editVizGraphType = graph.NoGraph;
+            editVars = new List<string>();
+            editRangePolicys = new List<RangePolicy>();
+            editMapPolicys = new List<MapPolicy>();
+            updateVizPanel = true;
+            EOptions = 0;
+            editDShape = new IndicatorShape();
+            editDColor = new Color();
+            editVizRobots = new List<string>();
+        }
     }
 
 

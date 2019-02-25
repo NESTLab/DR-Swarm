@@ -25,6 +25,7 @@ public class SendVars : MonoBehaviour
     public List<Toggle> allToggles = new List<Toggle>();
     public List<Toggle> allChecked = new List<Toggle>();
     public HashSet<string> prevCheckedRobots = new HashSet<string> { };
+    public List<string> editRobots = new List<string>();
     public GameObject panel; //Robot panel 
     public bool updateToggles = false;
     public GameObject tagPanel;
@@ -37,10 +38,12 @@ public class SendVars : MonoBehaviour
 
     void Start()
     {
-        selectAll.onValueChanged.AddListener(delegate { selectAllToggles(); });
-        prevCheckedRobots = UIManager.Instance.touchedRobots;
+
         if (t1 != null)
         {
+            editRobots = UIManager.Instance.editVizRobots;
+            selectAll.onValueChanged.AddListener(delegate { selectAllToggles(); });
+            prevCheckedRobots = UIManager.Instance.touchedRobots;
             allToggles.Add(t1);
             allToggles.Add(t2);
             allToggles.Add(t3);
@@ -63,51 +66,57 @@ public class SendVars : MonoBehaviour
             }
             
         }
-        if (prevCheckedRobots.Count > 0)
+        if (prevCheckedRobots.Count > 0 || editRobots.Count > 0)
         {
-
-            if (prevCheckedRobots.Contains("r1"))
-            {
-                t1.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r2"))
-            {
-                t2.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r3"))
-            {
-                t3.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r4"))
-            {
-                t4.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r5"))
-            {
-                t5.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r6"))
-            {
-                t6.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r7"))
-            {
-                t7.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r8"))
-            {
-                t8.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r9"))
-            {
-                t9.isOn = true;
-            }
-            if (prevCheckedRobots.Contains("r10"))
-            {
-                t10.isOn = true;
-            }
+            Debug.Log("CHECKED ROBTS " + editRobots);
+            addprevCheckedRobots();
         }
 
+    }
+
+    void addprevCheckedRobots()
+    {
+        if (prevCheckedRobots.Contains("r1") || editRobots.Contains("RobotTarget1"))
+        {
+            Debug.Log("true");
+            t1.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r2") || editRobots.Contains("RobotTarget2"))
+        {
+            t2.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r3") || editRobots.Contains("RobotTarget3"))
+        {
+            t3.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r4") || editRobots.Contains("RobotTarget4"))
+        {
+            t4.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r5") || editRobots.Contains("RobotTarget5"))
+        {
+            t5.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r6") || editRobots.Contains("RobotTarget6")) 
+        {
+            t6.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r7") || editRobots.Contains("RobotTarget7"))
+        {
+            t7.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r8") || editRobots.Contains("RobotTarget8"))
+        {
+            t8.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r9") || editRobots.Contains("RobotTarget9"))
+        {
+            t9.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r10") || editRobots.Contains("RobotTarget10"))
+        {
+            t10.isOn = true;
+        }
     }
 
     // Update is called once per frame
@@ -121,52 +130,11 @@ public class SendVars : MonoBehaviour
                 if (updateToggles)
                 {
                     prevCheckedRobots = UIManager.Instance.touchedRobots;
-                    if (prevCheckedRobots.Count > 0)
-                    {
-                        Debug.Log(prevCheckedRobots.Count);
-                        Debug.Log("cehckign r2" + prevCheckedRobots.Contains("r2"));
+                    editRobots = UIManager.Instance.editVizRobots;
 
-                        if (prevCheckedRobots.Contains("r1"))
-                        {
-                            t1.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r2"))
-                        {
-                            Debug.Log("Checking t2");
-                            t2.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r3"))
-                        {
-                            t3.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r4"))
-                        {
-                            t4.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r5"))
-                        {
-                            t5.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r6"))
-                        {
-                            t6.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r7"))
-                        {
-                            t7.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r8"))
-                        {
-                            t8.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r9"))
-                        {
-                            t9.isOn = true;
-                        }
-                        if (prevCheckedRobots.Contains("r10"))
-                        {
-                            t10.isOn = true;
-                        }
+                    if (prevCheckedRobots.Count > 0 || editRobots.Count > 0)
+                    {
+                        addprevCheckedRobots();
                     }
 
                     updateToggles = false;

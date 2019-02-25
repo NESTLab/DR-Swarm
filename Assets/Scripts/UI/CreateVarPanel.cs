@@ -21,6 +21,7 @@ public class CreateVarPanel : MonoBehaviour
 
     public GameObject overallPanel;
     public List<int> selectedVars = new List<int>();
+    public List<string> editvars = new List<string>();
 
 
     void Start()
@@ -30,15 +31,21 @@ public class CreateVarPanel : MonoBehaviour
         m_DropOptions = UIManager.Instance.wantedVars;
        
         int options = UIManager.Instance.Options;
+        if (UIManager.Instance.EOptions > 0)
+        {
+            options = UIManager.Instance.EOptions;
+            UIManager.Instance.Options = options;
+            Debug.Log("Update options");
+        }
 
         addVarButton.onClick.AddListener(AddVar);
         //rmvVarButton.onClick.AddListener(RemoveVar);
         sendVarsButton.onClick.AddListener(sendVars);
         offset = 0f;
-
+        editvars = UIManager.Instance.editVars;
         for (int i = 0; i < options; i++)
         {
-            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("VarDropDownPanel"), varPanel.transform);
+            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("UI/VarDropDownPanel"), varPanel.transform);
             dropdownPrefab2.transform.SetParent(varPanel.transform, false);
             RectTransform dropTransform = dropdownPrefab2.GetComponent<RectTransform>();
             dropTransform.sizeDelta = new Vector2(0, 50f);
@@ -52,7 +59,11 @@ public class CreateVarPanel : MonoBehaviour
             Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
             d2.ClearOptions();
             d2.AddOptions(m_DropOptions);
-            //d2.value = selectedVars[i];
+            if (editvars.Count > 0)
+            {
+                int v = getValueFromVars(editvars[i]);
+                d2.value = v;
+            }
             
             Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
             t2.text = "Variable " + (i + 1);
@@ -69,7 +80,6 @@ public class CreateVarPanel : MonoBehaviour
         //selectedVars.Clear();
 
         currOptions = options;
-
     }
 
     // Update is called once per frame
@@ -79,8 +89,15 @@ public class CreateVarPanel : MonoBehaviour
             if (overallPanel.activeSelf)
             {
                 int options = UIManager.Instance.Options;
+                if (UIManager.Instance.EOptions > 0)
+                {
+                    options = UIManager.Instance.EOptions;
+                    UIManager.Instance.Options = options;
+                    Debug.Log("Update options");
+                }
                 if (totalDropdowns > options || options > totalDropdowns)
                 {
+                    editvars = UIManager.Instance.editVars;
                     UIManager.Instance.updateTotalVars();
                     m_DropOptions = UIManager.Instance.wantedVars;
                     foreach (Transform child in varPanel.transform)
@@ -90,11 +107,12 @@ public class CreateVarPanel : MonoBehaviour
                     offset = 0f;
                     totalDropdowns = 0;
                     allDropdownObjects.Clear();
+                    editvars = UIManager.Instance.editVars;
                     if (options > 0)
                     {
                         for (int i = 0; i < options; i++)
                         {
-                            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("VarDropDownPanel"), varPanel.transform);
+                            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("UI/VarDropDownPanel"), varPanel.transform);
                             dropdownPrefab2.transform.SetParent(varPanel.transform, false);
                             RectTransform dropTransform = dropdownPrefab2.GetComponent<RectTransform>();
                             dropTransform.sizeDelta = new Vector2(0, 50f);
@@ -108,10 +126,12 @@ public class CreateVarPanel : MonoBehaviour
                             Dropdown d2 = dropdownPrefab2.transform.Find("DropdownVar1").GetComponent<Dropdown>();
                             d2.ClearOptions();
                             d2.AddOptions(m_DropOptions);
-                            if(selectedVars.Count >0)
+                            if (editvars.Count > 0)
                             {
-                                d2.value = selectedVars[i];
+                                int v = getValueFromVars(editvars[i]);
+                                d2.value = v;
                             }
+
 
                             Text t2 = dropdownPrefab2.transform.Find("TextV1").GetComponent<Text>();
                             t2.text = "Variable " + (i + 1);
@@ -128,6 +148,12 @@ public class CreateVarPanel : MonoBehaviour
                         //selectedVars.Clear();
 
                         currOptions = options;
+                        if (editvars.Count > 0)
+                        {
+                            UIManager.Instance.EOptions = 0;
+                           // UIManager.Instance.editVars = new List<string>();
+                        }
+
                     }
                 }
             }
@@ -161,7 +187,7 @@ public class CreateVarPanel : MonoBehaviour
         int count = allDropdownObjects.Count;
         if (totalOptions > currOptions)
         {
-            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("VarDropDownPanel"), varPanel.transform);
+            GameObject dropdownPrefab2 = (GameObject)Instantiate(Resources.Load("UI/VarDropDownPanel"), varPanel.transform);
             dropdownPrefab2.transform.SetParent(varPanel.transform, false);
             RectTransform dropTransform = dropdownPrefab2.GetComponent<RectTransform>();
             dropTransform.sizeDelta = new Vector2(0, 50f);
@@ -201,10 +227,27 @@ public class CreateVarPanel : MonoBehaviour
             var.Add(list[d.value].text);
         }
         Debug.Log(var);
-
+        foreach(string s in var)
+        {
+            Debug.Log("Adding " + s);
+        }
         UIManager.Instance.wantedVars = var;
         UIManager.Instance.addGraph = true;
 
+    }
+
+
+    int getValueFromVars(string var)
+    {
+        int val = 0;
+        for( int i = 0; i < m_DropOptions.Count; i++)
+        {
+            if (m_DropOptions[i] == var)
+            {
+                val = i;
+            }
+        }
+        return val;
     }
 
 
