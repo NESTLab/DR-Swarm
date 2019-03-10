@@ -5,11 +5,11 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-public class BarGraphContainer : VisualizationContainer<BarGraph>
-{
+public class BarGraphContainer : VisualizationContainer<BarGraph> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
+
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<Robot, Dictionary<string, float>> dataDict = new Dictionary<Robot, Dictionary<string, float>>();
@@ -31,8 +31,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
     private float axisOffset;
 
     // Initialize things
-    protected override void Start()
-    {
+    protected override void Start() {
         //TODO: maybe remove
         base.Start();
 
@@ -46,7 +45,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         graphContainer = new GameObject("BarGraph", typeof(Image));
         graphContainer.transform.SetParent(container.transform, false);
         RectTransform gt = graphContainer.GetComponent<RectTransform>();
-        gt.sizeDelta = new Vector2(container.sizeDelta.x, 270f);  // need to make this dynamically size
+        gt.sizeDelta = new Vector2(container.sizeDelta.x, 270f);  //TODO: need to make this dynamically size
         gt.anchorMax = new Vector2(0.5f, 1f);
         gt.anchorMin = new Vector2(0.5f, 1f);
         gt.pivot = new Vector2(0.5f, 1f);
@@ -60,7 +59,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         legendContainer = new GameObject("Legend", typeof(Image));
         legendContainer.transform.SetParent(container.transform, false);
         RectTransform lt = legendContainer.GetComponent<RectTransform>();
-        lt.sizeDelta = new Vector2(container.sizeDelta.x, 150f);  // need to make this dynamically size
+        lt.sizeDelta = new Vector2(container.sizeDelta.x, 150f);  //TODO: need to make this dynamically size
         lt.anchorMax = new Vector2(0.5f, 0f);
         lt.anchorMin = new Vector2(0.5f, 0f);
         lt.pivot = new Vector2(0.5f, 0f);
@@ -73,20 +72,20 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
         // Y axis
         GameObject yaxis = CreateImage("y-axis", gt, Color.white);
         RectTransform yt = yaxis.GetComponent<RectTransform>();
-        yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y - axisOffset); // change this eventually
+        yt.sizeDelta = new Vector2(1f, gt.sizeDelta.y - axisOffset); //TODO: change this eventually
         yt.anchorMin = Vector2.zero;
         yt.anchorMax = Vector2.zero;
         yt.pivot = Vector2.zero;
-        yt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
+        yt.anchoredPosition = new Vector2(axisOffset, axisOffset);  //TODO: change this eventually
 
         // X axis
         GameObject xaxis = CreateImage("x-axis", gt, Color.white);
         RectTransform xt = xaxis.GetComponent<RectTransform>();
-        xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f); // change this eventually
+        xt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f); //TODO: change this eventually
         xt.anchorMin = Vector2.zero;
         xt.anchorMax = Vector2.zero;
         xt.pivot = Vector2.zero;
-        xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  // change this eventually
+        xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  //TODO: change this eventually
 
         // gotta be a better way to do these - with a dynamic number of lines
         // top guideline
@@ -210,7 +209,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             // width should be container width divided by number of robots
             float containerSize = ((parent.sizeDelta.x - axisOffset) / robots.Count) - containerSpacing;
             ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset);
-            ct.anchoredPosition = new Vector2(((containerSize + containerSpacing) * containerCount) + axisOffset + 2, axisOffset + 2); // change this eventually
+            ct.anchoredPosition = new Vector2(((containerSize + containerSpacing) * containerCount) + axisOffset + 2, axisOffset + 2); //TODO: change this eventually
             
             // x labels
             GameObject xLabel = GetXLabel(r);
@@ -222,7 +221,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             xTransform.anchorMax = new Vector2(0f, 0f);
             xTransform.pivot = new Vector2(0.5f, 0f);
             xTransform.anchoredPosition = new Vector2(((containerSpacing + containerSize) * containerCount) + axisOffset + 2 + (containerSize/2), 0f);
-            xTransform.sizeDelta = new Vector2(100f, axisOffset);  // change eventually
+            xTransform.sizeDelta = new Vector2(100f, axisOffset);  //TODO: change eventually
 
             // now that we have the container, we need to fill it with the bars
             foreach (string var in variables) {
@@ -260,7 +259,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 tTransform.anchorMax = new Vector2(0f, 1f);
                 tTransform.pivot = new Vector2(0.5f, 1f);
                 tTransform.anchoredPosition = new Vector2(axisOffset/2, 0f); 
-                tTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
+                tTransform.sizeDelta = new Vector2(axisOffset, 25f);  //TODO: change eventually
 
                 GameObject mid = yLabels[0];
                 mid.transform.SetParent(graphContainer.transform, false);
@@ -270,7 +269,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
                 mTransform.anchorMax = new Vector2(0f, 1f);
                 mTransform.pivot = new Vector2(0.5f, 1f);
                 mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); 
-                mTransform.sizeDelta = new Vector2(axisOffset, 25f);  // change eventually
+                mTransform.sizeDelta = new Vector2(axisOffset, 25f);  //TODO: change eventually
 
                 // update barCount
                 barCount += 1;
@@ -301,7 +300,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             // translate each key lower than the last
             float x = (keyXSpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
             float y = (-keyYSpacing - kt.rect.height) * ((keyCount) % 2) * kt.localScale.y;
-            kt.anchoredPosition = new Vector2(x, y);  // this is not the best solution
+            kt.anchoredPosition = new Vector2(x, y);  //TODO: this is not the best solution
 
             keyCount++;
         }
@@ -309,8 +308,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
-    {
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         foreach (Robot r in data.Keys) {
             if (!robots.Contains(r)) {
                 robots.Add(r);
@@ -320,7 +318,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph>
             foreach (string var in data[r].Keys) {
                 dataDict[r][var] = data[r][var];
 
-                // this is not the best way to do it, but not seeing another option at the moment
+                //TODO: this is not the best way to do it, but not seeing another option at the moment
                 if (!variables.Contains(var)) {
                     variables.Add(var);
 

@@ -16,8 +16,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
 
     private List<RangePolicy> policies;
-
     private Dictionary<Robot, GameObject> indicators;
+    private Dictionary<IndicatorShape, Sprite> sprites;
+    private RangeIndicator vis;
 
     private Sprite square;
     private Sprite circle;
@@ -27,10 +28,6 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private Sprite plus;
     private Sprite arrow;
 
-    private Dictionary<IndicatorShape, Sprite> sprites;
-
-    private RangeIndicator vis;
-
     // Initialize things
     protected override void Start() {
         // TODO: maybe remove
@@ -38,7 +35,6 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
 
         vis = (RangeIndicator)visualization; 
         policies = vis.GetPolicies();
-
         indicators = new Dictionary<Robot, GameObject>();
 
         square = Resources.Load<Sprite>("Sprites/square");
@@ -117,6 +113,5 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
                 }
             }
         }
-        
     }
 }

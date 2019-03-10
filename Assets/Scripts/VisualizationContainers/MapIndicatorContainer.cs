@@ -6,8 +6,7 @@ using UniRx;
 using System.Linq;
 using shapeNamespace;
 
-public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
-{
+public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
@@ -17,9 +16,10 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
 
     private List<MapPolicy> policies;
-
     private Dictionary<Robot, GameObject> indicators;
-    
+    private Dictionary<IndicatorShape, Sprite> sprites;
+    private MapIndicator vis;
+
     private Sprite square;
     private Sprite circle;
     private Sprite triangle;
@@ -28,20 +28,13 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
     private Sprite plus;
     private Sprite arrow;
 
-    private Dictionary<IndicatorShape, Sprite> sprites; // shouldn't the map indicator have a shape?
-    private MapIndicator vis;
-    //private Dictionary<MapPolicy, string> policyDict;
-
     // Initialize things
-    protected override void Start()
-    {
+    protected override void Start() {
         // TODO: maybe remove
         base.Start();
 
         vis = (MapIndicator)visualization;
         policies = vis.GetPolicies();
-        //policyDict = vis.GetPolicyDict();
-
         indicators = new Dictionary<Robot, GameObject>();
 
         square = Resources.Load<Sprite>("Sprites/square");
@@ -107,7 +100,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
         return indicator;
     }
     
-    private GameObject GetIndicator(Robot robot) { // I think this is wrong
+    private GameObject GetIndicator(Robot robot) { 
         if (!indicators.ContainsKey(robot)) {
             GameObject indicator = CreateIndicator();
             indicator.transform.SetParent(transform, false);
@@ -118,8 +111,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
-    public override void Draw()
-    {
+    public override void Draw() {
         GameObject indicator = GetIndicator(this.robot);
         indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
@@ -134,7 +126,6 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
                 indicator.GetComponent<Image>().color = SetColor(val);
             }
             else if (p.type == MapPolicy.MapPolicyType.fillAmount) {
-                // TODO: set the fill amount to the associated value
                 var = p.variableName;
                 val = dataDict[var];
                 indicator.GetComponent<Image>().fillAmount = (float)(val % 1.0);
@@ -149,8 +140,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
-    {
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         if (data.ContainsKey(this.robot)) {
             foreach (string var in data[robot].Keys) {
                 dataDict[var] = data[robot][var];

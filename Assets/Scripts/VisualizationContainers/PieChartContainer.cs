@@ -5,11 +5,11 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
-public class PieChartContainer : VisualizationContainer<PieChart>
-{
+public class PieChartContainer : VisualizationContainer<PieChart> {
     // Instances of VisualizationContainer have access to the container
     // RectTransform container: the RectTransform of the drawable area in the
     // canvas. NOT the same as canvas.GetComponent<RectTransform>()
+
     List<Robot> robots = new List<Robot>();
     HashSet<string> variables = new HashSet<string>();
 
@@ -25,8 +25,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     private GameObject legendContainer; 
 
     // Initialize things
-    protected override void Start() 
-    {
+    protected override void Start() {
         // TODO: maybe remove
         base.Start(); 
         
@@ -83,8 +82,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
     }
 
     // Update stuff in Unity scene. Called automatically each frame update
-    public override void Draw() 
-    {
+    public override void Draw() {
         zRotation = 0f;
         float keySpacing = 10f;
         int keyCount = 0; 
@@ -128,8 +126,7 @@ public class PieChartContainer : VisualizationContainer<PieChart>
 
     // Update internal storage of data. Called automatically when data in
     // corresponding Visualization class
-    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data)
-    {
+    protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         float newTotal = 0;
         // TODO: make set account for removed variables as well
         variables.UnionWith(this.visualization.GetVariables()); 
