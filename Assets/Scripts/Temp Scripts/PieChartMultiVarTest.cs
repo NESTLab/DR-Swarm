@@ -38,8 +38,8 @@ public class PieChartMultiVarTest : MonoBehaviour {
 
         // pc1 = new PieChartMultiVar(r1, "var1", "var2");
         //pc2 = new PieChartMultiVar(r1, "var1", "var2", "var3", "var4");
-        pc1 = new PieChartMultiVar(robots, vars);
-        pc2 = new PieChartMultiVar(one, vars);
+        pc1 = new PieChartMultiVar(vars, robots);
+        pc2 = new PieChartMultiVar(vars, one);
     }
 	
 	// Update is called once per frame

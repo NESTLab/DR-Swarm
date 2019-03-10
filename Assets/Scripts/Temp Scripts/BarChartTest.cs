@@ -54,8 +54,8 @@ public class BarChartTest : MonoBehaviour {
         HashSet<string> lessVars = new HashSet<string>();
         lessVars.Add("var1");
 
-        bc1 = new BarGraph(robots, vars);
-        bc2 = new BarGraph(lessRobots, vars);
+        bc1 = new BarGraph(vars, robots);
+        bc2 = new BarGraph(vars, lessRobots);
     }
 	
 	// Update is called once per frame

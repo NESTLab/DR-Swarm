@@ -3,23 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-public class BarGraph : IVisualization
-{
+public class BarGraph : IVisualization {
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotSet;
     HashSet<string> varSet;
 
-    public BarGraph(HashSet<Robot> robots, HashSet<string> variables) 
-    {
+    public BarGraph(HashSet<string> variables, HashSet<Robot> robots) {
         robotSet = new HashSet<Robot>(robots);
         varSet = new HashSet<string>(variables);
 
-        // TODO: make all other vis classes use this generic alg
+        // TODO: make all other vis classes use this generic alg - line graph still left
         dataSource = robotSet.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
             foreach (string variable in varSet) {
-                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v =>
-                {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => {
                     return new Dictionary<string, float>() { { variable, v } };
                 }));
             }
@@ -41,28 +38,23 @@ public class BarGraph : IVisualization
         });
     }
 
-    public ISet<Robot> GetRobots()
-    {
+    public ISet<Robot> GetRobots() {
         return robotSet;
     }
 
-    public ISet<string> GetVariables()
-    {
+    public ISet<string> GetVariables() {
         return varSet;
     }
 
-    public ParameterCount GetNumDataSources()
-    {
+    public ParameterCount GetNumDataSources() {
         return ParameterCount.One;
     }
 
-    public ParameterCount GetNumRobots()
-    {
+    public ParameterCount GetNumRobots() {
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
-    {
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() {
         return dataSource;
     }
 }

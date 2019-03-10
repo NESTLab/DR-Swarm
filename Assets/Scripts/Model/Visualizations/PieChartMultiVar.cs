@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Operators;
 
-public class PieChartMultiVar : IVisualization
-{
+public class PieChartMultiVar : IVisualization {
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotSet;
     HashSet<string> varSet;
 
-    public PieChartMultiVar(List<Robot> robots, List<string> variables)
-    {
+    public PieChartMultiVar(List<string> variables, List<Robot> robots) {
         robotSet = new HashSet<Robot>(robots);
         varSet = new HashSet<string>(variables);
 
@@ -40,8 +38,7 @@ public class PieChartMultiVar : IVisualization
         });
     }
 
-    public ISet<Robot> GetRobots()
-    {
+    public ISet<Robot> GetRobots() {
         return robotSet;
     }
 
@@ -49,21 +46,16 @@ public class PieChartMultiVar : IVisualization
         return varSet;
     }
 
-    public ParameterCount GetNumDataSources()
-    {
+    public ParameterCount GetNumDataSources() {
         // TODO: make a two or more option
         return ParameterCount.N;
     }
 
-    public ParameterCount GetNumRobots()
-    {
+    public ParameterCount GetNumRobots() {
         return ParameterCount.One;
     }
 
-    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
-    {
-        // This encodes the data source into a dictionary containing
-        // one or more values per robot
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() {
         return dataSource;
     }
 }

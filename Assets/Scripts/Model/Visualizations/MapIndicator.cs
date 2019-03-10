@@ -5,8 +5,7 @@ using UniRx;
 using UnityEngine;
 using shapeNamespace;
 
-public class MapIndicator : IVisualization 
-{
+public class MapIndicator : IVisualization {
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotSet;
     HashSet<string> varSet;
@@ -17,8 +16,7 @@ public class MapIndicator : IVisualization
     IndicatorShape defaultShape;
 
     // variables[0] needs to correspond to policies[0]
-    public MapIndicator(List<MapPolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots)
-    {
+    public MapIndicator(List<MapPolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots) {
         robotSet = new HashSet<Robot>(robots);
         robotSet.Add(firstRobot);
 
@@ -57,12 +55,10 @@ public class MapIndicator : IVisualization
         });
     }
 
-    public void AddPolicy(MapPolicy P, string var) // need to also add the corresponding variable
-    {
+    public void AddPolicy(MapPolicy P, string var) {
         // verify that the policy works with the others
         foreach (MapPolicy policy in policyList) {
             if (P.type == policy.type) {
-                // throw some kind of error
                 throw new Exception(String.Format("Policy of type ('{0}') already exists.", P.type));
             }
             else {
@@ -84,28 +80,23 @@ public class MapIndicator : IVisualization
         return policyList;
     }
 
-    public ISet<Robot> GetRobots()
-    {
+    public ISet<Robot> GetRobots() {
         return robotSet;
     }
 
-    public ISet<string> GetVariables()
-    {
+    public ISet<string> GetVariables() {
         return varSet;
     }
 
-    public ParameterCount GetNumDataSources()
-    {
+    public ParameterCount GetNumDataSources() {
         return ParameterCount.N; 
     }
 
-    public ParameterCount GetNumRobots()
-    {
+    public ParameterCount GetNumRobots() {
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
-    {
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() {
         return dataSource;
     }
 }
