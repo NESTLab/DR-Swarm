@@ -3,37 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-// Anything and everything can be changed. Comments can be removed,
-// they're just here to explain everything as best I can
-
 public class PieChart : IVisualization
 {
-    // Feel free to use any data type to store the intermittent data
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
-    HashSet<Robot> robotList;
+    HashSet<Robot> robotSet;
     HashSet<string> varSet;
 
     public PieChart(string variableName, Robot firstRobot, Robot secondRobot, params Robot[] robots)
     {
-        // TODO: Jerry needs to rename this to robotSet
-        robotList = new HashSet<Robot>(robots);
-        robotList.Add(firstRobot);
-        robotList.Add(secondRobot);
+        robotSet = new HashSet<Robot>(robots);
+        robotSet.Add(firstRobot);
+        robotSet.Add(secondRobot);
 
         varSet = new HashSet<string>();
         varSet.Add(variableName);
 
-        // Create a single data source observable by creating
-        // an observable for each robot, and then combining them
-        // (this is what select many does)
-        dataSource = robotList.ToObservable().SelectMany(r =>
-        {
-            // get the observable variable from the robot
-            // then transform the values from the observable
-            // into a Dictionary<Robot, Dictionary<string, float>>
-            return r.GetObservableVariable<float>(variableName).Select(v => {
-                Dictionary <Robot, Dictionary<string, float>>  dict = new Dictionary<Robot, Dictionary<string, float>>();
-                dict.Add(r, new Dictionary<string, float>() { { variableName, v } });
+        dataSource = robotSet.ToObservable().SelectMany(robot => {
+            List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
+            foreach (string variable in varSet) {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => {
+                    return new Dictionary<string, float>() { { variable, v } };
+                }));
+            }
+
+            return Observable.CombineLatest(variableList).Select(varList => {
+                Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
+                foreach (Dictionary<string, float> varDict in varList) {
+                    if (!dict.ContainsKey(robot)) {
+                        dict[robot] = new Dictionary<string, float>();
+                    }
+
+                    foreach (string key in varDict.Keys) {
+                        dict[robot][key] = varDict[key];
+                    }
+                }
+
                 return dict;
             });
         });
@@ -41,12 +45,11 @@ public class PieChart : IVisualization
 
     public ISet<Robot> GetRobots()
     {
-        return robotList;
+        return robotSet;
     }
 
     public ISet<string> GetVariables()
     {
-        //throw new NotImplementedException();
         return varSet;
     }
 
@@ -63,11 +66,6 @@ public class PieChart : IVisualization
 
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData()
     {
-        // Take the Dictionary<Robot, float> and transform it
-        // into a Dictionary<Robot, Dictionary<string, float>>
-        // This is a dictionary that maps robots to a dict
-        // which maps variable name (string) to value (float)
-
         return dataSource;
     }
 }
