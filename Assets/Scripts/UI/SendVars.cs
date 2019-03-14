@@ -350,4 +350,9 @@ public class SendVars : MonoBehaviour
     }
 
 
+    public void ClearAddedRobots()
+    {
+        UIManager.Instance.touchedRobots = new HashSet<string>();
+    }
+
 }

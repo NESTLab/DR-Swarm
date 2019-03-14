@@ -15,23 +15,56 @@ public class CreateTag : MonoBehaviour
     public GameObject panel; //Robot panel
     public bool updateToggles;
     public Button sendTags;
+    public Button back;
+    public HashSet<string> prevCheckedRobots = new HashSet<string> { };
 
     public InputField tagName;
     // Start is called before the first frame update
     void Start()
     {
+        prevCheckedRobots = UIManager.Instance.touchedRobots;
         allToggles.Add(t1);
         allToggles.Add(t2);
         allToggles.Add(t3);
         allToggles.Add(t4);
         allToggles.Add(t5);
         sendTags.onClick.AddListener(sendTag);
+        back.onClick.AddListener(ClearToggles);
+        if (prevCheckedRobots.Count > 0)
+        {
+            addprevCheckedRobots();
+        }
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (panel != null)
+        {
+            if (panel.activeSelf)
+            {
+                if (updateToggles)
+                {
+                    prevCheckedRobots = UIManager.Instance.touchedRobots;
+
+                    if (prevCheckedRobots.Count > 0)
+                    {
+                        addprevCheckedRobots();
+                    }
+
+                    updateToggles = false;
+                }
+            }
+            else
+            {
+                updateToggles = true;
+            }
+        }
+        else
+        {
+            updateToggles = true;
+        }
 
     }
 
@@ -62,4 +95,32 @@ public class CreateTag : MonoBehaviour
         updateToggles = true;
 
     }
+
+
+    void addprevCheckedRobots()
+    {
+        if (prevCheckedRobots.Contains("r1"))
+        {
+            Debug.Log("true");
+            t1.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r2"))
+        {
+            t2.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r3"))
+        {
+            t3.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r4"))
+        {
+            t4.isOn = true;
+        }
+        if (prevCheckedRobots.Contains("r5"))
+        {
+            t5.isOn = true;
+        }
+
+    }
+
 }

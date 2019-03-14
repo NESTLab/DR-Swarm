@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using graphNameSpace;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,13 @@ public class CreateVizPanel : MonoBehaviour
     float offset = 0f; // Offset for when a prefab gets added
     public GameObject editVizPanel;
     public GameObject menuPanel;
+    public Sprite bar;
+    public Sprite line;
+    public Sprite pie;
+    public Sprite pieMult;
+    public Sprite map;
+    public Sprite range;
+
 
     // Start is called before the first frame update
     void Start()
@@ -60,7 +68,7 @@ public class CreateVizPanel : MonoBehaviour
                     Destroy(child.gameObject);
                 }
                 offset = 0; //Reset the Offset
-                if (allVizs.Count > 0 ) 
+                if (allVizs.Count > 0)
                 {
                     foreach (IVisualization viz in allVizs)
                     {
@@ -80,6 +88,10 @@ public class CreateVizPanel : MonoBehaviour
                         remv.onClick.AddListener(delegate { removeViz(name, viz); });
                         Button edit = vizPrefab.transform.Find("editViz").GetComponent<Button>();
                         edit.onClick.AddListener(delegate { editViz(name, viz); });
+                        Image img = vizPrefab.transform.Find("vizImage").GetComponent<Image>();
+                        graph viztype = getVizType( allVizs[i]);
+                        Debug.Log("Graph type" + viztype);
+                        setImage(img, viztype);
                         //Maitance variables
                         totalViz++;
                         i++;
@@ -95,7 +107,7 @@ public class CreateVizPanel : MonoBehaviour
     //To remove a visualization you only need to pass the name to the VizManager
     //The IViz here is only for sending the viz to UIManagager to keep track of how many vizs there currently are
     //^NOT BEST WAY TO DO THIS(atm)
-    void removeViz(string title,  IVisualization vz)
+    void removeViz(string title, IVisualization vz)
     {
         allVizs.Remove(vz);
         allVizsNames.Remove(title);
@@ -113,5 +125,27 @@ public class CreateVizPanel : MonoBehaviour
         editVizPanel.SetActive(true);
         menuPanel.SetActive(false);
     }
+
+    void setImage(Image a, graph g)
+    {
+        if (g == graph.Bar) { a.sprite = bar; }
+        else if (g == graph.Line) { a.sprite = line; }
+        else if (g == graph.Pie) { a.sprite = pie; }
+        else if (g == graph.PieMulti) { a.sprite = pieMult; }
+        else if (g == graph.TwoDMap) { a.sprite = map; }
+        else if (g == graph.TwoDRange) { a.sprite = range; }
+    }
+
+    graph getVizType(IVisualization viz)
+    {
+        if (viz.GetType().ToString() == "LineGraph") { return graph.Line; }
+        else if (viz.GetType().ToString() == "BarGraph") { return graph.Bar; }
+        else if (viz.GetType().ToString() == "MapIndicator") { return graph.TwoDMap; }
+        else if (viz.GetType().ToString() == "PieChart") { return graph.Pie; }
+        else if (viz.GetType().ToString() == "PieChartMultiVar") { return graph.PieMulti; }
+        else if (viz.GetType().ToString() == "RangeIndicator") { return graph.TwoDRange; }
+        else { return graph.Line; }
+    }
+
 
 }
