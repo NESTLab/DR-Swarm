@@ -51,6 +51,7 @@ public class VisualizationManager : MonoBehaviour
     #region Add/Edit/Remove Visualizations
     public void AddVisualization(string name, IVisualization visualization)
     {
+
         // Add the visualization to the dictionary unless it's already been added
         if (!visualizations.ContainsKey(name))
         {

@@ -131,21 +131,22 @@ public class PieChartMultiVarContainer : VisualizationContainer<PieChartMultiVar
     // corresponding Visualization class
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         float newTotal = 0;
-        // TODO: make set account for removed variables as well
-        variables.UnionWith(this.visualization.GetVariables());
+        // TODO: use Union and Intersect to account for dynamically added and removed variables
+        // EXAMPLE: variables.UnionWith(this.visualization.GetVariables());
 
-        foreach (Robot r in data.Keys) {
-            foreach (string var in variables) {
-                dataDict[var] = data[r][var];
+        if (data.ContainsKey(this.robot)) {
+            foreach (string var in data[robot].Keys) {
+                dataDict[var] = data[robot][var];
+
+                // update the total
+                newTotal += dataDict[var];
+
+                if (!variables.Contains(var)) {
+                    variables.Add(var);
+                }
             }
-        }
 
-        // TODO: incorporate this into the other for loop - doesn't need to be separate
-        // update the total 
-        foreach (string var in dataDict.Keys) {
-            newTotal += dataDict[var];
+            total = newTotal;
         }
-
-        total = newTotal;
     }
 }

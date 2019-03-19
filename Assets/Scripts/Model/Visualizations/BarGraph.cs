@@ -18,6 +18,7 @@ public class BarGraph : IVisualization
         robotList = new HashSet<Robot>(robots);
         varSet = new HashSet<string>(variables);
 
+        // TODO: make all other vis classes use this generic alg
         dataSource = robotList.ToObservable().SelectMany(robot => {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
             foreach (string variable in varSet) {

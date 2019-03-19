@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
 public class Robot
 {
@@ -34,4 +36,8 @@ public class Robot
     {
         return data.GetObservableValue<T>(name);
     }
+
+    public List<string> GetVariables() { 
+        return data.GetVariables();
+    } 
 }
