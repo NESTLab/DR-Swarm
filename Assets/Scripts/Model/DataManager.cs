@@ -43,6 +43,11 @@ public class DataManager : MonoBehaviour {
 
         return robots[robotName];
     }
+    //Return List of all robots that there is data for
+    public List<Robot> GetAllRobots()
+    {
+        return new List<Robot>(robots.Values );
+    }
 
     // Use this for initialization
     void Start () {
