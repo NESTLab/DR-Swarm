@@ -16,7 +16,7 @@ public class Robot
     public Robot(string name)
     {
         this._name = name;
-        this.color = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+        this.color = new Color(155f / 255f, 0, 179f / 255f);
         this.data = new VariableDict();
     }
 

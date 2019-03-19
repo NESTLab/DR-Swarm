@@ -10,6 +10,9 @@ using FullSerializer;
 
 public class ArgosClient : MonoBehaviour
 {
+    [SerializeField]
+    public string serverAddr = "192.168.1.108";
+
     private static readonly fsSerializer _serializer = new fsSerializer();
 
     Thread recvThread;
@@ -39,7 +42,7 @@ public class ArgosClient : MonoBehaviour
             {
                 if (!client.Connected)
                 {
-                    client.Connect("jbbrown-plex-server.dyn.wpi.edu", port);
+                    client.Connect(serverAddr, port);
                     stream = client.GetStream();
                 } else {
                     String responseData = String.Empty;
