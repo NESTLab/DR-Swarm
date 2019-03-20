@@ -126,5 +126,21 @@ public class VisualizationWindow : MonoBehaviour {
         // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
         // when instead we want it pointing away from the camera
         canvas.transform.Rotate(new Vector3(0, 180, 0), Space.Self);
+        if(VisualizationManager.Instance.turnOffVisualizationName != null)
+        {
+            toggleDisplay(VisualizationManager.Instance.turnOffVisualizationName);
+            VisualizationManager.Instance.turnOffVisualizationName = null;
+        }
+    }
+
+
+    //Toggle the display(change if it is active)
+    public void toggleDisplay(string visualizationName)
+    {
+        Debug.Log("viz name Window:" + visualizationName);
+        //Hoping this get will work
+
+        GameObject viz = container.Find(visualizationName).gameObject;
+        viz.SetActive(!viz.activeSelf);
     }
 }

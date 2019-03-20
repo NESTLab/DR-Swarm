@@ -14,6 +14,8 @@ public class VisualizationManager : MonoBehaviour
     // Dictionary to associate a visualization's unique name with a observable IVisualization object
     Dictionary<string, BehaviorSubject<IVisualization>> visualizations;
 
+    public string turnOffVisualizationName = null;
+
     private enum UpdateKind {
         Add,
         Remove
@@ -91,7 +93,9 @@ public class VisualizationManager : MonoBehaviour
                 HashSet<string> nameSet = visualizationNamesObs.Value;
                 nameSet.Remove(name);
                 visualizationNamesObs.OnNext(nameSet);
+                
             }
+            
 
             // Update the visualization subject
             observable.OnNext(visualization);
@@ -198,6 +202,12 @@ public class VisualizationManager : MonoBehaviour
         }
     }
     #endregion
+
+    public void toggleVisualizationFromManager(string visualizationName)
+    {
+        turnOffVisualizationName = visualizationName;
+    }
+
 
     // Use this for initialization
     void Start()

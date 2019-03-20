@@ -89,9 +89,12 @@ public class CreateVizPanel : MonoBehaviour
                         Button edit = vizPrefab.transform.Find("editViz").GetComponent<Button>();
                         edit.onClick.AddListener(delegate { editViz(name, viz); });
                         Image img = vizPrefab.transform.Find("vizImage").GetComponent<Image>();
-                        graph viztype = getVizType( allVizs[i]);
+                        graph viztype = getVizType(allVizs[i]);
                         Debug.Log("Graph type" + viztype);
                         setImage(img, viztype);
+                        Toggle visability = vizPrefab.transform.Find("Visability").GetComponent<Toggle>();
+                        visability.onValueChanged.AddListener(delegate { toggleVizDisplay(name, viz); });
+
                         //Maitance variables
                         totalViz++;
                         i++;
@@ -101,6 +104,10 @@ public class CreateVizPanel : MonoBehaviour
                 }
                 UIManager.Instance.updateVizPanel = false;
             }
+        }
+        else
+        {
+            UIManager.Instance.updateVizPanel = true;
         }
     }
 
@@ -134,6 +141,12 @@ public class CreateVizPanel : MonoBehaviour
         else if (g == graph.PieMulti) { a.sprite = pieMult; }
         else if (g == graph.TwoDMap) { a.sprite = map; }
         else if (g == graph.TwoDRange) { a.sprite = range; }
+    }
+
+    void toggleVizDisplay(string vizName, IVisualization viz)
+    {
+        Debug.Log("Logging Name:" + vizName);
+        VisualizationManager.Instance.toggleVisualizationFromManager(vizName);
     }
 
     graph getVizType(IVisualization viz)
