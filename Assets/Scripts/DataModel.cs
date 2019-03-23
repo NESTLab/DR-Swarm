@@ -13,7 +13,7 @@ public class DataModel : MonoBehaviour {
 
     #region SINGLETON PATTERN
     // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
-    public static DataModel _instance;
+    private static DataModel _instance;
     public static DataModel Instance
     {
         get
