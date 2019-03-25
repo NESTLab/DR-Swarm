@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// Class for the Map Policy Panel
+/// </summary>
 public class CreateMapVarPanel : MonoBehaviour
 {
     List<string> var_DropOptions = new List<string>();//Variable List
@@ -20,32 +22,28 @@ public class CreateMapVarPanel : MonoBehaviour
     public Button addFillButton; //Add Fill policy
     public Button sendVarsButton;
     public Dropdown defaultShape; //dropdown for shape
-    public Dropdown defaultColor;
+    public Dropdown defaultColor; //dropdown for color
 
     private List<string> colors = new List<string> { "Red", "Blue", "Green", "Yellow", "Magenta", "White", "Black" }; // How the User sees the colors, will be converted to hex values when sending
     public List<string> shapes = new List<string> { "Check", "Circle", "!", "Plus", "Square", "Triangle", "Arrow" };//List of shape options
-    public int mapCPols = 0;
-    public int mapOPols = 0;
-    public int mapFPols = 0;
-    private bool mapC = false;
-    private bool mapO = false;
-    private bool mapF = false;
+    private bool mapC = false; //To tell we need to update
+    private bool mapO = false; //To tell we need to update
+    private bool mapF = false; //To tell we need to update
     public GameObject mapColorPolicy;// = new GameObject();
     public GameObject mapFillPolicy;// = new GameObject();
     public GameObject mapOrientPolicy;// = new GameObject();
 
-
-
-    public List<int> selectedColors = new List<int>();//Used when updating panel
-    public List<int> selectedVarsC = new List<int>();
-    public List<int> selectedVarsO = new List<int>();
-    public List<int> selectedVarsF = new List<int>();
+    public List<int> selectedVarsC = new List<int>(); //Used when updating panel
+    public List<int> selectedVarsO = new List<int>(); //Used when updating panel
+    public List<int> selectedVarsF = new List<int>(); //Used when updating panel
     List<MapPolicy> editPolicies = new List<MapPolicy>();
 
-    private bool toggleClicked = false;
     public bool editAdded = false;
 
-    // Start is called before the first frame update
+
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         mapColorPolicy = new GameObject();
@@ -74,12 +72,14 @@ public class CreateMapVarPanel : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame
+    /// , Updates the panel as needed
+    /// </summary>
     void Update()
     {
         UIManager.Instance.updateTotalVars();
         var_DropOptions = UIManager.Instance.wantedVars;
-        //HOW TO UPDATE????
         if (overallPanel != null)
         {
             if (optionPanel.activeSelf)
@@ -87,35 +87,32 @@ public class CreateMapVarPanel : MonoBehaviour
                 editPolicies = UIManager.Instance.editMapPolicys;
                 if (mapC || mapO || mapF)
                 {
+                    //Clears the panel
                     foreach (Transform child in optionPanel.transform)
                     {
                         GameObject.Destroy(child.gameObject);
                     }
-                    Debug.Log("Updating");
                     offset = 0;
                     allPolicies.Clear();
-                    
+
                     if (mapColorPolicy.transform.childCount > 0)
                     {
-                        mapCPols = 0;
                         AddPolicyColor();
                     }
                     if (mapOrientPolicy.transform.childCount > 0)
                     {
-                        mapOPols = 0;
                         AddPolicyOrientation();
                     }
                     if (mapFillPolicy.transform.childCount > 0)
                     {
-                        mapFPols = 0;
                         AddPolicyFill();
                     }
                     mapC = false;
                     mapO = false;
                     mapF = false;
-
                 }
-                if (!editAdded && editPolicies.Count > 0)
+
+                if (!editAdded && editPolicies.Count > 0) //If in edit mode
                 {
                     for (int i = 0; i < editPolicies.Count; i++)
                     {
@@ -136,10 +133,12 @@ public class CreateMapVarPanel : MonoBehaviour
                 }
             }
         }
-
     }
 
-    //Add a single prefab at spot i 
+    /// <summary>
+    /// Add a single color prefab at spot i 
+    /// </summary>
+    /// <param name="i"></param>
     private void addOneColorPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapColorPolicyPrefab"), optionPanel.transform);
@@ -154,15 +153,11 @@ public class CreateMapVarPanel : MonoBehaviour
         offset = offset + offsetAddition;
         allPolicies.Add(policyPrefab);
 
-        Dropdown color = policyPrefab.transform.Find("DropdownColor").GetComponent<Dropdown>();
         Dropdown varD = policyPrefab.transform.Find("DropdownVar").GetComponent<Dropdown>();
-        //color.ClearOptions();
-        //color.AddOptions(colors);
         varD.ClearOptions();
         varD.AddOptions(var_DropOptions);
-        if (selectedColors.Count > 0)
+        if (selectedVarsC.Count > 0)
         {
-            //color.value = selectedColors[0];
             varD.value = selectedVarsC[0];
         }
         if (editPolicies.Count > 0)
@@ -179,10 +174,14 @@ public class CreateMapVarPanel : MonoBehaviour
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
         int x = i;
-        remv.onClick.AddListener(() => { mapColorPolicy = new GameObject(); mapC = true; mapCPols--; UIManager.Instance.Options--; addColorButton.interactable = true; getSelectedVarsO(x); getSelectedVarsF(x); });
-
+        remv.onClick.AddListener(() => { mapColorPolicy = new GameObject(); mapC = true; UIManager.Instance.Options--; addColorButton.interactable = true; getSelectedVarsO(x); getSelectedVarsF(x); });
         mapColorPolicy = policyPrefab;
     }
+
+    /// <summary>
+    /// Add a single orientation prefab at spot i 
+    /// </summary>
+    /// <param name="i"></param>
     private void addOneOrientationPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapOrientationPolicyPrefab"), optionPanel.transform);
@@ -197,14 +196,12 @@ public class CreateMapVarPanel : MonoBehaviour
         offset = offset + offsetAddition;
         allPolicies.Add(policyPrefab);
 
-        Toggle orient = policyPrefab.transform.Find("OrientToggle").GetComponent<Toggle>();
         Dropdown varD = policyPrefab.transform.Find("DropdownVar").GetComponent<Dropdown>();
         varD.ClearOptions();
         varD.AddOptions(var_DropOptions);
         if (selectedVarsO.Count > 0)
         {
             varD.value = selectedVarsO[0];
-            //orient.isOn = toggleClicked;
         }
         if (editPolicies.Count > 0)
         {
@@ -220,9 +217,14 @@ public class CreateMapVarPanel : MonoBehaviour
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
         int x = i;
-        remv.onClick.AddListener(() => { mapOrientPolicy = new GameObject(); mapO = true; mapOPols--; UIManager.Instance.Options--; addOrientationButton.interactable = true; getSelectedVarsC(x); getSelectedVarsF(x); });
+        remv.onClick.AddListener(() => { mapOrientPolicy = new GameObject(); mapO = true; UIManager.Instance.Options--; addOrientationButton.interactable = true; getSelectedVarsC(x); getSelectedVarsF(x); });
         mapOrientPolicy = policyPrefab;
     }
+
+    /// <summary>
+    /// Add a single fill prefab at spot i 
+    /// </summary>
+    /// <param name="i"></param>
     private void addOneFillPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapFillPolicyPrefab"), optionPanel.transform);
@@ -258,46 +260,54 @@ public class CreateMapVarPanel : MonoBehaviour
 
         Button remv = policyPrefab.transform.Find("rmvButton").GetComponent<Button>();
         int x = i;
-        remv.onClick.AddListener(() => { mapFillPolicy = new GameObject(); mapF = true; mapFPols--; UIManager.Instance.Options--; addFillButton.interactable = true; getSelectedVarsC(x); getSelectedVarsO(x); });
+        remv.onClick.AddListener(() => { mapFillPolicy = new GameObject(); mapF = true; UIManager.Instance.Options--; addFillButton.interactable = true; getSelectedVarsC(x); getSelectedVarsO(x); });
 
         mapFillPolicy = policyPrefab;
     }
 
 
-
+    /// <summary>
+    /// Get the vars from the color prefab at spot I
+    /// </summary>
+    /// <param name="i"></param>
     private void getSelectedVarsC(int i)
     {
-        selectedColors.Clear();
         selectedVarsC.Clear();
 
         GameObject g = mapColorPolicy;
         if (g.transform.childCount > 0)
         {
-            Dropdown color = g.transform.Find("DropdownColor").GetComponent<Dropdown>();
             Dropdown varD = g.transform.Find("DropdownVar").GetComponent<Dropdown>();
-            int valueC = color.value;
             int valueD = varD.value;
-            selectedColors.Add(valueC);
             selectedVarsC.Add(valueD);
         }
 
     }
+
+    /// <summary>
+    /// Get the vars from the orientation prefab at spot I
+    /// </summary>
+    /// <param name="i"></param>
     private void getSelectedVarsO(int i)
     {
-        selectedColors.Clear();
         selectedVarsO.Clear();
         if (i == 1) { i = 0; }
         else if (i == 0) { i = 1; }
         GameObject g = mapOrientPolicy;
         if (g.transform.childCount > 0)
         {
-            Toggle orient = g.transform.Find("OrientToggle").GetComponent<Toggle>();
-            toggleClicked = orient.isOn;
+            //Toggle orient = g.transform.Find("OrientToggle").GetComponent<Toggle>();
+            //toggleClicked = orient.isOn;
             Dropdown varD = g.transform.Find("DropdownVar").GetComponent<Dropdown>();
             int valueD = varD.value;
             selectedVarsO.Add(valueD);
         }
     }
+
+    /// <summary>
+    /// Get the vars from the fill prefab at spot I
+    /// </summary>
+    /// <param name="i"></param>
     private void getSelectedVarsF(int i)
     {
         selectedVarsF.Clear();
@@ -310,7 +320,9 @@ public class CreateMapVarPanel : MonoBehaviour
         }
     }
 
-    //Added to Add Color Policy button, will add a policy at the bottom of the list
+    /// <summary>
+    /// Added to Add Color Policy button, will add a policy at the bottom of the list
+    /// </summary>
     private void AddPolicyColor()
     {
 
@@ -321,10 +333,12 @@ public class CreateMapVarPanel : MonoBehaviour
             addOneColorPrefab(currOpps);
             UIManager.Instance.Options++;
             addColorButton.interactable = false;
-            mapCPols++;
         }
     }
 
+    /// <summary>
+    /// Added to Add orientation Policy button, will add a policy at the bottom of the list
+    /// </summary>
     private void AddPolicyOrientation()
     {
 
@@ -335,10 +349,12 @@ public class CreateMapVarPanel : MonoBehaviour
             addOneOrientationPrefab(currOpps);
             UIManager.Instance.Options++;
             addOrientationButton.interactable = false;
-            mapOPols++;
         }
     }
 
+    /// <summary>
+    /// Added to Add fill Policy button, will add a policy at the bottom of the list
+    /// </summary>
     private void AddPolicyFill()
     {
         int currOpps = allPolicies.Count;
@@ -348,12 +364,13 @@ public class CreateMapVarPanel : MonoBehaviour
             addOneFillPrefab(currOpps);
             UIManager.Instance.Options++;
             addFillButton.interactable = false;
-            mapFPols++;
         }
     }
 
-
-
+    /// <summary>
+    /// Sends the selected policies to the UIManagers as well as the defaults
+    /// Also signals to add the graph
+    /// </summary>
     public void sendPolicies()
     {
         List<string> colorsSelected = new List<string>();
@@ -367,7 +384,6 @@ public class CreateMapVarPanel : MonoBehaviour
             Dropdown var = g.transform.Find("DropdownVar").GetComponent<Dropdown>();
             List<Dropdown.OptionData> listv = var.options;
             string varChosen = listv[var.value].text;
-
             MapPolicy mp1 = new MapPolicy("color", varChosen, MapPolicy.MapPolicyType.color);
             policies.Add(mp1);
 
@@ -378,7 +394,6 @@ public class CreateMapVarPanel : MonoBehaviour
             Dropdown var = g.transform.Find("DropdownVar").GetComponent<Dropdown>();
             List<Dropdown.OptionData> listv = var.options;
             string varChosen = listv[var.value].text;
-
             MapPolicy mp2 = new MapPolicy("orientation", varChosen, MapPolicy.MapPolicyType.orientation);
             policies.Add(mp2);
 
@@ -389,10 +404,8 @@ public class CreateMapVarPanel : MonoBehaviour
             Dropdown var = g.transform.Find("DropdownVar").GetComponent<Dropdown>();
             List<Dropdown.OptionData> listv = var.options;
             string varChosen = listv[var.value].text;
-
             MapPolicy mp3 = new MapPolicy("fill", varChosen, MapPolicy.MapPolicyType.fillAmount);
             policies.Add(mp3);
-
         }
 
         string defaultShapeString = defaultShape.options[defaultShape.value].text;
@@ -402,48 +415,33 @@ public class CreateMapVarPanel : MonoBehaviour
 
         UIManager.Instance.allMPolicies = policies;
         UIManager.Instance.sentColor = defaultColored;
-        UIManager.Instance.sentShape = GetShape("default", defaultShapeString);
-        //Debug.Log("Shape d" + GetShape("default", defaultShapeString));
+        UIManager.Instance.sentShape = GetShape(defaultShapeString);
         UIManager.Instance.addGraph = true;
     }
 
-    public Color GetColor(string c, Color d)
+    /// <summary>
+    /// Get the Inidicator shape from the string
+    /// </summary>
+    /// <param name="d"> string from the default dropdown</param>
+    /// <returns></returns>
+    public IndicatorShape GetShape(string d)
     {
-        if (c == "Default") { return d; }
-        else
-        {
-            Color newCol;
-            if (ColorUtility.TryParseHtmlString(c, out newCol))
-            {
-                return newCol;
-            }
-            else { return Color.red; }
-        }
+        if (d == "Check") { return IndicatorShape.Check; }
+        else if (d == "Circle") { return IndicatorShape.Circle; }
+        else if (d == "!") { return IndicatorShape.Exclamation; }
+        else if (d == "Plus") { return IndicatorShape.Plus; }
+        else if (d == "Triangle") { return IndicatorShape.Triangle; }
+        else if (d == "Square") { return IndicatorShape.Square; }
+        else if (d == "Arrow") { return IndicatorShape.Arrow; }
+        else { return IndicatorShape.Check; }
     }
 
-
-    public IndicatorShape GetShape(string s, string d)
-    {
-        if (s == "Check") { return IndicatorShape.Check; }
-        else if (s == "Circle") { return IndicatorShape.Circle; }
-        else if (s == "!") { return IndicatorShape.Exclamation; }
-        else if (s == "Plus") { return IndicatorShape.Plus; }
-        else if (s == "Triangle") { return IndicatorShape.Triangle; }
-        else if (s == "Square") { return IndicatorShape.Square; }
-        else if (s == "Arrow") { return IndicatorShape.Arrow; }
-        else
-        {
-            if (d == "Check") { return IndicatorShape.Check; }
-            else if (d == "Circle") { return IndicatorShape.Circle; }
-            else if (d == "!") { return IndicatorShape.Exclamation; }
-            else if (d == "Plus") { return IndicatorShape.Plus; }
-            else if (d == "Triangle") { return IndicatorShape.Triangle; }
-            else if (d == "Square") { return IndicatorShape.Square; }
-            else if (d == "Arrow") { return IndicatorShape.Arrow; }
-
-        }
-        return IndicatorShape.Check;
-    }
+    /// <summary>
+    /// With a string and a list, get the position value. Used for the dropdowns
+    /// </summary>
+    /// <param name="var">string </param>
+    /// <param name="s">string list</param>
+    /// <returns>int value from the list</returns>
     int getiValueFromList(string var, List<string> s)
     {
         int val = 0;
@@ -456,38 +454,23 @@ public class CreateMapVarPanel : MonoBehaviour
         }
         return val;
     }
+
+    /// <summary>
+    /// get string of color from the Color.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns>string of a color</returns>
     string getColorString(Color c)
     {
         string color = "";
 
-        if (c == Color.red)
-        {
-            return "Red";
-        }
-        else if (c == Color.blue)
-        {
-            return "Blue";
-        }
-        else if (c == Color.green)
-        {
-            return "Green";
-        }
-        else if (c == Color.yellow)
-        {
-            return "Yellow";
-        }
-        else if (c == Color.magenta)
-        {
-            return "Magenta";
-        }
-        else if (c == Color.black)
-        {
-            return "Black";
-        }
-        else if (c == Color.white)
-        {
-            return "White";
-        }
+        if (c == Color.red) { return "Red"; }
+        else if (c == Color.blue) { return "Blue"; }
+        else if (c == Color.green) { return "Green"; }
+        else if (c == Color.yellow) { return "Yellow"; }
+        else if (c == Color.magenta) { return "Magenta"; }
+        else if (c == Color.black) { return "Black"; }
+        else if (c == Color.white) { return "White"; }
         return color;
     }
 

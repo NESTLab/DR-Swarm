@@ -23050,10 +23050,10 @@ RectTransform:
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 99.8, y: -21}
-  m_SizeDelta: {x: -200, y: -42}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 226, y: -25}
+  m_SizeDelta: {x: 200, y: -50}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &1178835899
 GameObject:
   m_ObjectHideFlags: 0
@@ -30899,13 +30899,9 @@ MonoBehaviour:
   - Plus
   - Square
   - Triangle
-  mapCPols: 0
-  mapOPols: 0
-  mapFPols: 0
   mapColorPolicy: {fileID: 0}
   mapFillPolicy: {fileID: 0}
   mapOrientPolicy: {fileID: 0}
-  selectedColors: 
   selectedVarsC: 
   selectedVarsO: 
   selectedVarsF: 
@@ -32676,13 +32672,9 @@ MonoBehaviour:
   - Plus
   - Square
   - Triangle
-  mapCPols: 0
-  mapOPols: 0
-  mapFPols: 0
   mapColorPolicy: {fileID: 0}
   mapFillPolicy: {fileID: 0}
   mapOrientPolicy: {fileID: 0}
-  selectedColors: 
   selectedVarsC: 
   selectedVarsO: 
   selectedVarsF: 
@@ -41455,10 +41447,10 @@ RectTransform:
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 99.8, y: -21}
-  m_SizeDelta: {x: -200, y: -42}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 201, y: -21}
+  m_SizeDelta: {x: 200, y: -42}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &2086467544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42487,8 +42479,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -77, y: -21}
-  m_SizeDelta: {x: -200, y: -42}
+  m_AnchoredPosition: {x: -77, y: -25}
+  m_SizeDelta: {x: -200, y: -50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2137280986
 MonoBehaviour:

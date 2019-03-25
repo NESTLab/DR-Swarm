@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class for creating a tag 
+/// </summary>
 public class CreateTag : MonoBehaviour
 {
+    public List<Toggle> allToggles = new List<Toggle>(); //List of toggles
+    public List<Toggle> allChecked = new List<Toggle>(); //List of checked toggles
+    public bool updateToggles; //If they need to be updated
+    public HashSet<string> prevCheckedRobots = new HashSet<string> { };//List of robots that are checked during touch robots
+
+    //UI objects
+    public Button sendTags;
+    public Button back;
+    public GameObject panel; //Robot panel
+    public InputField tagName;
     public Toggle t1;
     public Toggle t2;
     public Toggle t3;
     public Toggle t4;
     public Toggle t5;
-    public List<Toggle> allToggles = new List<Toggle>();
-    public List<Toggle> allChecked = new List<Toggle>();
-    public GameObject panel; //Robot panel
-    public bool updateToggles;
-    public Button sendTags;
-    public Button back;
-    public HashSet<string> prevCheckedRobots = new HashSet<string> { };
 
-    public InputField tagName;
-    // Start is called before the first frame update
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         prevCheckedRobots = UIManager.Instance.touchedRobots;
@@ -36,8 +43,9 @@ public class CreateTag : MonoBehaviour
         }
 
     }
-
-    // Update is called once per frame
+    /// <summary>
+    ///  Update is called once per frame
+    /// </summary>
     void Update()
     {
         if (panel != null)
@@ -47,12 +55,7 @@ public class CreateTag : MonoBehaviour
                 if (updateToggles)
                 {
                     prevCheckedRobots = UIManager.Instance.touchedRobots;
-
-                    if (prevCheckedRobots.Count > 0)
-                    {
-                        addprevCheckedRobots();
-                    }
-
+                    if (prevCheckedRobots.Count > 0) { addprevCheckedRobots(); }
                     updateToggles = false;
                 }
             }
@@ -68,13 +71,15 @@ public class CreateTag : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Send the tag to the UIManager
+    /// </summary>
     public void sendTag()
     {
-
         string name = tagName.text;
         List<Robot> robotsTag = new List<Robot> { };//Robots for the current graph
 
-        if (t1.isOn) { Debug.Log("ON"); robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
+        if (t1.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
         if (t2.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget2")); }
         if (t3.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget3")); }
         if (t4.isOn) { robotsTag.Add(DataManager.Instance.GetRobot("RobotTarget4")); }
@@ -83,7 +88,9 @@ public class CreateTag : MonoBehaviour
         ClearToggles();
     }
 
-
+    /// <summary>
+    /// Clears if any toggles have been checked
+    /// </summary>
     public void ClearToggles()
     {
         allChecked.Clear();
@@ -96,31 +103,15 @@ public class CreateTag : MonoBehaviour
 
     }
 
-
+    /// <summary>
+    /// If any robots have been checked in touch they will be checked on
+    /// </summary>
     void addprevCheckedRobots()
     {
-        if (prevCheckedRobots.Contains("r1"))
-        {
-            Debug.Log("true");
-            t1.isOn = true;
-        }
-        if (prevCheckedRobots.Contains("r2"))
-        {
-            t2.isOn = true;
-        }
-        if (prevCheckedRobots.Contains("r3"))
-        {
-            t3.isOn = true;
-        }
-        if (prevCheckedRobots.Contains("r4"))
-        {
-            t4.isOn = true;
-        }
-        if (prevCheckedRobots.Contains("r5"))
-        {
-            t5.isOn = true;
-        }
-
+        if (prevCheckedRobots.Contains("r1")) { t1.isOn = true; }
+        if (prevCheckedRobots.Contains("r2")) { t2.isOn = true; }
+        if (prevCheckedRobots.Contains("r3")) { t3.isOn = true; }
+        if (prevCheckedRobots.Contains("r4")) { t4.isOn = true; }
+        if (prevCheckedRobots.Contains("r5")) { t5.isOn = true; }
     }
-
 }

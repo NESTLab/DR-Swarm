@@ -7,6 +7,9 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Name space for types of graphs
+/// </summary>
 namespace graphNameSpace
 {
     public enum graph
@@ -21,24 +24,23 @@ namespace graphNameSpace
     }
 }
 
+/// <summary>
+/// UI Manager
+/// Singleton class that managages the data and behavior for the UI
+/// </summary>
 public class UIManager : MonoBehaviour
 {
 
     // Start is called before the first frame update   
-
     void Start()
-    {
-
-    }
+    { }
 
     // Update is called once per frame
     void Update()
-    {
-
-    }
+    { }
 
     public int Options = 1;//How many min variable options
-    public int EOptions = 0;
+    public int EOptions = 0; ///
     public int TotalOptions = 1;
     public int RobotOptions = 0;
 
@@ -56,6 +58,10 @@ public class UIManager : MonoBehaviour
 
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
+
+    /// <summary>
+    /// Variable that will detect when changed
+    /// </summary>
     public string sentGraphType
     {
         get { return _sentGraphType; }
@@ -63,13 +69,12 @@ public class UIManager : MonoBehaviour
         {
             _sentGraphType = value;
             //Set options based on type of graph
-            Debug.Log("Changing Graph Type");
             if (_sentGraphType == "Line")
             {
-                GraphType = graph.Line;
-                Options = 2;
-                TotalOptions = 100;
-                RobotOptions = 0;
+                GraphType = graph.Line; //Sets the graph type
+                Options = 2; //Min number of options
+                TotalOptions = 100; //Total Options <<Not used atm
+                RobotOptions = 0; // <<not used atm
             }
             else if (_sentGraphType == "Pie")
             {
@@ -109,16 +114,28 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //TAGS
+
+    #region TAGS
     public List<Tag> allTags = new List<Tag>();
     //Create a new tag
+
+    /// <summary>
+    /// creates a tag that is stored in the allTags Function
+    /// </summary>
+    /// <param name="name"> Name of the tag</param>
+    /// <param name="robots">List of the robots included in the tag</param>
     public void CreateTag(string name, List<Robot> robots)
     {
         Tag newtag = new Tag(name, robots);
         allTags.Add(newtag);
         Debug.Log("TAGS" + allTags.Count);
     }
+
     public List<string> checkedTagNames = new List<string>();
+
+    /// <summary>
+    /// Add tag robots to the checked robots list
+    /// </summary>
     public void addCheckedTags()
     {
         //Match string to tag name
@@ -136,23 +153,19 @@ public class UIManager : MonoBehaviour
                 thebots.UnionWith(c.robots);
             }
         }
-        //Debug.Log("Amount of checed" + checkedTagNames.Count);
-        //Debug.Log("THERE ARE + " + thebots.Count);
         robots = new List<Robot>(thebots);
     }
+    #endregion
 
-    //ADD VARS
+    #region Variables
     public List<string> wantedVars = new List<string>();
     //Get vars from selected robots 
+    /// <summary>
+    /// Get the variables from the currently selected robots. Uses an intersection of all the variables
+    /// </summary>
     public void updateTotalVars()
     {
         HashSet<string> varFromRobots = new HashSet<string>();
-        //List<Robot> allRobots = new List<Robot>();
-        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget1"));
-        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget2"));
-        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget3"));
-        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget4"));
-        //allRobots.Add(DataManager.Instance.GetRobot("RobotTarget5"));
         if (robots.Count > 0)
         {
             varFromRobots.UnionWith(robots[0].GetVariables());
@@ -164,11 +177,17 @@ public class UIManager : MonoBehaviour
         wantedVars = new List<string>(varFromRobots);
 
     }
+    #endregion
 
-
+    #region Robots
     //ADD ROBOTS
     public List<Robot> robots = new List<Robot> { };//Robots for the current graph
     //Add a robot to the array to get the total robots for the graph
+
+    /// <summary>
+    /// Add a robot to the array to get the total robots for the graph
+    /// </summary>
+    /// <param name="r">robot name string ("r" + int)</param>
     public void AddRobot(string r)
     {
         if (r == "r1") { robots.Add(DataManager.Instance.GetRobot("RobotTarget1")); }
@@ -183,27 +202,38 @@ public class UIManager : MonoBehaviour
         else if (r == "r10") { robots.Add(DataManager.Instance.GetRobot("RobotTarget10")); }
 
     }
-
-    //If there is a known list of robots to add, currently not using
-    public void AddAllRobots(List<string> robots)
-    {
-        foreach (string r in robots)
+    /*
+        //If there is a known list of robots to add, currently not using
+        /// <summary>
+        /// If there is a known list of robots to add, currently not using
+        /// </summary>
+        /// <param name="robots"></param>
+        public void AddAllRobots(List<string> robots)
         {
-            AddRobot(r);
+            foreach (string r in robots)
+            {
+                AddRobot(r);
+            }
         }
-    }
+        */
 
-    public bool AddRobotMode = false;
+    public bool AddRobotMode = false; //Used for the touch robots, know when clicking on a robot will add it
 
     //Add robot by clicking on them in AR
     public HashSet<string> touchedRobots = new HashSet<string> { };
     public List<string> editVizRobots = new List<string>();
+
+    /// <summary>
+    /// Add robot by clicking on them in AR, Triggered by touchscript
+    /// </summary>
+    /// <param name="r">robot name</param>
     public void addRobotByTouch(string r)
     {
         touchedRobots.Add(r);
-        //Debug.Log(touchedRobots.ToString());
     }
+    #endregion
 
+    #region Graphs
     //ADD GRAPH
     private bool _addGraph = false; //Var to tell when to add a graph
     public bool addGraph
@@ -219,16 +249,18 @@ public class UIManager : MonoBehaviour
 
     public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
     public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
-    public List<MapPolicy> allMPolicies = new List<MapPolicy>();
-    public List<RangePolicy> allRPolicies = new List<RangePolicy>();
-    public Color sentColor = new Color();
-    public IndicatorShape sentShape = new IndicatorShape();
+    public List<MapPolicy> allMPolicies = new List<MapPolicy>(); //List of all Map policies during add/edit
+    public List<RangePolicy> allRPolicies = new List<RangePolicy>(); //List of all range policies during add/edit
+    public Color sentColor = new Color(); //default color sent through range or map
+    public IndicatorShape sentShape = new IndicatorShape(); //default shape sent through range or map
 
-    //Create a graph, Needed are robots, variables, type
-    //Calls VizManager to add the graph, currently adds title as well
+    /// <summary>
+    /// Create a graph, Needed are robots, variables, type
+    /// Calls VizManager to add the graph, currently adds title as well
+    /// </summary>
     private void createGraph()
     {
-        string title = "";
+        string title = ""; //title of visualization, uses graph type+ dateTime
         DateTime foo = DateTime.UtcNow;
         long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
         if (GraphType == graph.Line)
@@ -242,7 +274,6 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-            Debug.Log("Type trufalse " + ("LineGraph" == graphToAdd.GetType().ToString()));
         }
         else if (GraphType == graph.Pie)
         {
@@ -252,19 +283,15 @@ public class UIManager : MonoBehaviour
             robots.RemoveAt(0);
             string var = wantedVars[0];
             IVisualization graphToAdd = new PieChart(var, r1, r2, robots.ToArray());
-            title = var + "," + " Pie " + unixTime;//TODO: Add another unique symbol to this?
+            title = var + "," + " Pie " + unixTime;
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
         }
         else if (GraphType == graph.PieMulti)
         {
-            //Robot r1 = robots[0];
-            //robots.RemoveAt(0);
-            //string var = wantedVars[0];
-            //wantedVars.RemoveAt(0);
             IVisualization graphToAdd = new PieChartMultiVar(robots, wantedVars);
-            title = "Multi Pie " + unixTime;//TODO: Add another unique symbol to this?
+            title = "Multi Pie " + unixTime;
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
@@ -275,32 +302,14 @@ public class UIManager : MonoBehaviour
             HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
             HashSet<string> hashVars = new HashSet<string>(wantedVars);
             IVisualization graphToAdd = new BarGraph(hashRobots, hashVars);
-            title = "Bar " + unixTime;//TODO: Add another unique symbol to this?
+            title = "Bar " + unixTime;
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
 
-            /*
-            Robot r1 = robots[0];
-            robots.RemoveAt(0);
-            string var = wantedVars[0];
-            wantedVars.RemoveAt(0);
-            HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
-            HashSet<string> hashVars = new HashSet<string>(wantedVars);
-
-
-            IVisualization graphToAdd = new BarGraph(r1, hashRobots, var, hashVars);
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-            title =  "Bar " + unixTime;//TODO: Add another unique symbol to this?
-            VisualizationManager.Instance.AddVisualization(title, graphToAdd);
-            allVizs.Add(graphToAdd);
-            allVizsNames.Add(title);
-            */
         }
         else if (GraphType == graph.TwoDRange)
         {
-            //Debug.Log("Policies " + allRPolicies + allRPolicies[0] + " " + allRPolicies.Count + "init2 color" + allRPolicies[1].color);
             title = "TwoDRange " + unixTime;
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -320,11 +329,11 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
-
         }
 
         _addGraph = false;
         robots = new List<Robot>();
+        updateVizPanel = true;
 
         //reset edit
         if (EditVizBool)
@@ -339,14 +348,14 @@ public class UIManager : MonoBehaviour
             editVars = new List<string>();
             editRangePolicys = new List<RangePolicy>();
             editMapPolicys = new List<MapPolicy>();
-            updateVizPanel = true;
+            
             EOptions = 0;
             editDShape = new IndicatorShape();
             editDColor = new Color();
             editVizRobots = new List<string>();
-            updateVizPanel = true;
         }
     }
+    #endregion
 
 
 
@@ -373,14 +382,14 @@ public class UIManager : MonoBehaviour
     #endregion
 
     public UIManager()//Constructor
-    {
-
-    }
+    { }
 
 
 }
 
-//Class for tags, allows us to associate a list of robots to a tag name.
+/// <summary>
+/// Class for tags, allows us to associate a list of robots to a tag name.
+/// </summary>
 public class Tag
 {
     public string name;

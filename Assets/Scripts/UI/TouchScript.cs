@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class added onto a robot gameobject triggers if there is a mesh collider
+/// </summary>
 public class TouchScript : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -19,12 +22,11 @@ public class TouchScript : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                if (UIManager.Instance.AddRobotMode)
+                if (UIManager.Instance.AddRobotMode) //If we could add robots
                 {
                     Debug.Log("name" + hit.collider.gameObject.name); //RobotTarget1, RobotTarget2
-                    if (hit.collider.gameObject.name == "RobotTarget1")
+                    if (hit.collider.gameObject.name == "RobotTarget1") // if the name of the gameobject is 
                     {
-                        //GameObject obj = GameObject.FindGameObjectWithTag("imageTarget1");
                         UIManager.Instance.addRobotByTouch("r1");
                     }
                     else if (hit.collider.gameObject.name == "RobotTarget2")
