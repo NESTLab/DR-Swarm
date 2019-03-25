@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class that added the tags prefabs to the robot panel
+/// </summary>
 public class TagRobotPanel : MonoBehaviour
 {
-     public GameObject tagPanel; //Parent Panel, set when adding script
+    public GameObject tagPanel; //Parent Panel, set when adding script
     float initpos = -37f; //Position offset for the prefabs
 
     public List<Tag> allTags = new List<Tag>();//All Visualizations, IViz
@@ -14,16 +17,17 @@ public class TagRobotPanel : MonoBehaviour
     float offset = 0f; // Offset for when a prefab gets added
     public int i = 0;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
-    {
+    { }
 
-    }
-
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
-
         allTags = UIManager.Instance.allTags; //Get the vizs
         if (tagPanel != null) //Checking if the panel is active (not null)
         {
@@ -49,11 +53,10 @@ public class TagRobotPanel : MonoBehaviour
                         t.pivot = new Vector2(.5f, .5f);
                         //Set the componenets of the prefab
                         Toggle t2 = tagPrefab.transform.Find("TagToggle").GetComponent<Toggle>();
-                        
                         t2.GetComponentInChildren<Text>().text = allTags[i].name;
                         string name = allTags[i].name;
                         List<string> bots = new List<string>();
-                       
+
                         //Maitance variables
                         totalViz++;
                         i++;

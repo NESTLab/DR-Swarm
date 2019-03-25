@@ -4,14 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class for setup of editting a viz, the first step is getting what the viz type would be
+/// </summary>
 public class EditViz : MonoBehaviour
 {
+    //Gameobjects
     IVisualization edit;
-    // Start is called before the first frame update
     public Text currVizTitle;
     string title;
     public Button back;
     public Button close;
+
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         edit = null;
@@ -19,7 +26,9 @@ public class EditViz : MonoBehaviour
         close.onClick.AddListener(Reset);
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
         if (UIManager.Instance.EditVizBool && edit == null)
@@ -30,10 +39,12 @@ public class EditViz : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Get the current type of the viz and display it
+    /// </summary>
     void changeVizName()
     {
-        Text t = currVizTitle.GetComponent<Text>();
-        Debug.Log("Changing name " + edit.GetType().ToString());
+        Text t = currVizTitle.GetComponent<Text>(); //text object
         if (edit.GetType().ToString() == "LineGraph")
         {
             t.text = "Current Viz Type: Line Graph";
@@ -71,25 +82,22 @@ public class EditViz : MonoBehaviour
             UIManager.Instance.editDColor = ((RangeIndicator)edit).GetDefaultColor();
 
         }
-
+        //Get the robots from the current viz
         List<string> botNames = new List<string>();
         foreach (Robot r in edit.GetRobots())
         {
             botNames.Add(r.name);
         }
-        Debug.Log("Vars" + edit.GetVariables().Count);
         UIManager.Instance.editVizRobots = botNames;
         UIManager.Instance.editVars = new List<string>(edit.GetVariables());
         UIManager.Instance.EOptions = edit.GetVariables().Count;
     }
 
+    /// <summary>
+    /// Reset the edit object
+    /// </summary>
     private void Reset()
     {
         edit = null;
     }
-
-
-
-
-
 }

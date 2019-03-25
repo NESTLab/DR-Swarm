@@ -7,13 +7,15 @@ using UnityEngine;
 /// </summary>
 public class TouchScript : MonoBehaviour
 {
-    // Start is called before the first frame update
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
-    {
+    {    }
 
-    }
-
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -24,7 +26,6 @@ public class TouchScript : MonoBehaviour
             {
                 if (UIManager.Instance.AddRobotMode) //If we could add robots
                 {
-                    Debug.Log("name" + hit.collider.gameObject.name); //RobotTarget1, RobotTarget2
                     if (hit.collider.gameObject.name == "RobotTarget1") // if the name of the gameobject is 
                     {
                         UIManager.Instance.addRobotByTouch("r1");
@@ -70,4 +71,3 @@ public class TouchScript : MonoBehaviour
         }
     }
 }
-
