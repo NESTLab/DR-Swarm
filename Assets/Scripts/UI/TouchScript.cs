@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Class added onto a robot gameobject triggers if there is a mesh collider
+/// Class added onto a robot gameobject triggers if there is a mesh collider.
 /// </summary>
 public class TouchScript : MonoBehaviour
 {
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
-    {    }
+    { }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for sending vars from one variable to another
+/// Class for sending vars from one variable to another.
 /// </summary>
 public class SendVars : MonoBehaviour
 {
@@ -37,7 +37,7 @@ public class SendVars : MonoBehaviour
     public GameObject rangePanel;
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     {
@@ -75,7 +75,7 @@ public class SendVars : MonoBehaviour
 
 
     /// <summary>
-    ///  Update is called once per frame
+    ///  Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -97,7 +97,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Check toggles if they need to be checked on
+    /// Check toggles if they need to be checked on.
     /// </summary>
     void addprevCheckedRobots()
     {
@@ -114,7 +114,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Added to the select all toggle
+    /// Added to the select all toggle.
     /// </summary>
     public void selectAllToggles()
     {
@@ -136,7 +136,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Turn off the select all toggle if another toggle is selected
+    /// Turn off the select all toggle if another toggle is selected.
     /// </summary>
     /// <param name="t">toggle this is attached to</param>
     public void TurnOffSelectAll(Toggle t)
@@ -146,7 +146,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Turn all toggles off (robot panel)
+    /// Turn all toggles off (robot panel).
     /// </summary>
     public void ClearToggles()
     {
@@ -161,9 +161,9 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when the next button is pressed
-    /// Checks for each toggle to tell if it is on, if its on, need to add the robot
-    /// Also calls addGraph
+    /// Called when the next button is pressed.
+    /// Checks for each toggle to tell if it is on, if its on, need to add the robot.
+    /// Also calls addGraph.
     /// </summary>
     public void toggleAdd()
     {
@@ -207,7 +207,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Send the graph type
+    /// Send the graph type.
     /// </summary>
     /// <param name="i">graph type (through unity)</param>
     public void setToGraph(string i)
@@ -216,7 +216,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Attached to main panel for the robots, to know if the user is using touch robots
+    /// Attached to main panel for the robots, to know if the user is using touch robots.
     /// </summary>
     /// <param name="s"></param>
     public void addRobotMode(Slider s)
@@ -226,7 +226,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Change which panel needs tobe next (for the variables)
+    /// Change which panel needs tobe next (for the variables).
     /// </summary>
     public void setPanel()
     {
@@ -238,7 +238,7 @@ public class SendVars : MonoBehaviour
     }
 
     /// <summary>
-    /// Clear the robots that were added through the touch
+    /// Clear the robots that were added through the touch.
     /// </summary>
     public void ClearAddedRobots()
     {

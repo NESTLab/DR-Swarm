@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for the Range Policy Panel
+/// Class for the Range Policy Panel.
 /// </summary>
 public class CreateRangeVarPanel : MonoBehaviour
 {
@@ -37,7 +37,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     List<RangePolicy> editPolicies = new List<RangePolicy>(); //Policies from prev viz if editing
 
     /// <summary>
-    ///  Start is called before the first frame update
+    ///  Start is called before the first frame update.
     /// </summary>
     void Start()
     {
@@ -76,7 +76,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -137,7 +137,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    ///  Add a single prefab at spot i 
+    ///  Add a single prefab at spot i.
     /// </summary>
     /// <param name="i"></param>
     private void addOnePrefab(int i)
@@ -186,7 +186,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// get current selected vars to remove the prefab at spot i
+    /// Get current selected vars to remove the prefab at spot i.
     /// </summary>
     /// <param name="i"></param>
     private void getSelectedVars(int i)
@@ -217,7 +217,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Added to Add Policy button, will add a policy at the bottom of the list
+    /// Added to Add Policy button, will add a policy at the bottom of the list.
     /// </summary>
     private void AddPolicy()
     {
@@ -239,7 +239,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Send policies to UIManager
+    /// Send policies to UIManager.
     /// </summary>
     public void sendPolicies()
     {
@@ -291,11 +291,11 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get color from string of use default color
+    /// Get color from string of use default color.
     /// </summary>
     /// <param name="c">color string</param>
     /// <param name="d">defualt color</param>
-    /// <returns>Color</returns>
+    /// <returns>A Unity Color object</returns>
     public Color GetColor(string c, Color d)
     {
         if (c == "Default") { return d; }
@@ -311,7 +311,7 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get shape from string
+    /// Get shape from string.
     /// </summary>
     /// <param name="s">string from dropdown</param>
     /// <param name="d">defualt color</param>
@@ -340,11 +340,11 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// With a string and a list, get the position value. Used for the dropdowns
+    /// With a string and a list, get the position value. Used for the dropdowns.
     /// </summary>
     /// <param name="var">string </param>
     /// <param name="s">string list</param>
-    /// <returns>int</returns>
+    /// <returns>int that defines where the string is in the list s</returns>
     int getiValueFromList(string var, List<string> s)
     {
         int val = 0;
@@ -356,10 +356,10 @@ public class CreateRangeVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// get string of color from the Color.
+    /// Get string of color from the Color.
     /// </summary>
     /// <param name="c"></param>
-    /// <returns>string that is a color</returns>
+    /// <returns>String that is a color</returns>
     string getColorString(Color c)
     {
         string color = "";

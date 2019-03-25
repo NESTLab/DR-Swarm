@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for showing the tag panel
+/// Class for showing the tag panel.
 /// </summary>
 public class CreateTagPanel : MonoBehaviour
 {
@@ -17,13 +17,13 @@ public class CreateTagPanel : MonoBehaviour
     public int i = 0; //keep track of amount of tags
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     { }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -77,8 +77,8 @@ public class CreateTagPanel : MonoBehaviour
     }
 
     /// <summary>
-    ///  To remove a visualization you only need to pass the name to the VizManager
-    ///  The IViz here is only for sending the viz to UIManagager to keep track of how many vizs there currently are
+    ///  To remove a visualization you only need to pass the name to the VizManager.
+    ///  The IViz here is only for sending the viz to UIManagager to keep track of how many vizs there currently are.
     /// </summary>
     /// <param name="title">name of the viz</param>
     /// <param name="vz"> tag </param>

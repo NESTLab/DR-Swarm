@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for creating a tag 
+/// Class for creating a tag. 
 /// </summary>
 public class CreateTag : MonoBehaviour
 {
@@ -25,7 +25,7 @@ public class CreateTag : MonoBehaviour
     public Toggle t5;
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     {
@@ -44,7 +44,7 @@ public class CreateTag : MonoBehaviour
 
     }
     /// <summary>
-    ///  Update is called once per frame
+    ///  Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -72,7 +72,7 @@ public class CreateTag : MonoBehaviour
     }
 
     /// <summary>
-    /// Send the tag to the UIManager
+    /// Send the tag to the UIManager.
     /// </summary>
     public void sendTag()
     {
@@ -89,7 +89,7 @@ public class CreateTag : MonoBehaviour
     }
 
     /// <summary>
-    /// Clears if any toggles have been checked
+    /// Clears if any toggles have been checked.
     /// </summary>
     public void ClearToggles()
     {
@@ -104,7 +104,7 @@ public class CreateTag : MonoBehaviour
     }
 
     /// <summary>
-    /// If any robots have been checked in touch they will be checked on
+    /// If any robots have been checked in touch they will be checked on.
     /// </summary>
     void addprevCheckedRobots()
     {

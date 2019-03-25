@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Name space for types of graphs
+/// Name space for types of graphs/
 /// </summary>
 namespace graphNameSpace
 {
@@ -25,8 +25,7 @@ namespace graphNameSpace
 }
 
 /// <summary>
-/// UI Manager
-/// Singleton class that managages the data and behavior for the UI
+/// UI Manager - Singleton class that managages the data and behavior for the UI/
 /// </summary>
 public class UIManager : MonoBehaviour
 {
@@ -38,13 +37,14 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     { }
-
+    //selecting a graph vars
     public int Options = 1;//How many min variable options
     public int EOptions = 0; ///
     public int TotalOptions = 1;
     public int RobotOptions = 0;
-
     public string _sentGraphType = "";
+
+    //edditing graph vars
     public bool EditVizBool = false;
     public IVisualization editviz;
     public string editVizName;
@@ -56,11 +56,26 @@ public class UIManager : MonoBehaviour
     public IndicatorShape editDShape;
     public Color editDColor;
 
+    //vars for adding a graph
+    public List<string> wantedVars = new List<string>(); //vars to add to the graph
+    public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
+    public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
+    public List<MapPolicy> allMPolicies = new List<MapPolicy>(); //List of all Map policies during add/edit
+    public List<RangePolicy> allRPolicies = new List<RangePolicy>(); //List of all range policies during add/edit
+    public Color sentColor = new Color(); //default color sent through range or map
+    public IndicatorShape sentShape = new IndicatorShape(); //default shape sent through range or map
+    public List<Robot> robots = new List<Robot> { };//Robots for the current graph
 
     public graph GraphType = graph.NoGraph; //What type of graph is currently being set
 
+    //tags
+    public List<Tag> allTags = new List<Tag>();
+    public List<string> checkedTagNames = new List<string>();
+
+    public bool AddRobotMode = false; //Used for the touch robots, know when clicking on a robot will add it
+
     /// <summary>
-    /// Variable that will detect when changed
+    /// Variable that will detect when changed.
     /// </summary>
     public string sentGraphType
     {
@@ -116,11 +131,8 @@ public class UIManager : MonoBehaviour
 
 
     #region TAGS
-    public List<Tag> allTags = new List<Tag>();
-    //Create a new tag
-
     /// <summary>
-    /// creates a tag that is stored in the allTags Function
+    /// Creates a tag that is stored in the allTags Function.
     /// </summary>
     /// <param name="name"> Name of the tag</param>
     /// <param name="robots">List of the robots included in the tag</param>
@@ -128,13 +140,10 @@ public class UIManager : MonoBehaviour
     {
         Tag newtag = new Tag(name, robots);
         allTags.Add(newtag);
-        Debug.Log("TAGS" + allTags.Count);
     }
 
-    public List<string> checkedTagNames = new List<string>();
-
     /// <summary>
-    /// Add tag robots to the checked robots list
+    /// Add tag robots to the checked robots list.
     /// </summary>
     public void addCheckedTags()
     {
@@ -158,10 +167,8 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Variables
-    public List<string> wantedVars = new List<string>();
-    //Get vars from selected robots 
     /// <summary>
-    /// Get the variables from the currently selected robots. Uses an intersection of all the variables
+    /// Get the variables from the currently selected robots. Uses an intersection of all the variables.
     /// </summary>
     public void updateTotalVars()
     {
@@ -180,12 +187,8 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Robots
-    //ADD ROBOTS
-    public List<Robot> robots = new List<Robot> { };//Robots for the current graph
-    //Add a robot to the array to get the total robots for the graph
-
     /// <summary>
-    /// Add a robot to the array to get the total robots for the graph
+    /// Add a robot to the array to get the total robots for the graph.
     /// </summary>
     /// <param name="r">robot name string ("r" + int)</param>
     public void AddRobot(string r)
@@ -202,29 +205,13 @@ public class UIManager : MonoBehaviour
         else if (r == "r10") { robots.Add(DataManager.Instance.GetRobot("RobotTarget10")); }
 
     }
-    /*
-        //If there is a known list of robots to add, currently not using
-        /// <summary>
-        /// If there is a known list of robots to add, currently not using
-        /// </summary>
-        /// <param name="robots"></param>
-        public void AddAllRobots(List<string> robots)
-        {
-            foreach (string r in robots)
-            {
-                AddRobot(r);
-            }
-        }
-        */
-
-    public bool AddRobotMode = false; //Used for the touch robots, know when clicking on a robot will add it
 
     //Add robot by clicking on them in AR
     public HashSet<string> touchedRobots = new HashSet<string> { };
     public List<string> editVizRobots = new List<string>();
 
     /// <summary>
-    /// Add robot by clicking on them in AR, Triggered by touchscript
+    /// Add robot by clicking on them in AR, Triggered by touchscript.
     /// </summary>
     /// <param name="r">robot name</param>
     public void addRobotByTouch(string r)
@@ -234,7 +221,6 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Graphs
-    //ADD GRAPH
     private bool _addGraph = false; //Var to tell when to add a graph
     public bool addGraph
     {
@@ -247,16 +233,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public List<IVisualization> allVizs = new List<IVisualization>(); //temp list of all visualizations
-    public List<string> allVizsNames = new List<string>(); //temp list of all visualizations
-    public List<MapPolicy> allMPolicies = new List<MapPolicy>(); //List of all Map policies during add/edit
-    public List<RangePolicy> allRPolicies = new List<RangePolicy>(); //List of all range policies during add/edit
-    public Color sentColor = new Color(); //default color sent through range or map
-    public IndicatorShape sentShape = new IndicatorShape(); //default shape sent through range or map
-
     /// <summary>
-    /// Create a graph, Needed are robots, variables, type
-    /// Calls VizManager to add the graph, currently adds title as well
+    /// Create a graph, Needed are robots, variables, type.
+    /// Calls VizManager to add the graph, currently adds title as well.
     /// </summary>
     private void createGraph()
     {
@@ -341,7 +320,6 @@ public class UIManager : MonoBehaviour
             VisualizationManager.Instance.RemoveVisualization(editVizName);
             allVizs.Remove(editviz);
             allVizsNames.Remove(editVizName);
-            Debug.Log("Viz count to " + allVizs.Count);
             EditVizBool = false;
             editVizName = "";
             editVizGraphType = graph.NoGraph;
@@ -356,7 +334,6 @@ public class UIManager : MonoBehaviour
         }
     }
     #endregion
-
 
 
     #region SINGLETON PATTERN

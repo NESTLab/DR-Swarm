@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for setup of editting a viz, the first step is getting what the viz type would be
+/// Class for setup of editting a viz, the first step is getting what the viz type would be.
 /// </summary>
 public class EditViz : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class EditViz : MonoBehaviour
     public Button close;
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     {
@@ -27,7 +27,7 @@ public class EditViz : MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -40,7 +40,7 @@ public class EditViz : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the current type of the viz and display it
+    /// Get the current type of the viz and display it.
     /// </summary>
     void changeVizName()
     {
@@ -94,7 +94,7 @@ public class EditViz : MonoBehaviour
     }
 
     /// <summary>
-    /// Reset the edit object
+    /// Reset the edit object.
     /// </summary>
     private void Reset()
     {

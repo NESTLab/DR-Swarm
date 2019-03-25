@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 
 /// <summary>
-/// Class that creates the var panel and that behaviour
+/// Class that creates the var panel and that behaviour.
 /// </summary>
 public class CreateVarPanel : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public class CreateVarPanel : MonoBehaviour
     public GameObject overallPanel; //panel that contains the var panel
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// Initializes many vars
     /// </summary>
     void Start()
@@ -55,7 +55,7 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -103,7 +103,7 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Add one var prefab
+    /// Add one var prefab.
     /// </summary>
     /// <param name="i"> number in the list itll be </param>
     void addVarPrefab(int i)
@@ -146,7 +146,7 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get vars from a dropdown 
+    /// Get vars from a dropdown .
     /// </summary>
     /// <param name="i">spot i in the list</param>
     void getSelectedVars(int i)
@@ -161,7 +161,7 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Added to the add var button
+    /// Added to the add var button.
     /// </summary>
     void AddVar()
     {
@@ -171,7 +171,7 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Send vars from dropdowns to the UIManager
+    /// Send vars from dropdowns to the UIManager.
     /// </summary>
     void sendVars()
     {
@@ -187,10 +187,10 @@ public class CreateVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the value of the string from list of dropdown options
+    /// Get the value of the string from list of dropdown options.
     /// </summary>
     /// <param name="var">string to get the value i in the list</param>
-    /// <returns></returns>
+    /// <returns>An int that indicated in which part of the dropdowns the string is.</returns>
     int getValueFromVars(string var)
     {
         int val = 0;

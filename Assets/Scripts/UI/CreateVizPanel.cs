@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class that creates the list of viz on the main panel
+/// Class that creates the list of viz on the main panel.
 /// </summary>
 public class CreateVizPanel : MonoBehaviour
 {
@@ -28,13 +28,13 @@ public class CreateVizPanel : MonoBehaviour
     public Sprite range;
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     { }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
@@ -90,8 +90,8 @@ public class CreateVizPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// To remove a visualization you only need to pass the name to the VizManager
-    /// The IViz here is only for sending the viz to UIManagager to keep track of how many vizs there currently are
+    /// To remove a visualization you only need to pass the name to the VizManager.
+    /// The IViz here is only for sending the viz to UIManagager to keep track of how many vizs there currently are.
     /// </summary>
     /// <param name="title">title of the viz</param>
     /// <param name="vz">actual vizualization</param>
@@ -105,10 +105,10 @@ public class CreateVizPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Attached to edit buttons of each prefab, set it to the edit panels
+    /// Attached to edit buttons of each prefab, set it to the edit panels.
     /// </summary>
-    /// <param name="title"> name of viz</param>
-    /// <param name="viz">the viz</param>
+    /// <param name="title"> Name of viz</param>
+    /// <param name="viz">The viz</param>
     void editViz(string title, IVisualization viz)
     {
         UIManager.Instance.editVizName = title;
@@ -119,7 +119,7 @@ public class CreateVizPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Set the image of the viz prefab
+    /// Set the image of the viz prefab.
     /// </summary>
     /// <param name="a">Image object</param>
     /// <param name="g">Graph type</param>
@@ -134,7 +134,7 @@ public class CreateVizPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Turn off the visualization through VuzMAnager
+    /// Turn off the visualization through VizManager.
     /// </summary>
     /// <param name="vizName">name of the viz</param>
     /// <param name="viz">viz</param>
@@ -144,7 +144,7 @@ public class CreateVizPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the graph type of the viz
+    /// Get the graph type of the viz.
     /// </summary>
     /// <param name="viz">viz type</param>
     /// <returns></returns>

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class for the Map Policy Panel
+/// Class for the Map Policy Panel.
 /// </summary>
 public class CreateMapVarPanel : MonoBehaviour
 {
@@ -42,7 +42,7 @@ public class CreateMapVarPanel : MonoBehaviour
 
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     {
@@ -73,8 +73,8 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called once per frame
-    /// , Updates the panel as needed
+    /// Update is called once per frame.
+    /// Updates the panel as needed.
     /// </summary>
     void Update()
     {
@@ -136,9 +136,9 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Add a single color prefab at spot i 
+    /// Add a single color prefab at spot i. 
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void addOneColorPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapColorPolicyPrefab"), optionPanel.transform);
@@ -179,9 +179,9 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Add a single orientation prefab at spot i 
+    /// Add a single orientation prefab at spot i. 
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void addOneOrientationPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapOrientationPolicyPrefab"), optionPanel.transform);
@@ -222,9 +222,9 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Add a single fill prefab at spot i 
+    /// Add a single fill prefab at spot i. 
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void addOneFillPrefab(int i)
     {
         GameObject policyPrefab = (GameObject)Instantiate(Resources.Load("UI/MapFillPolicyPrefab"), optionPanel.transform);
@@ -267,9 +267,9 @@ public class CreateMapVarPanel : MonoBehaviour
 
 
     /// <summary>
-    /// Get the vars from the color prefab at spot I
+    /// Get the vars from the color prefab at spot I.
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void getSelectedVarsC(int i)
     {
         selectedVarsC.Clear();
@@ -285,9 +285,9 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the vars from the orientation prefab at spot I
+    /// Get the vars from the orientation prefab at spot I.
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void getSelectedVarsO(int i)
     {
         selectedVarsO.Clear();
@@ -305,9 +305,9 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the vars from the fill prefab at spot I
+    /// Get the vars from the fill prefab at spot I.
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">Where the prefab is in the list</param>
     private void getSelectedVarsF(int i)
     {
         selectedVarsF.Clear();
@@ -321,7 +321,7 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Added to Add Color Policy button, will add a policy at the bottom of the list
+    /// Added to Add Color Policy button, will add a policy at the bottom of the list.
     /// </summary>
     private void AddPolicyColor()
     {
@@ -337,7 +337,7 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Added to Add orientation Policy button, will add a policy at the bottom of the list
+    /// Added to Add orientation Policy button, will add a policy at the bottom of the list.
     /// </summary>
     private void AddPolicyOrientation()
     {
@@ -368,8 +368,8 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Sends the selected policies to the UIManagers as well as the defaults
-    /// Also signals to add the graph
+    /// Sends the selected policies to the UIManagers as well as the defaults.
+    /// Also signals to add the graph.
     /// </summary>
     public void sendPolicies()
     {
@@ -420,10 +420,10 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the Inidicator shape from the string
+    /// Get the Inidicator shape from the string.
     /// </summary>
     /// <param name="d"> string from the default dropdown</param>
-    /// <returns></returns>
+    /// <returns>An IndicatorShape from string d</returns>
     public IndicatorShape GetShape(string d)
     {
         if (d == "Check") { return IndicatorShape.Check; }
@@ -437,11 +437,11 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// With a string and a list, get the position value. Used for the dropdowns
+    /// With a string and a list, get the position value. Used for the dropdowns.
     /// </summary>
     /// <param name="var">string </param>
     /// <param name="s">string list</param>
-    /// <returns>int value from the list</returns>
+    /// <returns>Int value from the list</returns>
     int getiValueFromList(string var, List<string> s)
     {
         int val = 0;

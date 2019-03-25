@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Class that added the tags prefabs to the robot panel
+/// Class that added the tags prefabs to the robot panel.
 /// </summary>
 public class TagRobotPanel : MonoBehaviour
 {
@@ -18,13 +18,13 @@ public class TagRobotPanel : MonoBehaviour
     public int i = 0;
 
     /// <summary>
-    /// Start is called before the first frame update
+    /// Start is called before the first frame update.
     /// </summary>
     void Start()
     { }
 
     /// <summary>
-    /// Update is called once per frame
+    /// Update is called once per frame.
     /// </summary>
     void Update()
     {
