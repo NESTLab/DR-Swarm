@@ -4,12 +4,24 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Operators;
 
+/// <summary>
+/// Class representing the multivariable pie chart visualization.
+/// </summary>
+/// <remarks>
+/// This visualization is designed for pie charts that compare data points from multiple sources that all come from one robot.
+/// As an example, this visualization can display the amount of time a robot spends idle vs. exploring vs. gathering food.
+/// </remarks>
 public class PieChartMultiVar : IVisualization 
 {
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
     HashSet<Robot> robotSet;
     HashSet<string> varSet;
 
+    /// <summary>
+    /// The class constructor.
+    /// </summary>
+    /// <param name="variables"> The names of the observed data. </param>
+    /// <param name="robots"> The robots to attach this visualization to. </param>
     public PieChartMultiVar(List<string> variables, List<Robot> robots) 
     {
         robotSet = new HashSet<Robot>(robots);
@@ -47,27 +59,41 @@ public class PieChartMultiVar : IVisualization
         });
     }
 
+    /// <summary>
+    /// See <see cref="IVisualization.GetRobots"/>
+    /// </summary>
     public ISet<Robot> GetRobots() 
     {
         return robotSet;
     }
 
+    /// <summary>
+    /// See <see cref="IVisualization.GetVariables"/>
+    /// </summary>
     public ISet<string> GetVariables() 
     {
         return varSet;
     }
 
+    /// <summary>
+    /// See <see cref="IVisualization.GetNumDataSources"/>
+    /// </summary>
     public ParameterCount GetNumDataSources() 
     {
-        // TODO: make a two or more option
-        return ParameterCount.N;
+        return ParameterCount.TwoPlus;
     }
 
+    /// <summary>
+    /// See <see cref="IVisualization.GetNumRobots"/>
+    /// </summary>
     public ParameterCount GetNumRobots() 
     {
         return ParameterCount.One;
     }
 
+    /// <summary>
+    /// See <see cref="IVisualization.GetObservableData"/>
+    /// </summary>
     public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() 
     {
         return dataSource;

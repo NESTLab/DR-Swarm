@@ -1,1 +1,1 @@
-﻿public enum ParameterCount { One, Two, N }
+﻿public enum ParameterCount { One, Two, TwoPlus, N }
