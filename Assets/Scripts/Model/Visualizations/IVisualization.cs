@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 
 // TODO: go over the documentation
+// TODO: make function for getObservable
 /// <summary>
 /// IVisualization is the interface for data about visualizations. 
 /// Each visualization should implement this, and a separate class for the VisualizationContainer
@@ -11,7 +12,7 @@ using UniRx;
 /// <remarks>
 /// Details about the interface go here.
 /// </remarks>
-public interface IVisualization
+public abstract class IVisualization  // TODO: change name to Visualization
 {
     // getObservableData returns an observable Dictionary<Robot, List<float>>
     // The reason for using this data type is to be able to encode one or more
