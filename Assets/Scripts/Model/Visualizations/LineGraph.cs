@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-//TODO: Jerry should try to make this match the other classes
+// TODO: Jerry should try to make this match the other classes
 public class LineGraph : IVisualization
 {
     IObservable<Dictionary<Robot, float>> xAxisObs, yAxisObs;

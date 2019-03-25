@@ -5,6 +5,14 @@ using UniRx;
 using UnityEngine;
 using shapeNamespace;
 
+// TODO: fill out the documentation
+/// <summary>
+/// Class level summary documentation goes here.
+/// </summary>
+/// <remarks>
+/// Longer comments can be associated with a type or member through
+/// the remarks tag.
+/// </remarks>
 public class RangeIndicator : IVisualization
 {
     IObservable<Dictionary<Robot, Dictionary<string, float>>> dataSource;
@@ -16,7 +24,11 @@ public class RangeIndicator : IVisualization
     Color defaultColor;
     IndicatorShape defaultShape;
 
-    public RangeIndicator(string variableName, List<RangePolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots) {
+    /// <summary>
+    /// The class constructor.
+    /// </summary>
+    public RangeIndicator(string variableName, List<RangePolicy> policies, Color color, IndicatorShape shape, Robot firstRobot, params Robot[] robots) 
+    {
         robotSet = new HashSet<Robot>(robots);
         robotSet.Add(firstRobot);
 
@@ -28,22 +40,29 @@ public class RangeIndicator : IVisualization
         defaultColor = color;
         defaultShape = shape;
 
-        dataSource = robotSet.ToObservable().SelectMany(robot => {
+        dataSource = robotSet.ToObservable().SelectMany(robot => 
+        {
             List<IObservable<Dictionary<string, float>>> variableList = new List<IObservable<Dictionary<string, float>>>();
-            foreach (string variable in varSet) {
-                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => {
+            foreach (string variable in varSet) 
+            {
+                variableList.Add(robot.GetObservableVariable<float>(variable).Select(v => 
+                {
                     return new Dictionary<string, float>() { { variable, v } };
                 }));
             }
 
-            return Observable.CombineLatest(variableList).Select(varList => {
+            return Observable.CombineLatest(variableList).Select(varList => 
+            {
                 Dictionary<Robot, Dictionary<string, float>> dict = new Dictionary<Robot, Dictionary<string, float>>();
-                foreach (Dictionary<string, float> varDict in varList) {
-                    if (!dict.ContainsKey(robot)) {
+                foreach (Dictionary<string, float> varDict in varList) 
+                {
+                    if (!dict.ContainsKey(robot)) 
+                    {
                         dict[robot] = new Dictionary<string, float>();
                     }
 
-                    foreach (string key in varDict.Keys) {
+                    foreach (string key in varDict.Keys) 
+                    {
                         dict[robot][key] = varDict[key];
                     }
                 }
@@ -53,48 +72,109 @@ public class RangeIndicator : IVisualization
         });
     }
 
-    public void AddPolicy(RangePolicy P) {
-        // verify that the policy works with the others
-        foreach (RangePolicy policy in policyList) {
-            // if new policy's min is in between a current policy's min and max, new one is incompatible
-            if ((policy.range[0] <= P.range[0] && P.range[0] < policy.range[1]) || (P.range[0] <= policy.range[0] && policy.range[0] < P.range[1])) { //TODO: are these the only cases?
+    /// <summary>
+    /// Some other method.
+    /// </summary>
+    /// <returns>
+    /// Return values are described through the returns tag.
+    /// </returns>
+    public void AddPolicy(RangePolicy P) 
+    {
+        // Verify that the new policy works with the existing ones.
+        foreach (RangePolicy policy in policyList) 
+        {
+            // If the new policy's min or max is in between a current policy's min and max, it is incompatible and cannot be added.
+            // TODO: are these the only cases?
+            if ((policy.range[0] <= P.range[0] && P.range[0] < policy.range[1]) || (P.range[0] <= policy.range[0] && policy.range[0] < P.range[1])) 
+            { 
                 throw new Exception(String.Format("Policy range is incompatible"));
             }
-            else {
+            else 
+            {
                 policyList.Add(P);
             }
         }
     }
-    
-    public IndicatorShape GetDefaultShape() {
+
+    /// <summary>
+    /// Some other method.
+    /// </summary>
+    /// <returns>
+    /// Return values are described through the returns tag.
+    /// </returns>
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public IndicatorShape GetDefaultShape() 
+    {
         return defaultShape;
     }
 
-    public Color GetDefaultColor() {
+    /// <summary>
+    /// Some other method.
+    /// </summary>
+    /// <returns>
+    /// Return values are described through the returns tag.
+    /// </returns>
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public Color GetDefaultColor() 
+    {
         return defaultColor;
     }
 
-    public List<RangePolicy> GetPolicies() {
+    /// <summary>
+    /// Some other method.
+    /// </summary>
+    /// <returns>
+    /// Return values are described through the returns tag.
+    /// </returns>
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public List<RangePolicy> GetPolicies() 
+    {
         return policyList;
     }
 
-    public ISet<Robot> GetRobots() {
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public ISet<Robot> GetRobots() 
+    {
         return robotSet;
     }
 
-    public ISet<string> GetVariables() {
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public ISet<string> GetVariables() 
+    {
         return varSet;
     }
 
-    public ParameterCount GetNumDataSources() {
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public ParameterCount GetNumDataSources() 
+    {
         return ParameterCount.One;
     }
 
-    public ParameterCount GetNumRobots() {
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public ParameterCount GetNumRobots() 
+    {
         return ParameterCount.N;
     }
 
-    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() {
+    /// <seealso cref="SomeMethod(string)">
+    /// Notice the use of the cref attribute to reference a specific method.
+    /// </seealso>
+    public IObservable<Dictionary<Robot, Dictionary<string, float>>> GetObservableData() 
+    {
         return dataSource;
     }
 }
