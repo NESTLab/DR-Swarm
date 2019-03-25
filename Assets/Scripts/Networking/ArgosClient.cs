@@ -46,14 +46,16 @@ public class ArgosClient : MonoBehaviour
     private static int port = 8052;
 
     // Start is called before the first frame update
-    void Start() { }
+    void Start() {
+        CreateRecvThread();
+    }
 
     /// <summary>
-    /// Create a new thread to recieve data
+    /// Create a new thread to receive data
     /// </summary>
     private void CreateRecvThread()
     {
-        recvThread = new Thread(new ThreadStart(RecieveData));
+        recvThread = new Thread(new ThreadStart(ReceiveData));
         recvThread.IsBackground = true;
         recvThread.Start();
     }
@@ -66,7 +68,7 @@ public class ArgosClient : MonoBehaviour
     ///     Designed to run in a separate thread, since it has a while loop that
     ///     runs for a long time.
     /// </remarks>
-    private void RecieveData()
+    private void ReceiveData()
     {
         client = new TcpClient();
 
@@ -94,11 +96,11 @@ public class ArgosClient : MonoBehaviour
                         // Decode the data from the server with UTF8 formatting
                         responseData = Encoding.UTF8.GetString(data, 0, bytes);
 
-                        // Add the parsed data to the string builder and check if \n was recieved
+                        // Add the parsed data to the string builder and check if \n was received
                         builder.Append(responseData);
                         if (responseData.Contains("\n"))
                         {
-                            // Parse the data recieved as JSON
+                            // Parse the data received as JSON
                             String jsonString = builder.ToString();
                             jsonString = jsonString.Substring(4);
                             Debug.Log(jsonString);
