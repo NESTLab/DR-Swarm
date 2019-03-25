@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using shapeNamespace;
@@ -32,6 +33,8 @@ public class RangePolicy : Policy {
     public RangePolicy(string name, float minValue, float maxValue) : base(name) {
         this.range = new Vector2(minValue, maxValue);
     }
+
+    
 }
 
 public class MapPolicy : Policy {
