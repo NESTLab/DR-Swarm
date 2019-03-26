@@ -2496,6 +2496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b057da6309eea4d4f86867daad687111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addedName: 
 --- !u!33 &97867918
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -13073,6 +13074,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b057da6309eea4d4f86867daad687111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addedName: 
 --- !u!33 &667630405
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -29097,6 +29099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b057da6309eea4d4f86867daad687111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addedName: RobotTarget1 (UnityEngine.Transform)
 --- !u!64 &1450731949
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -34525,6 +34528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b057da6309eea4d4f86867daad687111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addedName: R2
 --- !u!64 &1671327021
 MeshCollider:
   m_ObjectHideFlags: 0

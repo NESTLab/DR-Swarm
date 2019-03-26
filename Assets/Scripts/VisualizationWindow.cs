@@ -17,6 +17,7 @@ public class VisualizationWindow : MonoBehaviour {
 
     // A set of names for the visualization containers associated with this window
     private HashSet<string> visualizationNames;
+    public string addedName;
 
     // Use this for initialization
     void Start() {
@@ -24,6 +25,11 @@ public class VisualizationWindow : MonoBehaviour {
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
         visualizationNames = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
+        System.Type MyScriptType = System.Type.GetType("WindowTouch" + ",Assembly-CSharp");
+
+        WindowTouch script = (WindowTouch)canvas.AddComponent(MyScriptType);
+        Debug.Log("Adding Robot name " + addedName + "  " + robot.name);
+        script.SwitchVizOnWindow(addedName);
 
         // Subscribe to the set of visualizations for this robot
         // A callback gets called if a visualization was added or removed for the robot
