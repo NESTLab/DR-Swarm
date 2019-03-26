@@ -456,7 +456,7 @@ public class CreateMapVarPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// get string of color from the Color.
+    /// Get string of color from the Color.
     /// </summary>
     /// <param name="c"></param>
     /// <returns>string of a color</returns>
