@@ -18,6 +18,7 @@ public class VisualizationWindow : MonoBehaviour {
     // A set of names for the visualization containers associated with this window
     private HashSet<string> visualizationNames;
     public string addedName;
+    private int indexViz = 0;
 
     // Use this for initialization
     void Start() {
@@ -25,11 +26,11 @@ public class VisualizationWindow : MonoBehaviour {
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
         visualizationNames = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
-        System.Type MyScriptType = System.Type.GetType("WindowTouch" + ",Assembly-CSharp");
+        //System.Type MyScriptType = System.Type.GetType("WindowTouch" + ",Assembly-CSharp");
 
-        WindowTouch script = (WindowTouch)canvas.AddComponent(MyScriptType);
-        Debug.Log("Adding Robot name " + addedName + "  " + robot.name);
-        script.SwitchVizOnWindow(addedName);
+        //WindowTouch script = (WindowTouch)canvas.AddComponent(MyScriptType);
+        //Debug.Log("Adding Robot name " + addedName + "  " + robot.name);
+        //script.SwitchVizOnWindow(addedName);
 
         // Subscribe to the set of visualizations for this robot
         // A callback gets called if a visualization was added or removed for the robot
@@ -137,10 +138,19 @@ public class VisualizationWindow : MonoBehaviour {
             toggleDisplay(VisualizationManager.Instance.turnOffVisualizationName);
             VisualizationManager.Instance.turnOffVisualizationName = null;
         }
+        if (UIManager.Instance.RobotToSwitchVisualizations.Equals(robot.name))
+        {
+            Debug.Log("It is that");
+            SwitchVisualization();
+            UIManager.Instance.RobotToSwitchVisualizations = "";
+        }
     }
 
 
-    //Toggle the display(change if it is active)
+    /// <summary>
+    /// Toggle the display(change if it is active).
+    /// </summary>
+    /// <param name="visualizationName"></param>
     public void toggleDisplay(string visualizationName)
     {
         Debug.Log("viz name Window:" + visualizationName);
@@ -149,4 +159,32 @@ public class VisualizationWindow : MonoBehaviour {
         GameObject viz = container.Find(visualizationName).gameObject;
         viz.SetActive(!viz.activeSelf);
     }
+
+    private void SwitchVisualization()
+    {
+        if(visualizationNames.Count > 1)
+        {
+            Debug.Log("Swithcing prev is " + indexViz +" count " + visualizationNames.Count);
+            indexViz = indexViz+1;
+            if(indexViz > visualizationNames.Count) { Debug.Log("Reseting"); indexViz = 0; }
+            
+            List<string> names = new List<string> ( visualizationNames );
+            Debug.Log("Going to " + indexViz + " which is " + names[indexViz]);
+            for(int i = 0; i < names.Count; i++)
+            {
+                GameObject viz = container.Find(names[i]).gameObject;
+                if (i == indexViz)
+                {
+                    viz.SetActive(true);
+
+                } else
+                {
+                    viz.SetActive(false);
+
+                }
+            }
+        }
+
+    }
+
 }

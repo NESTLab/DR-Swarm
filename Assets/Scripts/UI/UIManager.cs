@@ -73,6 +73,7 @@ public class UIManager : MonoBehaviour
     public List<string> checkedTagNames = new List<string>();
 
     public bool AddRobotMode = false; //Used for the touch robots, know when clicking on a robot will add it
+    public string RobotToSwitchVisualizations = ""; //var used for switching the visualizations on the canvas
 
     /// <summary>
     /// Variable that will detect when changed.
@@ -333,6 +334,7 @@ public class UIManager : MonoBehaviour
             editVizRobots = new List<string>();
         }
     }
+
     #endregion
 
 

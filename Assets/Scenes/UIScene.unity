@@ -23463,6 +23463,7 @@ GameObject:
   - component: {fileID: 1180495159}
   - component: {fileID: 1180495158}
   - component: {fileID: 1180495161}
+  - component: {fileID: 1180495162}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -23546,6 +23547,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e06741d78814bd141b39ef09459857c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1180495162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180495157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36557ed0c47e05d469fd325bb97b726f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robotName1: RobotTarget1 (UnityEngine.Transform)
+  robotName2: RobotTarget2 (UnityEngine.Transform)
+  robotName3: RobotTarget3 (UnityEngine.Transform)
+  robotName4: RobotTarget4 (UnityEngine.Transform)
 --- !u!1 &1182740668
 GameObject:
   m_ObjectHideFlags: 0
