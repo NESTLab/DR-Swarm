@@ -2,58 +2,64 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataManager : MonoBehaviour {
-
-    Dictionary<string, Robot> robots;
-
-    public DataManager()
+namespace DrSwarm.Model
+{
+    public class DataManager : MonoBehaviour
     {
-        robots = new Dictionary<string, Robot>();
-    }
 
-    #region SINGLETON PATTERN
-    // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
-    private static DataManager _instance;
-    public static DataManager Instance
-    {
-        get
+        Dictionary<string, Robot> robots;
+
+        public DataManager()
         {
-            if (_instance == null)
-            {
-                _instance = GameObject.FindObjectOfType<DataManager>();
+            robots = new Dictionary<string, Robot>();
+        }
 
+        #region SINGLETON PATTERN
+        // Thanks https://answers.unity.com/questions/891380/unity-c-singleton.html
+        private static DataManager _instance;
+        public static DataManager Instance
+        {
+            get
+            {
                 if (_instance == null)
                 {
-                    GameObject container = new GameObject("DataModel");
-                    _instance = container.AddComponent<DataManager>();
+                    _instance = GameObject.FindObjectOfType<DataManager>();
+
+                    if (_instance == null)
+                    {
+                        GameObject container = new GameObject("DataModel");
+                        _instance = container.AddComponent<DataManager>();
+                    }
                 }
+
+                return _instance;
+            }
+        }
+        #endregion
+
+        public Robot GetRobot(string robotName)
+        {
+            if (!robots.ContainsKey(robotName))
+            {
+                robots[robotName] = new Robot(robotName);
             }
 
-            return _instance;
+            return robots[robotName];
         }
-    }
-    #endregion
-
-    public Robot GetRobot(string robotName)
-    {
-        if (!robots.ContainsKey(robotName))
+        //Return List of all robots that there is data for
+        public List<Robot> GetAllRobots()
         {
-            robots[robotName] = new Robot(robotName);
+            return new List<Robot>(robots.Values);
         }
 
-        return robots[robotName];
-    }
-    //Return List of all robots that there is data for
-    public List<Robot> GetAllRobots()
-    {
-        return new List<Robot>(robots.Values );
-    }
+        // Use this for initialization
+        void Start()
+        {
+        }
 
-    // Use this for initialization
-    void Start () {
-	}
-
-    // Update is called once per frame
-	void Update () {
+        // Update is called once per frame
+        void Update()
+        {
+        }
     }
 }
