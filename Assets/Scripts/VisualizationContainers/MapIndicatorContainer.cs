@@ -61,6 +61,7 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
         sprites[IndicatorShape.Arrow] = arrow;
     }
 
+    // TODO: probably incorporate into draw function
     /// <summary>
     /// Maps the color of the indicator to the value of the associated variable.
     /// </summary>

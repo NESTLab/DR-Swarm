@@ -6,11 +6,15 @@ using UniRx;
 using System.Linq;
 using shapeNamespace;
 
+/// <summary>
+/// Class responsible for drawing the range indicator visualization.
+/// </summary>
+/// <remarks>
+/// Instances of VisualizationContainer have access to the container RectTransform container: 
+/// the RectTransform of the drawable area in the canvas. 
+/// This is NOT the same as canvas.GetComponent<RectTransform>()
+/// </remarks>
 public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
-    // Instances of VisualizationContainer have access to the container
-    // RectTransform container: the RectTransform of the drawable area in the
-    // canvas. NOT the same as canvas.GetComponent<RectTransform>()
-
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
@@ -28,7 +32,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
     private Sprite plus;
     private Sprite arrow;
 
-    // Initialize things
+    /// <summary>
+    /// Initializes the visualization container.
+    /// </summary>
     protected override void Start() {
         // TODO: maybe remove
         base.Start();
@@ -55,13 +61,21 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         sprites[IndicatorShape.Arrow] = arrow;
     }
 
+    /// <summary>
+    /// Creates a new range indicator.
+    /// </summary>
+    /// <param name="value"> The value of the variable associated with the desired indicator. </param>
+    /// <returns>
+    /// Returns a new range indicator.
+    /// </returns>
     private GameObject CreateIndicator(float value) {
         GameObject indicator = new GameObject("indicator", typeof(Image));
         indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
-            if (p.range.x <= value && value < p.range.y) { // have the right policy
+            // Find the right policy.
+            if (p.range.x <= value && value < p.range.y) { 
                 IndicatorShape shape = p.shape;
 
                 indicator.GetComponent<Image>().sprite = sprites[shape];
@@ -73,6 +87,14 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         return indicator;
     }
 
+    /// <summary>
+    /// Get a range indicator from the indicators dictionary.
+    /// </summary>
+    /// <param name="robot"> The robot associated with the desired indicator. </param>
+    /// <param name="value"> The value of the variable associated with the desired indicator. </param>
+    /// <returns>
+    /// Returns the Range Indicator associated with a specific robot, or a new Range Indicator if none has been assigned yet.
+    /// </returns>
     private GameObject GetIndicator(Robot robot, float value) {
         if (!indicators.ContainsKey(robot)) {
             GameObject indicator = CreateIndicator(value);
@@ -83,7 +105,9 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         return indicators[robot];
     }
 
-    // Update stuff in Unity scene. Called automatically each frame update
+    /// <summary>
+    /// Update the Unity scene. Called automatically each frame update.
+    /// </summary>
     public override void Draw() {
         GameObject indicator = GetIndicator(this.robot, dataDict[variables[0]]);
         float value = dataDict[variables[0]];  // TODO: might be able to simplify this even more
@@ -91,7 +115,8 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
 
         foreach (RangePolicy p in policies) {
-            if (p.range.x <= value && value < p.range.y) { // have the right policy
+            // Find the right policy.
+            if (p.range.x <= value && value < p.range.y) { 
                 IndicatorShape shape = p.shape;
                 indicator.GetComponent<Image>().sprite = sprites[shape];
 
@@ -100,9 +125,11 @@ public class RangeIndicatorContainer : VisualizationContainer<RangeIndicator> {
             }
         }
     }
-
-    // Update internal storage of data. Called automatically when data in
-    // corresponding Visualization class
+    
+    /// <summary>
+    /// Update internal storage of data. Called automatically when data in corresponding Visualization class.
+    /// </summary>
+    /// <param name="data"> Dictionary of all data relevant to the visualization. </param>
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         if (data.ContainsKey(this.robot)) {
             foreach (string var in data[robot].Keys) {

@@ -5,11 +5,15 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 
+/// <summary>
+/// Class responsible for drawing the bar graph visualization.
+/// </summary>
+/// <remarks>
+/// Instances of VisualizationContainer have access to the container RectTransform container: 
+/// the RectTransform of the drawable area in the canvas. 
+/// This is NOT the same as canvas.GetComponent<RectTransform>()
+/// </remarks>
 public class BarGraphContainer : VisualizationContainer<BarGraph> {
-    // Instances of VisualizationContainer have access to the container
-    // RectTransform container: the RectTransform of the drawable area in the
-    // canvas. NOT the same as canvas.GetComponent<RectTransform>()
-
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<Robot, Dictionary<string, float>> dataDict = new Dictionary<Robot, Dictionary<string, float>>();
@@ -22,15 +26,19 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
     private Dictionary<int, GameObject> yLabels = new Dictionary<int, GameObject>();
 
     private float curHVal = 0f;
-    private float invphi = 1f / 1.618f; // golden ratio
-    private float topVal = 0f;  // this is for dynamically resizing the graphs
+    // Golden ratio for assigning new colors.
+    private float invphi = 1f / 1.618f;
+    // This is for dynamically resizing the graphs.
+    private float topVal = 0f;  
 
     private GameObject graphContainer;
     private GameObject legendContainer;
 
     private float axisOffset;
 
-    // Initialize things
+    /// <summary>
+    /// Initializes the visualization container.
+    /// </summary>
     protected override void Start() {
         //TODO: maybe remove
         base.Start();
@@ -41,7 +49,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
 
         axisOffset = 30f;
 
-        // set up bar graph container
+        // Set up bar graph container.
         graphContainer = new GameObject("BarGraph", typeof(Image));
         graphContainer.transform.SetParent(container.transform, false);
         RectTransform gt = graphContainer.GetComponent<RectTransform>();
@@ -55,7 +63,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
 
         graphContainer.GetComponent<Image>().color = Color.clear;
 
-        // set up legend container
+        // Set up legend container.
         legendContainer = new GameObject("Legend", typeof(Image));
         legendContainer.transform.SetParent(container.transform, false);
         RectTransform lt = legendContainer.GetComponent<RectTransform>();
@@ -87,8 +95,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         xt.pivot = Vector2.zero;
         xt.anchoredPosition = new Vector2(axisOffset, axisOffset);  //TODO: change this eventually
 
-        // gotta be a better way to do these - with a dynamic number of lines
-        // top guideline
+        // Top guideline
         GameObject top = CreateImage("top-guide", gt, Color.white);
         RectTransform tt = top.GetComponent<RectTransform>();
         tt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f);
@@ -99,7 +106,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
 
         yLabels[1] = CreateLabel("top-label");
 
-        // middle guideline
+        // Middle guideline
         GameObject mid = CreateImage("mid-guide", gt, Color.white);
         RectTransform mt = mid.GetComponent<RectTransform>();
         mt.sizeDelta = new Vector2(gt.sizeDelta.x - axisOffset, 1f);
@@ -111,6 +118,15 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         yLabels[0] = CreateLabel("mid-label");
     }
 
+    /// <summary>
+    /// Creates a new Image, either a container or a bar.
+    /// </summary>
+    /// <param name="name"> The name of the new Image. </param>
+    /// <param name="parent"> The parent RectTransform. </param>
+    /// <param name="color"> The desired color of the Image. </param>
+    /// <returns>
+    /// Returns a new Image.
+    /// </returns>
     private GameObject CreateImage(string name, RectTransform parent, Color color) {
         GameObject image = new GameObject(name, typeof(Image));
         image.transform.SetParent(parent, false);
@@ -123,6 +139,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return image;
     }
 
+    /// <summary>
+    /// Gets a LegendKey from the legend dictionary.
+    /// </summary>
+    /// <param name="var"> The name of the variable associated with the desired LegendKey. </param>
+    /// <returns>
+    /// Returns the legend key associated with a specific variable, or a new LegendKey if none has been assigned yet.
+    /// </returns>
     private GameObject GetLegendKey(string var) {
         if (!legend.ContainsKey(var)) {
             GameObject blankKey = (GameObject)Instantiate(Resources.Load("LegendKey"), transform);
@@ -133,6 +156,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return legend[var];
     }
 
+    /// <summary>
+    /// Gets a barContainer from the barContainers dictionary.
+    /// </summary>
+    /// <param name="robot"> The name of the robot associated with the desired barContainer. </param>
+    /// <returns>
+    /// Returns the barContainer associated with a specific variable, or a new barContainer if none has been assigned yet.
+    /// </returns>
     private GameObject GetBarContainer(Robot robot) {
         if (!barContainers.ContainsKey(robot)) { 
             GameObject container = new GameObject("barContainer", typeof(Image));
@@ -144,16 +174,25 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return barContainers[robot];
     }
 
-    // this might make the bar containers function useless
+    // TODO: this might make the bar containers function useless
+    /// <summary>
+    /// Gets a bar from the bars dictionary.
+    /// </summary>
+    /// <param name="robot"> The name of the robot associated with the desired bar. </param>
+    /// <param name="parent"> The parent RectTransform. </param>
+    /// <param name="var"> The name of the variable associated with the desired bar. </param>
+    /// <returns>
+    /// Returns the bar associated with a specific variable, or a new bar if none has been assigned yet.
+    /// </returns>
     private GameObject GetBar(Robot robot, RectTransform parent, string var) {
         if (!bars.ContainsKey(robot)) {
-            // initialize the dictionary
+            // Initialize the dictionary.
             Dictionary<string, GameObject> barDict = new Dictionary<string, GameObject>();
             bars[robot] = barDict;
         }
 
         if (!bars[robot].ContainsKey(var)) {
-            // initialize the single bar
+            // Initialize the single bar.
             GameObject blankBar = CreateImage("bar", parent, Color.white);
             blankBar.GetComponent<Image>().color = varColors[var];
             bars[robot][var] = blankBar;
@@ -162,6 +201,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return bars[robot][var];
     }
 
+    /// <summary>
+    /// Gets an x-label from the xLabels dictionary.
+    /// </summary>
+    /// <param name="r"> The name of the robot associated with the desired x-label. </param>
+    /// <returns>
+    /// Returns the x-label associated with a specific variable, or a new x-label if none has been assigned yet.
+    /// </returns>
     private GameObject GetXLabel(Robot r) {
         if (!xLabels.ContainsKey(r)) {
             GameObject label = CreateLabel("x-label");
@@ -171,6 +217,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return xLabels[r];
     }
 
+    /// <summary>
+    /// Creates a new label.
+    /// </summary>
+    /// <param name="name"> The name for the label. </param>
+    /// <returns>
+    /// Returns a new label.
+    /// </returns>
     private GameObject CreateLabel(string name) {
         GameObject label = new GameObject(name, typeof(Text));
         Text text = label.GetComponent<Text>();
@@ -185,11 +238,13 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         return label;
     }
 
-    // Update stuff in Unity scene. Called automatically each frame update
+    /// <summary>
+    /// Update the Unity scene. Called automatically each frame update.
+    /// </summary>
     public override void Draw() {
         float containerSpacing = 10f;
         float containerCount = 0f;
-        float barSpacing = 0f;  // change this eventually
+        float barSpacing = 0f;  // TODO: change this eventually
         float barCount = 0f;
         float keyXSpacing = 2f;
         float keyYSpacing = 10f;
@@ -206,12 +261,12 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
             ct.localScale = Vector3.one;
             ct.localRotation = new Quaternion(0, 0, 0, 0);
             RectTransform parent = graphContainer.GetComponent<RectTransform>();
-            // width should be container width divided by number of robots
+            // Width should be container width divided by number of robots.
             float containerSize = ((parent.sizeDelta.x - axisOffset) / robots.Count) - containerSpacing;
             ct.sizeDelta = new Vector2(containerSize, parent.sizeDelta.y - axisOffset);
             ct.anchoredPosition = new Vector2(((containerSize + containerSpacing) * containerCount) + axisOffset + 2, axisOffset + 2); //TODO: change this eventually
             
-            // x labels
+            // X labels
             GameObject xLabel = GetXLabel(r);
             xLabel.transform.SetParent(graphContainer.transform, false);
             xLabel.GetComponent<Text>().text = r.name;
@@ -223,18 +278,18 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
             xTransform.anchoredPosition = new Vector2(((containerSpacing + containerSize) * containerCount) + axisOffset + 2 + (containerSize/2), 0f);
             xTransform.sizeDelta = new Vector2(100f, axisOffset);  //TODO: change eventually
 
-            // now that we have the container, we need to fill it with the bars
+            // Now that we have the container, we need to fill it with the bars.
             foreach (string var in variables) {
                 GameObject bar = GetBar(r, ct, var);
 
-                // put the bar inside the container
+                // Put the bar inside the container.
                 bar.transform.SetParent(barContainer.transform, false);
                 RectTransform bparent = barContainer.GetComponent<RectTransform>();
 
-                // width should be container width divided by number of robots
+                // Width should be container width divided by number of robots.
                 float barSize = (bparent.sizeDelta.x) / variables.Count;
 
-                // set size
+                // Set size.
                 float value = dataDict[r][var];
 
                 if (value > topVal) {
@@ -250,7 +305,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
                 tb.pivot = new Vector2(0f, 0f);
                 tb.anchoredPosition = new Vector2((barSpacing + tb.rect.width) * barCount, 0f);
 
-                // set guide labels
+                // Set guide labels.
                 GameObject top = yLabels[1];
                 top.transform.SetParent(graphContainer.transform, false);
                 top.GetComponent<Text>().text = string.Format("{0:0.##}", topVal);
@@ -271,7 +326,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
                 mTransform.anchoredPosition = new Vector2(axisOffset / 2, -graphContainer.GetComponent<RectTransform>().sizeDelta.y/2); 
                 mTransform.sizeDelta = new Vector2(axisOffset, 25f);  //TODO: change eventually
 
-                // update barCount
+                // Update barCount.
                 barCount += 1;
             }
 
@@ -279,17 +334,18 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         }
 
         foreach (string var in variables) {
-            // set color and text values for each variable
+            // Set color and text values for each variable.
             GameObject key = GetLegendKey(var);
             key.transform.SetParent(legendContainer.transform, false);
 
             GameObject icon = key.transform.Find("Icon").gameObject;
-            icon.GetComponent<Image>().color = varColors[var];  // same color as bar
+            // Same color as bar.
+            icon.GetComponent<Image>().color = varColors[var];  
 
             GameObject text = key.transform.Find("Text").gameObject;
             text.GetComponent<Text>().text = var;
 
-            // set key position
+            // Set key position.
             RectTransform kt = key.GetComponent<RectTransform>();
             kt.anchorMax = new Vector2(0f, 1f);
             kt.anchorMin = new Vector2(0f, 1f);
@@ -297,7 +353,7 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
             kt.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             kt.localRotation = new Quaternion(0, 0, 0, 0);
 
-            // translate each key lower than the last
+            // Translate each key lower than the last.
             float x = (keyXSpacing + kt.rect.width) * (keyCount / 2) * kt.localScale.x;
             float y = (-keyYSpacing - kt.rect.height) * ((keyCount) % 2) * kt.localScale.y;
             kt.anchoredPosition = new Vector2(x, y);  //TODO: this is not the best solution
@@ -306,8 +362,10 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
         }
     }
 
-    // Update internal storage of data. Called automatically when data in
-    // corresponding Visualization class
+    /// <summary>
+    /// Update internal storage of data. Called automatically when data in corresponding Visualization class.
+    /// </summary>
+    /// <param name="data"> Dictionary of all data relevant to the visualization. </param>
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         foreach (Robot r in data.Keys) {
             if (!robots.Contains(r)) {
@@ -318,11 +376,11 @@ public class BarGraphContainer : VisualizationContainer<BarGraph> {
             foreach (string var in data[r].Keys) {
                 dataDict[r][var] = data[r][var];
 
-                //TODO: this is not the best way to do it, but not seeing another option at the moment
+                // TODO: this is not the best way to do it, but not seeing another option at the moment
                 if (!variables.Contains(var)) {
                     variables.Add(var);
 
-                    // set the color for the new variable
+                    // Set the color for the new variable.
                     varColors[var] = Color.HSVToRGB(curHVal, 1, 1);
                     curHVal = (curHVal + invphi) % 1.0f;
                 }
