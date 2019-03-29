@@ -6,11 +6,15 @@ using UniRx;
 using System.Linq;
 using shapeNamespace;
 
+/// <summary>
+/// Class responsible for drawing the map indicator visualization.
+/// </summary>
+/// <remarks>
+/// Instances of VisualizationContainer have access to the container RectTransform container: 
+/// the RectTransform of the drawable area in the canvas. 
+/// This is NOT the same as canvas.GetComponent<RectTransform>()
+/// </remarks>
 public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
-    // Instances of VisualizationContainer have access to the container
-    // RectTransform container: the RectTransform of the drawable area in the
-    // canvas. NOT the same as canvas.GetComponent<RectTransform>()
-
     List<Robot> robots = new List<Robot>();
     List<string> variables = new List<string>();
     Dictionary<string, float> dataDict = new Dictionary<string, float>();
@@ -28,7 +32,9 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
     private Sprite plus;
     private Sprite arrow;
 
-    // Initialize things
+    /// <summary>
+    /// Initializes the visualization container.
+    /// </summary>
     protected override void Start() {
         // TODO: maybe remove
         base.Start();
@@ -55,18 +61,32 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
         sprites[IndicatorShape.Arrow] = arrow;
     }
 
+    /// <summary>
+    /// Maps the color of the indicator to the value of the associated variable.
+    /// </summary>
+    /// <param name="v"> The value of the variable associated with the color field of the indicator. </param>
+    /// <returns>
+    /// Returns a color. 
+    /// </returns>
     private Color SetColor(float v) {
         v = (float)(v % 1.0);
         Color c = Color.HSVToRGB(v, 1f, 1f);
         return c;
     }
     
+    /// <summary>
+    /// Creates a new map indicator.
+    /// </summary>
+    /// <returns>
+    /// Returns a new map indicator.
+    /// </returns>
     private GameObject CreateIndicator() {
         GameObject indicator = new GameObject("indicator", typeof(Image));
         indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
-        indicator.GetComponent<Image>().type = Image.Type.Filled;  // this is so we can change the amount it's filled
-                                                                   // We're gonna have to change how it's filled, but that's a later problem
+        // This is so we can change the amount the indicator is filled.
+        // TODO: Figure out how to change how it's filled
+        indicator.GetComponent<Image>().type = Image.Type.Filled;
 
         string var;
         float val;
@@ -99,7 +119,14 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
 
         return indicator;
     }
-    
+
+    /// <summary>
+    /// Get a map indicator from the indicators dictionary.
+    /// </summary>
+    /// <param name="robot"> The robot associated with the desired indicator. </param>
+    /// <returns>
+    /// Returns the Map Indicator associated with a specific robot, or a new Map Indicator if none has been assigned yet.
+    /// </returns>
     private GameObject GetIndicator(Robot robot) { 
         if (!indicators.ContainsKey(robot)) {
             GameObject indicator = CreateIndicator();
@@ -110,12 +137,14 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
         return indicators[robot];
     }
 
-    // Update stuff in Unity scene. Called automatically each frame update
+    /// <summary>
+    /// Update the Unity scene. Called automatically each frame update.
+    /// </summary>
     public override void Draw() {
         GameObject indicator = GetIndicator(this.robot);
         indicator.GetComponent<Image>().sprite = sprites[vis.GetDefaultShape()];
         indicator.GetComponent<Image>().color = vis.GetDefaultColor();
-        // probably gonna need more of these for fill default and orientation default
+
         string var;
         float val;
 
@@ -138,8 +167,10 @@ public class MapIndicatorContainer : VisualizationContainer<MapIndicator> {
         }
     }
 
-    // Update internal storage of data. Called automatically when data in
-    // corresponding Visualization class
+    /// <summary>
+    /// Update internal storage of data. Called automatically when data in corresponding Visualization class.
+    /// </summary>
+    /// <param name="data"> Dictionary of all data relevant to the visualization. </param>
     protected override void UpdateData(Dictionary<Robot, Dictionary<string, float>> data) {
         if (data.ContainsKey(this.robot)) {
             foreach (string var in data[robot].Keys) {
