@@ -1,25 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using DrSwarm.Model;
 
-public class SerializedDataPack
+namespace DrSwarm.Networking
 {
-    public Dictionary<string, Dictionary<string, float>> variables;
-
-    public SerializedDataPack()
+    public class SerializedDataPack
     {
-        variables = new Dictionary<string, Dictionary<string, float>>();
-    }
+        public Dictionary<string, Dictionary<string, float>> variables;
 
-    public void AssignVariables()
-    {
-        foreach (string robotName in variables.Keys)
+        public SerializedDataPack()
         {
-            Robot robot = DataManager.Instance.GetRobot(robotName);
+            variables = new Dictionary<string, Dictionary<string, float>>();
+        }
 
-            foreach (string variableName in variables[robotName].Keys)
+        public void AssignVariables()
+        {
+            foreach (string robotName in variables.Keys)
             {
-                robot.SetVariable(variableName, variables[robotName][variableName]);
+                Robot robot = DataManager.Instance.GetRobot(robotName);
+
+                foreach (string variableName in variables[robotName].Keys)
+                {
+                    robot.SetVariable(variableName, variables[robotName][variableName]);
+                }
             }
         }
     }

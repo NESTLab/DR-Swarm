@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using shapeNamespace;
+using DrSwarm;
+using DrSwarm.Model;
+using DrSwarm.Model.Visualizations;
 
 public class MapIndicatorTest : MonoBehaviour
 {

@@ -1,8 +1,8 @@
-﻿using graphNameSpace;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DrSwarm;
+using DrSwarm.Model.Visualizations;
 
 public class CreateVizPanel : MonoBehaviour
 {
@@ -89,7 +89,7 @@ public class CreateVizPanel : MonoBehaviour
                         Button edit = vizPrefab.transform.Find("editViz").GetComponent<Button>();
                         edit.onClick.AddListener(delegate { editViz(name, viz); });
                         Image img = vizPrefab.transform.Find("vizImage").GetComponent<Image>();
-                        graph viztype = getVizType( allVizs[i]);
+                        UIManager.Graph viztype = getVizType( allVizs[i]);
                         Debug.Log("Graph type" + viztype);
                         setImage(img, viztype);
                         //Maitance variables
@@ -126,25 +126,25 @@ public class CreateVizPanel : MonoBehaviour
         menuPanel.SetActive(false);
     }
 
-    void setImage(Image a, graph g)
+    void setImage(Image a, UIManager.Graph g)
     {
-        if (g == graph.Bar) { a.sprite = bar; }
-        else if (g == graph.Line) { a.sprite = line; }
-        else if (g == graph.Pie) { a.sprite = pie; }
-        else if (g == graph.PieMulti) { a.sprite = pieMult; }
-        else if (g == graph.TwoDMap) { a.sprite = map; }
-        else if (g == graph.TwoDRange) { a.sprite = range; }
+        if (g == UIManager.Graph.Bar) { a.sprite = bar; }
+        else if (g == UIManager.Graph.Line) { a.sprite = line; }
+        else if (g == UIManager.Graph.Pie) { a.sprite = pie; }
+        else if (g == UIManager.Graph.PieMulti) { a.sprite = pieMult; }
+        else if (g == UIManager.Graph.TwoDMap) { a.sprite = map; }
+        else if (g == UIManager.Graph.TwoDRange) { a.sprite = range; }
     }
 
-    graph getVizType(IVisualization viz)
+    UIManager.Graph getVizType(IVisualization viz)
     {
-        if (viz.GetType().ToString() == "LineGraph") { return graph.Line; }
-        else if (viz.GetType().ToString() == "BarGraph") { return graph.Bar; }
-        else if (viz.GetType().ToString() == "MapIndicator") { return graph.TwoDMap; }
-        else if (viz.GetType().ToString() == "PieChart") { return graph.Pie; }
-        else if (viz.GetType().ToString() == "PieChartMultiVar") { return graph.PieMulti; }
-        else if (viz.GetType().ToString() == "RangeIndicator") { return graph.TwoDRange; }
-        else { return graph.Line; }
+        if (viz.GetType().ToString() == "LineGraph") { return UIManager.Graph.Line; }
+        else if (viz.GetType().ToString() == "BarGraph") { return UIManager.Graph.Bar; }
+        else if (viz.GetType().ToString() == "MapIndicator") { return UIManager.Graph.TwoDMap; }
+        else if (viz.GetType().ToString() == "PieChart") { return UIManager.Graph.Pie; }
+        else if (viz.GetType().ToString() == "PieChartMultiVar") { return UIManager.Graph.PieMulti; }
+        else if (viz.GetType().ToString() == "RangeIndicator") { return UIManager.Graph.TwoDRange; }
+        else { return UIManager.Graph.Line; }
     }
 
 

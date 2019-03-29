@@ -1,8 +1,7 @@
-﻿using graphNameSpace;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class SendVars : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -333,12 +332,12 @@ public class SendVars : MonoBehaviour
 
     public void setPanel()
     {
-        graph UIgraph = UIManager.Instance.GraphType;
-        if (UIgraph == graph.TwoDRange)
+        UIManager.Graph UIgraph = UIManager.Instance.GraphType;
+        if (UIgraph == UIManager.Graph.TwoDRange)
         {
             rangePanel.gameObject.SetActive(true);
         }
-        else if (UIgraph == graph.TwoDMap)
+        else if (UIgraph == UIManager.Graph.TwoDMap)
         {
             mapPanel.gameObject.SetActive(true);
         }

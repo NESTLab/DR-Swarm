@@ -1,15 +1,13 @@
-﻿using graphNameSpace;
-using shapeNamespace;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.UI;
+using DrSwarm;
+using DrSwarm.Model;
+using DrSwarm.Model.Visualizations;
 
-namespace graphNameSpace
+public class UIManager : MonoBehaviour
 {
-    public enum graph
+    public enum Graph
     {
         Line,
         Pie,
@@ -19,10 +17,6 @@ namespace graphNameSpace
         TwoDMap,
         NoGraph
     }
-}
-
-public class UIManager : MonoBehaviour
-{
 
     // Start is called before the first frame update   
 
@@ -46,7 +40,7 @@ public class UIManager : MonoBehaviour
     public bool EditVizBool = false;
     public IVisualization editviz;
     public string editVizName;
-    public graph editVizGraphType;
+    public Graph editVizGraphType;
     public List<string> editVars = new List<string>();
     public List<RangePolicy> editRangePolicys = new List<RangePolicy>();
     public List<MapPolicy> editMapPolicys = new List<MapPolicy>();
@@ -55,7 +49,7 @@ public class UIManager : MonoBehaviour
     public Color editDColor;
 
 
-    public graph GraphType = graph.NoGraph; //What type of graph is currently being set
+    public Graph GraphType = Graph.NoGraph; //What type of graph is currently being set
     public string sentGraphType
     {
         get { return _sentGraphType; }
@@ -66,42 +60,42 @@ public class UIManager : MonoBehaviour
             Debug.Log("Changing Graph Type");
             if (_sentGraphType == "Line")
             {
-                GraphType = graph.Line;
+                GraphType = Graph.Line;
                 Options = 2;
                 TotalOptions = 100;
                 RobotOptions = 0;
             }
             else if (_sentGraphType == "Pie")
             {
-                GraphType = graph.Pie;
+                GraphType = Graph.Pie;
                 Options = 1;
                 TotalOptions = 1;
                 RobotOptions = 0;
             }
             else if (_sentGraphType == "PieMulti")
             {
-                GraphType = graph.PieMulti;
+                GraphType = Graph.PieMulti;
                 Options = 2;
                 RobotOptions = 1;
                 TotalOptions = 100;
             }
             else if (_sentGraphType == "Bar")
             {
-                GraphType = graph.Bar;
+                GraphType = Graph.Bar;
                 Options = 1;
                 RobotOptions = 0;
                 TotalOptions = 100;
             }
             else if (_sentGraphType == "2DMap")
             {
-                GraphType = graph.TwoDMap;
+                GraphType = Graph.TwoDMap;
                 Options = 0;
                 RobotOptions = 0;
                 TotalOptions = 100;
             }
             else if (_sentGraphType == "2DRange")
             {
-                GraphType = graph.TwoDRange;
+                GraphType = Graph.TwoDRange;
                 Options = 1;
                 RobotOptions = 0;
                 TotalOptions = 100;
@@ -231,7 +225,7 @@ public class UIManager : MonoBehaviour
         string title = "";
         DateTime foo = DateTime.UtcNow;
         long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-        if (GraphType == graph.Line)
+        if (GraphType == Graph.Line)
         {
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -244,7 +238,7 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
             Debug.Log("Type trufalse " + ("LineGraph" == graphToAdd.GetType().ToString()));
         }
-        else if (GraphType == graph.Pie)
+        else if (GraphType == Graph.Pie)
         {
             Robot r1 = robots[0];
             robots.RemoveAt(0);
@@ -257,7 +251,7 @@ public class UIManager : MonoBehaviour
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
         }
-        else if (GraphType == graph.PieMulti)
+        else if (GraphType == Graph.PieMulti)
         {
             //Robot r1 = robots[0];
             //robots.RemoveAt(0);
@@ -269,7 +263,7 @@ public class UIManager : MonoBehaviour
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
         }
-        else if (GraphType == graph.Bar)
+        else if (GraphType == Graph.Bar)
         {
 
             HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
@@ -298,7 +292,7 @@ public class UIManager : MonoBehaviour
             allVizsNames.Add(title);
             */
         }
-        else if (GraphType == graph.TwoDRange)
+        else if (GraphType == Graph.TwoDRange)
         {
             //Debug.Log("Policies " + allRPolicies + allRPolicies[0] + " " + allRPolicies.Count + "init2 color" + allRPolicies[1].color);
             title = "TwoDRange " + unixTime;
@@ -310,7 +304,7 @@ public class UIManager : MonoBehaviour
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
         }
-        else if (GraphType == graph.TwoDMap)
+        else if (GraphType == Graph.TwoDMap)
         {
             title = "TwoDMAp " + unixTime;
             Robot r1 = robots[0];
@@ -335,7 +329,7 @@ public class UIManager : MonoBehaviour
             Debug.Log("Viz count to " + allVizs.Count);
             EditVizBool = false;
             editVizName = "";
-            editVizGraphType = graph.NoGraph;
+            editVizGraphType = Graph.NoGraph;
             editVars = new List<string>();
             editRangePolicys = new List<RangePolicy>();
             editMapPolicys = new List<MapPolicy>();

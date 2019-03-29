@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using shapeNamespace;
-
+using DrSwarm.Model;
 
 public class CreateRangeVarPanel : MonoBehaviour
 {

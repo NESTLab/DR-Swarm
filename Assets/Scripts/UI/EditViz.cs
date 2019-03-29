@@ -1,8 +1,8 @@
-﻿using graphNameSpace;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DrSwarm.Model;
+using DrSwarm.Model.Visualizations;
 
 public class EditViz : MonoBehaviour
 {
@@ -37,17 +37,17 @@ public class EditViz : MonoBehaviour
         if (edit.GetType().ToString() == "LineGraph")
         {
             t.text = "Current Viz Type: Line Graph";
-            UIManager.Instance.editVizGraphType = graph.Line;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.Line;
         }
         else if (edit.GetType().ToString() == "BarGraph")
         {
             currVizTitle.GetComponent<Text>().text = "Current Viz Type: Bar Graph";
-            UIManager.Instance.editVizGraphType = graph.Bar;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.Bar;
         }
         else if (edit.GetType().ToString() == "MapIndicator")
         {
             currVizTitle.GetComponent<Text>().text = "Current Viz Type: Map Indicator";
-            UIManager.Instance.editVizGraphType = graph.TwoDMap;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.TwoDMap;
             UIManager.Instance.editMapPolicys = ((MapIndicator)edit).GetPolicies();
             UIManager.Instance.editDShape = ((MapIndicator)edit).GetDefaultShape();
             UIManager.Instance.editDColor = ((MapIndicator)edit).GetDefaultColor();
@@ -55,17 +55,17 @@ public class EditViz : MonoBehaviour
         else if (edit.GetType().ToString() == "PieChart")
         {
             currVizTitle.GetComponent<Text>().text = "Current Viz Type: Pie Graph";
-            UIManager.Instance.editVizGraphType = graph.Pie;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.Pie;
         }
         else if (edit.GetType().ToString() == "PieChartMultiVar")
         {
             currVizTitle.GetComponent<Text>().text = "Current Viz Type: Pie Graph Multi Var";
-            UIManager.Instance.editVizGraphType = graph.PieMulti;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.PieMulti;
         }
         else if (edit.GetType().ToString() == "RangeIndicator")
         {
             currVizTitle.GetComponent<Text>().text = "Current Viz Type: Range Indicator";
-            UIManager.Instance.editVizGraphType = graph.TwoDRange;
+            UIManager.Instance.editVizGraphType = UIManager.Graph.TwoDRange;
             UIManager.Instance.editRangePolicys = ((RangeIndicator)edit).GetPolicies();
             UIManager.Instance.editDShape = ((RangeIndicator)edit).GetDefaultShape();
             UIManager.Instance.editDColor = ((RangeIndicator)edit).GetDefaultColor();
