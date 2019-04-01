@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class VisualizationWindow : MonoBehaviour {
+public class VisualizationWindow : MonoBehaviour
+{
     // The robot associated with this visualization window
     private Robot robot;
 
@@ -21,16 +22,12 @@ public class VisualizationWindow : MonoBehaviour {
     private int indexViz = 0;
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         canvas = (GameObject)Instantiate(Resources.Load("VisualizationCanvas"), transform);
         container = canvas.transform.Find("Container").GetComponent<RectTransform>();
         visualizationNames = new HashSet<string>();
         robot = DataManager.Instance.GetRobot(name);
-        //System.Type MyScriptType = System.Type.GetType("WindowTouch" + ",Assembly-CSharp");
-
-        //WindowTouch script = (WindowTouch)canvas.AddComponent(MyScriptType);
-        //Debug.Log("Adding Robot name " + addedName + "  " + robot.name);
-        //script.SwitchVizOnWindow(addedName);
 
         // Subscribe to the set of visualizations for this robot
         // A callback gets called if a visualization was added or removed for the robot
@@ -38,7 +35,7 @@ public class VisualizationWindow : MonoBehaviour {
     }
 
     private void VisualizationListUpdated(ISet<string> visualizationSet)
-    { 
+    {
         // Compute the set of visualizations added and removed
         HashSet<string> addedVisualizations = new HashSet<string>(visualizationSet);
         addedVisualizations.ExceptWith(visualizationNames);
@@ -94,7 +91,7 @@ public class VisualizationWindow : MonoBehaviour {
             container.visualizationName = visualizationName;
             container.container = transform;
         }
-        else if (visualizationType == typeof(PieChartMultiVar)) 
+        else if (visualizationType == typeof(PieChartMultiVar))
         {
             PieChartMultiVarContainer container = gameObject.AddComponent<PieChartMultiVarContainer>();
             container.robot = this.robot;
@@ -108,7 +105,8 @@ public class VisualizationWindow : MonoBehaviour {
             container.visualizationName = visualizationName;
             container.container = transform;
         }
-        else if (visualizationType == typeof(MapIndicator)) {
+        else if (visualizationType == typeof(MapIndicator))
+        {
             MapIndicatorContainer container = gameObject.AddComponent<MapIndicatorContainer>();
             container.robot = this.robot;
             container.visualizationName = visualizationName;
@@ -120,20 +118,22 @@ public class VisualizationWindow : MonoBehaviour {
             container.robot = this.robot;
             container.visualizationName = visualizationName;
             container.container = transform;
-        } else
+        }
+        else
         {
             throw new Exception("Invalid visualization type.");
         }
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         canvas.transform.LookAt(GameObject.Find("Camera").transform);
 
         // Rotate 180 around Y axis, because LookAt points the Z axis at the camera
         // when instead we want it pointing away from the camera
         canvas.transform.Rotate(new Vector3(0, 180, 0), Space.Self);
-        if(VisualizationManager.Instance.turnOffVisualizationName != null)
+        if (VisualizationManager.Instance.turnOffVisualizationName != null)
         {
             toggleDisplay(VisualizationManager.Instance.turnOffVisualizationName);
             VisualizationManager.Instance.turnOffVisualizationName = null;
@@ -158,33 +158,52 @@ public class VisualizationWindow : MonoBehaviour {
 
         GameObject viz = container.Find(visualizationName).gameObject;
         viz.SetActive(!viz.activeSelf);
+        UIManager.Instance.ChangeVizDisplayList(visualizationName);
     }
 
+    /// <summary>
+    /// Switches the visualization that is displayed on the window. This is only triggered when the window is clicked on.
+    /// </summary>
     private void SwitchVisualization()
     {
-        if(visualizationNames.Count > 1)
+        if (visualizationNames.Count > 1)
         {
-            Debug.Log("Swithcing prev is " + indexViz +" count " + visualizationNames.Count);
-            indexViz = indexViz+1;
-            if(indexViz > visualizationNames.Count) { Debug.Log("Reseting"); indexViz = 0; }
-            
-            List<string> names = new List<string> ( visualizationNames );
-            Debug.Log("Going to " + indexViz + " which is " + names[indexViz]);
-            for(int i = 0; i < names.Count; i++)
+            //Debug.Log("Swithcing prev is " + indexViz + " count " + visualizationNames.Count);
+            indexViz = indexViz + 1; //increase the index
+            if (indexViz > visualizationNames.Count) { indexViz = 0; }
+
+            List<string> names = new List<string>(visualizationNames); //Allow to do names[i]
+            for (int i = 0; i < names.Count; i++)//cycle through the visualizations
             {
                 GameObject viz = container.Find(names[i]).gameObject;
                 if (i == indexViz)
                 {
-                    viz.SetActive(true);
-
-                } else
-                {
-                    viz.SetActive(false);
-
+                    if (UIManager.Instance.VisDisplayListContains(names[indexViz])) //if the viz is turned off go to the next one. 
+                    {
+                        indexViz = indexViz + 1;
+                        if (indexViz > visualizationNames.Count) { indexViz = 0; }
+                    }
+                    else
+                    {
+                        GameObject containerBackground = canvas.transform.Find("ContainerBackground").gameObject;
+                        GameObject background = canvas.transform.Find("Background").gameObject;
+                        viz.SetActive(true);
+                        Type visualizationType = VisualizationManager.Instance.GetVisualizationType(names[i]);
+                        Debug.Log("Type is " + visualizationType.ToString());
+                        if (visualizationType == typeof(MapIndicator) || visualizationType == typeof(RangeIndicator))
+                        {
+                            
+                            background.GetComponent<Image>().color = Color.clear;
+                            containerBackground.GetComponent<Image>().color = Color.clear;
+                        } else
+                        {
+                            background.GetComponent<Image>().color = new Color((30f / 255f), (30f / 255f), (30f / 255f));
+                            containerBackground.GetComponent<Image>().color = new Color((64 / 255f), (64 / 255f), (64 / 255f));
+                        }
+                    }
                 }
+                else { viz.SetActive(false); }
             }
         }
-
     }
-
 }

@@ -25,8 +25,9 @@ public class TouchScript : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 if (UIManager.Instance.AddRobotMode) //If we could add robots
-                {
-                    if (hit.collider.gameObject.name == "RobotTarget1") // if the name of the gameobject is 
+                {   
+                    // if the name of the gameobject is
+                    if (hit.collider.gameObject.name == "RobotTarget1") 
                     {
                         UIManager.Instance.addRobotByTouch("r1");
                     }

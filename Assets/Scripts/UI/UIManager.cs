@@ -74,6 +74,7 @@ public class UIManager : MonoBehaviour
 
     public bool AddRobotMode = false; //Used for the touch robots, know when clicking on a robot will add it
     public string RobotToSwitchVisualizations = ""; //var used for switching the visualizations on the canvas
+    public List<string> listOffTurnedOffVizs = new List<string>();
 
     /// <summary>
     /// Variable that will detect when changed.
@@ -327,12 +328,32 @@ public class UIManager : MonoBehaviour
             editVars = new List<string>();
             editRangePolicys = new List<RangePolicy>();
             editMapPolicys = new List<MapPolicy>();
-            
+
             EOptions = 0;
             editDShape = new IndicatorShape();
             editDColor = new Color();
             editVizRobots = new List<string>();
         }
+    }
+
+    /// <summary>
+    /// Add/Remove the string viz name form the list of ones turned off.
+    /// </summary>
+    /// <param name="viz">A visualization name.</param>
+    public void ChangeVizDisplayList(string viz)
+    {
+        if (listOffTurnedOffVizs.Contains(viz)) { listOffTurnedOffVizs.Remove(viz); }
+        else { listOffTurnedOffVizs.Add(viz); }
+    }
+
+    /// <summary>
+    /// Check if the list contains that viz name.
+    /// </summary>
+    /// <param name="viz">A visualization name</param>
+    /// <returns>Boolean</returns>
+    public Boolean VisDisplayListContains(string viz)
+    {
+        return listOffTurnedOffVizs.Contains(viz);
     }
 
     #endregion

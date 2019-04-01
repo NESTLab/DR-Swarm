@@ -410,6 +410,7 @@ public class CreateMapVarPanel : MonoBehaviour
 
         string defaultShapeString = defaultShape.options[defaultShape.value].text;
         string defaultColorString = defaultColor.options[defaultColor.value].text; //Color.Red
+
         if (ColorUtility.TryParseHtmlString(defaultColorString, out defaultColored)) { }
         else { defaultColored = Color.red; }
 
