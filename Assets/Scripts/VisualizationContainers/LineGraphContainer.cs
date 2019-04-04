@@ -44,6 +44,9 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
             yValues.AddRange(values.Select(v => v.y));
         }
 
+        if (xValues.Count == 0 || yValues.Count == 0)
+            return;
+
         float xMin = xValues.Min();
         float xMax = xValues.Max();
         float yMin = yValues.Min();
@@ -125,6 +128,10 @@ public class LineGraphContainer : VisualizationContainer<LineGraph> {
         {
             float x = container.sizeDelta.x * (v.x - drawArea.xMin) / (drawArea.width);
             float y = container.sizeDelta.y * (v.y - drawArea.yMin) / (drawArea.height);
+
+            // If the drawArea.width or height == 0, x/y will be NaN
+            if (double.IsNaN(x) || double.IsNaN(y))
+                return Vector2.zero;
 
             return new Vector2(x, y);
         });
