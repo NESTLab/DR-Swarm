@@ -17,7 +17,7 @@ public class BarGraph : IVisualization
     /// </summary>
     /// <param name="variables"> The names of the observed data. </param>
     /// <param name="robots"> The robots to attach this visualization to. </param>
-    public BarGraph(HashSet<string> variables, HashSet<Robot> robots)
+    public BarGraph(HashSet<Robot> robots, HashSet<string> variables)
     {
         robotSet = new HashSet<Robot>(robots);
         varSet = new HashSet<string>(variables);

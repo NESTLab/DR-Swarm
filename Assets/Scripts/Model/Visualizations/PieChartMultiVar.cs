@@ -22,7 +22,7 @@ public class PieChartMultiVar : IVisualization
     /// </summary>
     /// <param name="variables"> The names of the observed data. </param>
     /// <param name="robots"> The robots to attach this visualization to. </param>
-    public PieChartMultiVar(List<string> variables, List<Robot> robots) 
+    public PieChartMultiVar(List<Robot> robots, List<string> variables) 
     {
         robotSet = new HashSet<Robot>(robots);
         varSet = new HashSet<string>(variables);
