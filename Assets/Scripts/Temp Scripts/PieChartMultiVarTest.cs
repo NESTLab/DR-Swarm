@@ -12,8 +12,8 @@ public class PieChartMultiVarTest : MonoBehaviour {
     // Use this for initialization
     void Start () {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
-        r1.SetVariable("var1", 0.5f);
-        r1.SetVariable("var2", 0.2f);
+        r1.SetVariable("TaskCompleted", 0.5f);
+        r1.SetVariable("NotCompleted", 0.2f);
         r1.SetVariable("var3", 0.3f);
         r1.SetVariable("var4", 1.0f);
 
@@ -28,10 +28,10 @@ public class PieChartMultiVarTest : MonoBehaviour {
         robots.Add(r2);
 
         List<string> vars = new List<string>();
-        vars.Add("var1");
-        vars.Add("var2");
-        vars.Add("var3");
-        vars.Add("var4");
+        vars.Add("TaskCompleted");
+        vars.Add("NotCompleted");
+        //vars.Add("var3");
+        //vars.Add("var4");
 
         List<Robot> one = new List<Robot>();
         one.Add(r1);
@@ -39,16 +39,23 @@ public class PieChartMultiVarTest : MonoBehaviour {
         // pc1 = new PieChartMultiVar(r1, "var1", "var2");
         //pc2 = new PieChartMultiVar(r1, "var1", "var2", "var3", "var4");
         pc1 = new PieChartMultiVar(robots, vars);
-        pc2 = new PieChartMultiVar(one, vars);
+        pc2 = new PieChartMultiVar(robots, vars);
     }
 	
 	// Update is called once per frame
 	void Update () {
-        theta += 0.01f;
+        if (theta >= 1.8)
+        {
+            theta = -1.8f;
+        }
+        else
+        {
+            theta += 0.01f;
+        }
+        Debug.Log("a" + theta);
+        r1.SetVariable("TaskCompleted", Mathf.Sin(theta) * Mathf.Sin(theta));
 
-        r1.SetVariable("var1", Mathf.Sin(theta) * Mathf.Sin(theta));
-
-        r1.SetVariable("var2", Mathf.Cos(theta) * Mathf.Cos(theta));
+        r1.SetVariable("NotCompleted", Mathf.Cos(theta) * Mathf.Cos(theta));
 
         if (Input.GetKeyDown("1")) {
             Debug.Log("add pc2");

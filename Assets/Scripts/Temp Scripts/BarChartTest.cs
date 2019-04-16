@@ -6,7 +6,7 @@ public class BarChartTest : MonoBehaviour {
 
     Robot r1, r2;
     IVisualization bc1;
-
+    float x;
     // Use this for initialization
     void Start () {
         r1 = DataManager.Instance.GetRobot("RobotTarget1");
@@ -25,6 +25,7 @@ public class BarChartTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         if (Input.GetKeyDown("1")) {
             VisualizationManager.Instance.AddVisualization("bargraph1", bc1);
         } else if (Input.GetKeyDown("2")) {

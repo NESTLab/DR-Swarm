@@ -251,7 +251,7 @@ public class UIManager : MonoBehaviour
             string xvar = wantedVars[0];
             string yvar = wantedVars[1];
             IVisualization graphToAdd = new LineGraph(xvar, yvar, r1, robots.ToArray());
-            title = xvar + "," + yvar + " Line " + unixTime;//TODO: Add another unique symbol to this?
+            title = "Line"; // xvar + "," + yvar + " Line " + unixTime;//TODO: Add another unique symbol to this?
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
@@ -283,7 +283,7 @@ public class UIManager : MonoBehaviour
             HashSet<Robot> hashRobots = new HashSet<Robot>(robots);
             HashSet<string> hashVars = new HashSet<string>(wantedVars);
             IVisualization graphToAdd = new BarGraph(hashRobots, hashVars);
-            title = "Bar " + unixTime;
+            title = "Bar ";// + unixTime;
             VisualizationManager.Instance.AddVisualization(title, graphToAdd);
             allVizs.Add(graphToAdd);
             allVizsNames.Add(title);
@@ -291,7 +291,7 @@ public class UIManager : MonoBehaviour
         }
         else if (GraphType == graph.TwoDRange)
         {
-            title = "TwoDRange " + unixTime;
+            title = "TwoD Range " + unixTime;
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
@@ -302,7 +302,7 @@ public class UIManager : MonoBehaviour
         }
         else if (GraphType == graph.TwoDMap)
         {
-            title = "TwoDMAp " + unixTime;
+            title = "TwoD Map " + unixTime;
             Robot r1 = robots[0];
             robots.RemoveAt(0);
             string var = wantedVars[0];
